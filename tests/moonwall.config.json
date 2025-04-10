@@ -1,0 +1,79 @@
+{
+  "label": "MasterConfig 🧪",
+  "defaultTestTimeout": 300000,
+  "scriptsDir": "scripts/",
+  "environments": [
+    {
+      "name": "dev",
+      "testFileDir": [
+        "suites/dev"
+      ],
+      "multiThreads": true,
+      "reporters": ["basic", "html", "json"],
+      "reportFile": {
+        "json": "./tmp/testResults.json"
+      },
+      "contracts": "contracts/",
+      "runScripts": ["compile-contracts.ts compile"],
+      "foundation": {
+        "type": "dev",
+        "launchSpec": [
+          {
+            "newRpcBehaviour": true,
+            "name": "zkvevmpara-dev",
+            "binPath": "../target/release/zkv-para-evm-node",
+            "options": [
+              "--dev",
+              "--sealing=manual",
+              "-ltrace"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "zombie",
+      "testFileDir": [
+        "suites/zombie"
+      ],
+      "multiThreads": false,
+      "timeout": 300000,
+      "contracts": "contracts/",
+      "runScripts": ["compile-contracts.ts compile", "build-tracing-wasm.sh"],
+      "foundation": {
+        "type": "zombie",
+        "zombieSpec": {
+          "name": "zombienet",
+          "configPath": "./configs/zombienet-config.json"
+        }
+      },
+      "connections": [
+        {
+          "name": "ethers",
+          "type": "ethers",
+          "endpoints": ["ws://127.0.0.1:9920"]
+        },
+        {
+          "name": "viem",
+          "type": "viem",
+          "endpoints": ["ws://127.0.0.1:9920"]
+        },
+        {
+          "name": "parachain",
+          "type": "polkadotJs",
+          "endpoints": ["ws://127.0.0.1:9920"]
+        },
+        {
+          "name": "web3",
+          "type": "web3",
+          "endpoints": ["ws://127.0.0.1:9920"]
+        },
+        {
+          "name": "relaychain",
+          "type": "polkadotJs",
+          "endpoints": ["ws://127.0.0.1:9900"]
+        }
+      ]
+    }
+  ]
+}

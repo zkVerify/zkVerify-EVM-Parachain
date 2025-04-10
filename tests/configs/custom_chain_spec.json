@@ -1,0 +1,48 @@
+{
+  "settings": {
+    "timeout": 5000,
+    "provider": "native"
+  },
+  "relaychain": {
+    "chain": "local",
+    "default_command": "../relay_bin/zkv-relay",
+    "nodes": [
+      {
+        "name": "alice",
+        "validator": true,
+        "ws_port": 9900
+      },
+      {
+        "name": "bob",
+        "validator": true
+      }
+    ]
+  },
+  "parachains": [
+    {
+      "id": 1000,
+      "add_to_genesis": true,
+      "cumulus_based": true,
+      "force_decorator": "generic-evm",
+      "chain_spec_path": "./configs/chain_specs/test_chain_spec.json",
+      "collators": [
+        {
+          "name": "zkv-evm-parachain-collator01",
+          "command": "../target/release/zkv-para-evm-node",
+          "ws_port": 9910,
+          "args": [
+            ""
+          ]
+        },
+        {
+          "name": "zkv-evm-parachain-collator02",
+          "command": "../target/release/zkv-para-evm-node",
+          "ws_port": 9920,
+          "args": [
+            ""
+          ]
+        }
+      ]
+    }
+  ]
+}
