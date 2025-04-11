@@ -17,8 +17,6 @@ pub mod asset_config;
 pub use asset_config::AssetType;
 mod aura;
 mod authorship;
-pub mod governance;
-mod root_testing;
 mod session;
 mod timestamp;
 pub mod xcm_config;

@@ -22,8 +22,8 @@ frame_benchmarking::define_benchmarks!(
     [pallet_multisig, Multisig]
     [pallet_preimage, Preimage]
     [pallet_balances, Balances]
-
     [pallet_assets, Assets]
+
     [pallet_sudo, Sudo]
 
     [pallet_colleator_selection, CollatorSelection]
@@ -32,6 +32,7 @@ frame_benchmarking::define_benchmarks!(
     [cumulus_pallet_xcmp_queue, XcmpQueue]
     [pallet_xcm, PalletXcmExtrinsicsBenchmark::<Runtime>]
     [pallet_message_queue, MessageQueue]
+
     [pallet_evm, EVM]
 );
 

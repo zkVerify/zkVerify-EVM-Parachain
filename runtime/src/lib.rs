@@ -234,7 +234,7 @@ construct_runtime!(
         System: frame_system = 0,
         ParachainSystem: cumulus_pallet_parachain_system = 1,
         Timestamp: pallet_timestamp = 2,
-        ParachainInfo: parachain_info = 3,
+        ParachainInfo: parachain_info = 3, // No weight
         Proxy: pallet_proxy = 4,
         Utility: pallet_utility = 5,
         Multisig: pallet_multisig = 6,
@@ -242,36 +242,33 @@ construct_runtime!(
 
         // Monetary
         Balances: pallet_balances = 10,
-        TransactionPayment: pallet_transaction_payment = 11,
+        TransactionPayment: pallet_transaction_payment = 11, // No weight
         Assets: pallet_assets = 12,
 
         // Governance
         Sudo: pallet_sudo = 15,
 
         // Collator Support. The order of these 5 are important and shall not change.
-        Authorship: pallet_authorship = 20,
+        Authorship: pallet_authorship = 20, // No weight
         CollatorSelection: pallet_collator_selection = 21,
         Session: pallet_session = 22,
-        Aura: pallet_aura = 23,
-        AuraExt: cumulus_pallet_aura_ext = 24,
+        Aura: pallet_aura = 23, // No weight
+        AuraExt: cumulus_pallet_aura_ext = 24, // No weight
 
         // XCM Helpers
         XcmpQueue: cumulus_pallet_xcmp_queue = 30,
         PolkadotXcm: pallet_xcm = 31,
-        CumulusXcm: cumulus_pallet_xcm = 32,
+        CumulusXcm: cumulus_pallet_xcm = 32, // No weight
         MessageQueue: pallet_message_queue = 33,
 
         // EVM
-        Ethereum: pallet_ethereum = 40,
+        Ethereum: pallet_ethereum = 40, // No weight
         EVM: pallet_evm = 41,
-        BaseFee: pallet_base_fee = 42,
-        EVMChainId: pallet_evm_chain_id = 43,
-
-        // Test Utils
-        RootTesting: pallet_root_testing = 47,
+        BaseFee: pallet_base_fee = 42, // No weight
+        EVMChainId: pallet_evm_chain_id = 43, // No weight
 
         // Network Type
-        NetworkType: pallet_network_type = 70,
+        NetworkType: pallet_network_type = 70, // No weight
     }
 );
 
