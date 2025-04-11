@@ -22,7 +22,6 @@ frame_benchmarking::define_benchmarks!(
     [pallet_message_queue, MessageQueue]
     [pallet_sudo, Sudo]
     [cumulus_pallet_xcmp_queue, XcmpQueue]
-    [pallet_scheduler, Scheduler]
     [pallet_preimage, Preimage]
     [pallet_proxy, Proxy]
     [cumulus_pallet_parachain_system, ParachainSystem]

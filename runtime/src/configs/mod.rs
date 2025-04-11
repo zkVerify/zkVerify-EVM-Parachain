@@ -74,7 +74,7 @@ use crate::{
     },
     weights::{self, BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight},
     Aura, Balances, BaseFee, CollatorSelection, EVMChainId, MessageQueue, NetworkType,
-    OpenZeppelinPrecompiles, OriginCaller, PalletInfo, ParachainSystem, Preimage, Runtime,
+    OpenZeppelinPrecompiles, OriginCaller, PalletInfo, ParachainSystem, Runtime,
     RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask,
     System, Timestamp, UncheckedExtrinsic, WeightToFee, XcmpQueue, VERSION,
 };
@@ -171,25 +171,6 @@ impl frame_system::Config for Runtime {
     type SS58Prefix = SS58Prefix;
     /// Runtime version.
     type Version = Version;
-}
-
-parameter_types! {
-    pub MaximumSchedulerWeight: frame_support::weights::Weight = Perbill::from_percent(80) *
-        RuntimeBlockWeights::get().max_block;
-    pub const MaxScheduledRuntimeCallsPerBlock: u32 = 50;
-}
-
-impl pallet_scheduler::Config for Runtime {
-    type MaxScheduledPerBlock = MaxScheduledRuntimeCallsPerBlock;
-    type MaximumWeight = MaximumSchedulerWeight;
-    type OriginPrivilegeCmp = frame_support::traits::EqualPrivilegeOnly;
-    type PalletsOrigin = OriginCaller;
-    type Preimages = Preimage;
-    type RuntimeCall = RuntimeCall;
-    type RuntimeEvent = RuntimeEvent;
-    type RuntimeOrigin = RuntimeOrigin;
-    type ScheduleOrigin = EnsureRoot<AccountId>;
-    type WeightInfo = weights::pallet_scheduler::WeightInfo<Runtime>;
 }
 
 parameter_types! {
