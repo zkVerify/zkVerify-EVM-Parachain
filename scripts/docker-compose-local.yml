@@ -1,0 +1,15 @@
+services:
+  zkv-evm-bench:
+    image: ${IMAGE:-zkv-evm}:${TAG:-bench}
+    build:
+      context: ${SOURCE_ROOT?err_unset}
+      dockerfile: ./docker/dockerfiles/horizen-node.Dockerfile
+      args:
+        - PROFILE=production
+        - FEATURES=runtime-benchmarks
+    entrypoint: [ "" ]
+    command: [ "/bin/bash" ]
+    container_name: zkv-evm-bench
+    user: "${USER_ID:-0}:${GROUP_ID:-0}"
+    volumes:
+      - "${SOURCE_ROOT?err_unset}:/data/benchmark:rw"
