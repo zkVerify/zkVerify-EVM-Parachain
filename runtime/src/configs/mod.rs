@@ -59,8 +59,6 @@ use xcm::latest::prelude::BodyId;
 use xcm_builder::ProcessXcmMessage;
 use xcm_config::{RelayLocation, XcmOriginToTransactDispatchOrigin};
 
-#[cfg(feature = "runtime-benchmarks")]
-use crate::benchmark::{OpenHrmpChannel, PayWithEnsure};
 use crate::{
     constants::{
         currency::{deposit, CENTS, EXISTENTIAL_DEPOSIT, MICROCENTS},

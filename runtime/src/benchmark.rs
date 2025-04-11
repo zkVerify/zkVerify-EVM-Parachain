@@ -15,20 +15,24 @@
 
 frame_benchmarking::define_benchmarks!(
     [frame_system, SystemBench::<Runtime>]
-    [pallet_assets, Assets]
-    [pallet_balances, Balances]
-    [pallet_session, SessionBench::<Runtime>]
-    [pallet_timestamp, Timestamp]
-    [pallet_message_queue, MessageQueue]
-    [pallet_sudo, Sudo]
-    [cumulus_pallet_xcmp_queue, XcmpQueue]
-    [pallet_preimage, Preimage]
-    [pallet_proxy, Proxy]
     [cumulus_pallet_parachain_system, ParachainSystem]
-    [pallet_multisig, Multisig]
+    [pallet_timestamp, Timestamp]
+    [pallet_proxy, Proxy]
     [pallet_utility, Utility]
-    [pallet_evm, EVM]
+    [pallet_multisig, Multisig]
+    [pallet_preimage, Preimage]
+    [pallet_balances, Balances]
+
+    [pallet_assets, Assets]
+    [pallet_sudo, Sudo]
+
+    [pallet_colleator_selection, CollatorSelection]
+    [pallet_session, SessionBench::<Runtime>]
+
+    [cumulus_pallet_xcmp_queue, XcmpQueue]
     [pallet_xcm, PalletXcmExtrinsicsBenchmark::<Runtime>]
+    [pallet_message_queue, MessageQueue]
+    [pallet_evm, EVM]
 );
 
 use cumulus_primitives_core::{ChannelStatus, GetChannelInfo};

@@ -272,8 +272,6 @@ construct_runtime!(
 
         // Network Type
         NetworkType: pallet_network_type = 70,
-
-        //PalletTemplate: pallet_template = 100,
     }
 );
 
