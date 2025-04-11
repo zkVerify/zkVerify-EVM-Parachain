@@ -20,7 +20,7 @@ frame_benchmarking::define_benchmarks!(
     [pallet_proxy, Proxy]
     [pallet_utility, Utility]
     [pallet_multisig, Multisig]
-    [pallet_preimage, Preimage]
+
     [pallet_balances, Balances]
     [pallet_assets, Assets]
 

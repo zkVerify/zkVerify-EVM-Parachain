@@ -238,7 +238,6 @@ construct_runtime!(
         Proxy: pallet_proxy = 4,
         Utility: pallet_utility = 5,
         Multisig: pallet_multisig = 6,
-        Preimage: pallet_preimage::{Pallet, Call, Storage, Event<T>, HoldReason} = 7,
 
         // Monetary
         Balances: pallet_balances = 10,

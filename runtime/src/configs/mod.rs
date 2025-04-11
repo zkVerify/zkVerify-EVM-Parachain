@@ -170,29 +170,6 @@ impl frame_system::Config for Runtime {
 }
 
 parameter_types! {
-    pub const PreimageBaseDeposit: Balance = deposit(2, 64);
-    pub const PreimageByteDeposit: Balance = deposit(0, 1);
-    pub const PreimageHoldReason: RuntimeHoldReason = RuntimeHoldReason::Preimage(pallet_preimage::HoldReason::Preimage);
-}
-
-impl pallet_preimage::Config for Runtime {
-    type Consideration = frame_support::traits::fungible::HoldConsideration<
-        AccountId,
-        Balances,
-        PreimageHoldReason,
-        frame_support::traits::LinearStoragePrice<
-            PreimageBaseDeposit,
-            PreimageByteDeposit,
-            Balance,
-        >,
-    >;
-    type Currency = Balances;
-    type ManagerOrigin = EnsureRoot<AccountId>;
-    type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_preimage::WeightInfo<Runtime>;
-}
-
-parameter_types! {
     pub const MaxProxies: u32 = 32;
     pub const MaxPending: u32 = 32;
     pub const ProxyDepositBase: Balance = deposit(1, 40);

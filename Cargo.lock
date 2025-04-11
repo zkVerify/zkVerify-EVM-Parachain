@@ -21436,7 +21436,6 @@ dependencies = [
  "pallet-message-queue",
  "pallet-multisig",
  "pallet-network-type",
- "pallet-preimage",
  "pallet-proxy",
  "pallet-session",
  "pallet-sudo",

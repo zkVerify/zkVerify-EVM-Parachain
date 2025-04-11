@@ -74,7 +74,6 @@ pallet-authorship = { version = "38.0.0", default-features = false }
 pallet-balances = { version = "39.0.1", default-features = false }
 pallet-message-queue = { version = "41.0.2", default-features = false }
 pallet-multisig = { version = "38.0.0", default-features = false }
-pallet-preimage = { version = "38.0.0", default-features = false }
 pallet-proxy = { version = "38.0.0", default-features = false }
 pallet-session = { version = "38.0.0", default-features = false }
 pallet-sudo = { version = "38.0.0", default-features = false }

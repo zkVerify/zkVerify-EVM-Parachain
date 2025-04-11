@@ -25,7 +25,6 @@ pub mod pallet_balances;
 pub mod pallet_evm;
 pub mod pallet_message_queue;
 pub mod pallet_multisig;
-pub mod pallet_preimage;
 pub mod pallet_proxy;
 pub mod pallet_session;
 pub mod pallet_sudo;
