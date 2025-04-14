@@ -72,7 +72,7 @@ impl pallet_assets::Config for Runtime {
     type RemoveItemsLimit = RemoveItemsLimit;
     type RuntimeEvent = RuntimeEvent;
     type StringLimit = StringLimit;
-    type WeightInfo = weights::pallet_assets::WeightInfo<Runtime>; //FIXME: run & update
+    type WeightInfo = weights::pallet_assets::ZKVEvmWeight<Runtime>; //FIXME: run & update
 }
 
 // Our AssetType. For now we only handle Xcm Assets

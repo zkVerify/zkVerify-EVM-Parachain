@@ -81,15 +81,11 @@ pub fn create_benchmark_extrinsic(
     call: runtime::RuntimeCall,
     nonce: u32,
 ) -> runtime::UncheckedExtrinsic {
-    let genesis_hash = client
-        .block_hash(0)
-        .ok()
-        .flatten()
-        .expect("Genesis block exists; qed");
+    let genesis_hash = client.block_hash(0).ok().flatten().expect("Genesis block exists; qed");
     let best_hash = client.chain_info().best_hash;
     let best_block = client.chain_info().best_number;
 
-    let period = runtime::configs::BlockHashCount::get()
+    let period = polkadot_runtime_common::BlockHashCount::get()
         .checked_next_power_of_two()
         .map(|c| c / 2)
         .unwrap_or(2) as u64;
@@ -172,10 +168,8 @@ pub fn create_inherent_data(client: Arc<ParachainClient>, para_id: ParaId) -> In
     let timestamp = sp_timestamp::InherentDataProvider::new(std::time::Duration::default().into());
 
     let _ = futures::executor::block_on(timestamp.provide_inherent_data(&mut inherent_data));
-    let _ = inherent_data.put_data(
-        polkadot_primitives::PARACHAINS_INHERENT_IDENTIFIER,
-        &para_inherent,
-    );
+    let _ =
+        inherent_data.put_data(polkadot_primitives::PARACHAINS_INHERENT_IDENTIFIER, &para_inherent);
 
     inherent_data
 }

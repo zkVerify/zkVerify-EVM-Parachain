@@ -42,7 +42,7 @@ impl pallet_collator_selection::Config for Runtime {
     type ValidatorId = <Self as frame_system::Config>::AccountId;
     type ValidatorIdOf = pallet_collator_selection::IdentityCollator;
     type ValidatorRegistration = Session;
-    type WeightInfo = ();
+    type WeightInfo = weights::pallet_colleator_selection::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -60,5 +60,5 @@ impl pallet_session::Config for Runtime {
     type ShouldEndSession = pallet_session::PeriodicSessions<Period, Offset>;
     type ValidatorId = AccountId;
     type ValidatorIdOf = pallet_collator_selection::IdentityCollator;
-    type WeightInfo = weights::pallet_session::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_session::ZKVEvmWeight<Runtime>;
 }

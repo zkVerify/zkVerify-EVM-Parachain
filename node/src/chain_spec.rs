@@ -35,7 +35,7 @@ pub type ChainSpec = sc_service::GenericChainSpec<Extensions>;
 
 /// The default XCM version to set in genesis config.
 const SAFE_XCM_VERSION: u32 = xcm::prelude::XCM_VERSION;
-const WEI_TO_ZEN: u128 = 1_000_000_000_000_000_000;
+const WEI_TO_VFY: u128 = 1_000_000_000_000_000_000;
 
 //the default account IDs used in PolkadotJS for ethereum dev accounts
 //they are added in the PolkadotJs consolle only if chain is dev or local
@@ -53,7 +53,7 @@ pub const SUBSTRATE_DEFAULT_SEED_PHRASE: &str =
 
 /// Helper function to generate a crypto pair from seed
 pub fn get_from_seed<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>::Public {
-    TPublic::Pair::from_string(&format!("{}", seed), None)
+    TPublic::Pair::from_string(seed, None)
         .expect("static values are valid; qed")
         .public()
 }
@@ -207,7 +207,7 @@ fn chain_properties() -> Map<String, Value> {
     properties.insert("ss58Format".into(), 42.into());
     // This is very important for us, it lets us track the usage of our templates, and have no downside for the node/runtime. Please do not remove :)
     properties.insert("basedOn".into(), "OpenZeppelin EVM Template".into());
-    return properties;
+    properties
 }
 
 fn initial_genesis(
@@ -241,7 +241,7 @@ fn initial_genesis(
             H160::from_str("A0CCf49aDBbdfF7A814C07D1FcBC2b719d674959")
                 .expect("internal H160 is valid"),
             fp_evm::GenesisAccount {
-                balance: U256::from(2 * WEI_TO_ZEN),
+                balance: U256::from(2 * WEI_TO_VFY),
                 code: Default::default(),
                 nonce: Default::default(),
                 storage: Default::default(),
@@ -251,11 +251,8 @@ fn initial_genesis(
 
     #[cfg(feature = "runtime-benchmarks")]
     {
-        endowed_accounts.push(AccountId::from(hex!(
-            "1000000000000000000000000000000000000001"
-        )));
-        use sp_core::{ecdsa, Pair};
-        let acc = ecdsa::Pair::from_string("//Bob", None).expect("static values are valid; qed");
+        endowed_accounts.push(AccountId::from(hex!("1000000000000000000000000000000000000001")));
+        let acc = sp_core::ecdsa::Pair::from_string("//Bob", None).expect("static values are valid; qed");
         endowed_accounts.push(AccountId::from(acc.public()));
     }
 

@@ -61,6 +61,7 @@ sp-session = { workspace = true }
 sp-std = { workspace = true }
 sp-transaction-pool = { workspace = true }
 sp-version = { workspace = true }
+sp-weights = { workspace = true }
 
 # Polkadot
 pallet-xcm = { workspace = true }
@@ -181,6 +182,7 @@ std = [
 	"sp-std/std",
 	"sp-transaction-pool/std",
 	"sp-version/std",
+	"sp-weights/std",
 	"test-utils/std",
 	"xcm-builder/std",
 	"xcm-executor/std",

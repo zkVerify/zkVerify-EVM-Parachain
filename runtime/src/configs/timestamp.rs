@@ -22,5 +22,5 @@ impl pallet_timestamp::Config for Runtime {
     /// A timestamp: milliseconds since the unix epoch.
     type Moment = u64;
     type OnTimestampSet = Aura;
-    type WeightInfo = weights::pallet_timestamp::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_timestamp::ZKVEvmWeight<Runtime>;
 }

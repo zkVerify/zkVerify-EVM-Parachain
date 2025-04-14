@@ -68,7 +68,7 @@ use crate::{
         AccountId, Balance, Block, BlockNumber, ConsensusHook, Hash, Nonce,
         PriceForSiblingParachainDelivery,
     },
-    weights::{self, BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight},
+    weights::{self, ExtrinsicBaseWeight},
     Aura, Balances, BaseFee, CollatorSelection, EVMChainId, MessageQueue, NetworkType,
     OpenZeppelinPrecompiles, OriginCaller, PalletInfo, ParachainSystem, Runtime,
     RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask,
@@ -85,7 +85,7 @@ parameter_types! {
     pub RuntimeBlockLength: BlockLength =
         BlockLength::max_with_normal_ratio(MAX_BLOCK_LENGTH, NORMAL_DISPATCH_RATIO);
     pub RuntimeBlockWeights: BlockWeights = BlockWeights::builder()
-        .base_block(BlockExecutionWeight::get())
+        .base_block(weights::block_weights::BlockExecutionWeight::get())
         .for_class(DispatchClass::all(), |weights| {
             weights.base_extrinsic = ExtrinsicBaseWeight::get();
         })
@@ -143,7 +143,7 @@ impl frame_system::Config for Runtime {
     /// Block & extrinsics weights: base values and limits.
     type BlockWeights = RuntimeBlockWeights;
     /// The weight of database operations that the runtime can invoke.
-    type DbWeight = RocksDbWeight;
+    type DbWeight = weights::db::constants::RocksDbWeight;
     /// The type for hashing blocks and tries.
     type Hash = Hash;
     /// The lookup mechanism to get account ID from whatever is passed in
@@ -167,6 +167,8 @@ impl frame_system::Config for Runtime {
     type SS58Prefix = SS58Prefix;
     /// Runtime version.
     type Version = Version;
+    /// Weights
+    type SystemWeightInfo = weights::frame_system::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -230,7 +232,7 @@ impl pallet_proxy::Config for Runtime {
     type ProxyType = ProxyType;
     type RuntimeCall = RuntimeCall;
     type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_proxy::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_proxy::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -255,7 +257,7 @@ impl pallet_balances::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type RuntimeFreezeReason = RuntimeFreezeReason;
     type RuntimeHoldReason = RuntimeHoldReason;
-    type WeightInfo = weights::pallet_balances::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_balances::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -279,7 +281,7 @@ impl pallet_transaction_payment::Config for Runtime {
 impl pallet_sudo::Config for Runtime {
     type RuntimeCall = RuntimeCall;
     type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_sudo::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_sudo::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -298,7 +300,7 @@ impl cumulus_pallet_parachain_system::Config for Runtime {
     type ReservedXcmpWeight = ReservedXcmpWeight;
     type RuntimeEvent = RuntimeEvent;
     type SelfParaId = parachain_info::Pallet<Runtime>;
-    type WeightInfo = weights::cumulus_pallet_parachain_system::WeightInfo<Runtime>;
+    type WeightInfo = weights::cumulus_pallet_parachain_system::ZKVEvmWeight<Runtime>;
     type XcmpMessageHandler = XcmpQueue;
 }
 
@@ -330,7 +332,7 @@ impl pallet_message_queue::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type ServiceWeight = MessageQueueServiceWeight;
     type Size = u32;
-    type WeightInfo = weights::pallet_message_queue::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_message_queue::ZKVEvmWeight<Runtime>;
 }
 
 impl cumulus_pallet_aura_ext::Config for Runtime {}
@@ -351,7 +353,7 @@ impl cumulus_pallet_xcmp_queue::Config for Runtime {
     type PriceForSiblingDelivery = PriceForSiblingParachainDelivery;
     type RuntimeEvent = RuntimeEvent;
     type VersionWrapper = ();
-    type WeightInfo = weights::cumulus_pallet_xcmp_queue::WeightInfo<Runtime>;
+    type WeightInfo = weights::cumulus_pallet_xcmp_queue::ZKVEvmWeight<Runtime>;
     // Enqueue XCMP messages from siblings for later processing.
     type XcmpQueue = TransformOrigin<MessageQueue, AggregateMessageOrigin, ParaId, ParaIdToSibling>;
     type MaxActiveOutboundChannels = ConstU32<128>;
@@ -376,7 +378,7 @@ impl pallet_multisig::Config for Runtime {
     type MaxSignatories = MaxSignatories;
     type RuntimeCall = RuntimeCall;
     type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_multisig::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_multisig::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -407,7 +409,7 @@ impl pallet_utility::Config for Runtime {
     type PalletsOrigin = OriginCaller;
     type RuntimeCall = RuntimeCall;
     type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_utility::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_utility::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -469,7 +471,7 @@ impl pallet_evm::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     //type SuicideQuickClearLimit = SuicideQuickClearLimit;
     type Timestamp = Timestamp;
-    type WeightInfo = weights::pallet_evm::WeightInfo<Self>;
+    type WeightInfo = weights::pallet_evm::ZKVEvmWeight<Self>;
     type WeightPerGas = WeightPerGas;
     type WithdrawOrigin = EnsureAccountId20;
 }

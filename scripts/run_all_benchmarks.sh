@@ -45,19 +45,19 @@ BENCH_SH="${BENCH_SH:-${SOURCE_ROOT}/scripts/bench.sh}"
 ERR_FILE="${ERR_FILE:-${SOURCE_ROOT}/benchmarking_errors.txt}"
 
 if [ "${USE_DOCKER}" = "false" ]; then
-  echo "[+] Compiling zkv-evm-para-node benchmarks..."
+  echo "[+] Compiling ${NODE_CRATE} benchmarks..."
   cargo build \
     --locked \
     --features=runtime-benchmarks \
-    --profile=production \
-    --bin zkv-evm-para-node
+    --profile="${PROFILE}" \
+    --bin "${NODE_CRATE}"
 
   # The executable to use.
-  NODE="${PROJECT_ROOT}/target/production/zkv-evm-para-node"
-  WASM="${PROJECT_ROOT}/target/production/wbuild/horizen-runtime/horizen_runtime.compact.compressed.wasm"
+  NODE="${NODE_EXE}"
+  WASM="${RUNTIME}"
   SKIP_LINES=2
 else
-  IMAGE="zkv-evm"
+  IMAGE=${IMAGE:-"zkv-evm"}
   TAG="$(git rev-parse --short HEAD)"
   dirty="$(git status --porcelain --untracked-files=no | grep "Cargo\|docker/\|node/\|pallets/\|primitives/\|runtime/" | grep -v "runtime/src/weights" || true)"
   build="false"
@@ -71,20 +71,20 @@ else
 
   if [ "${build}" = "true" ]; then
     echo -e "[+] Building ${IMAGE}:${TAG} runtime-benchmarks docker image...\n\n"
-    docker compose --progress=plain -f "${compose_file}" build
+    docker compose -f "${compose_file}" build --progress=plain
     docker image prune -f
   fi
   # The executable to use.
-  NODE="docker compose -f ${compose_file} run -T --rm --remove-orphans zkv-evm-bench /usr/local/bin/zkv-relay"
-  WASM="/app/zkv_runtime.compact.compressed.wasm"
+  NODE="docker compose -f ${compose_file} run -T --rm --remove-orphans bench /usr/local/bin/${NODE_CRATE}"
+  WASM="/app/${WASM_FILE}"
 
   # Now PROJECT_ROOT become the docker folder
   PROJECT_ROOT="/data/benchmark"
   SKIP_LINES=4
 fi
 
-DEFAULT_DEPLOY_WEIGHT_TEMPLATE="${PROJECT_ROOT}/scripts/templates/zkv-evm-deploy-pallets-weight-template.hbs"
-DEFAULT_DEPLOY_WEIGHT_TEMPLATE_XCM="${PROJECT_ROOT}/scripts/templates/zkv-evm-deploy-weight-template-xcm.hbs"
+DEFAULT_DEPLOY_WEIGHT_TEMPLATE="${PROJECT_ROOT}/${TEMPLATES_ROOT}/deploy-weight-template.hbs"
+DEFAULT_DEPLOY_WEIGHT_TEMPLATE_XCM="${PROJECT_ROOT}/${TEMPLATES_ROOT}/deploy-weight-template-xcm.hbs"
 
 WEIGHT_TEMPLATE="${WEIGHT_TEMPLATE:-${DEFAULT_DEPLOY_WEIGHT_TEMPLATE}}"
 WEIGHT_TEMPLATE_XCM="${WEIGHT_TEMPLATE_XCM:-${DEFAULT_DEPLOY_WEIGHT_TEMPLATE_XCM}}"

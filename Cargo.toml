@@ -127,6 +127,7 @@ sp-timestamp = { version = "34.0.0", default-features = false }
 sp-transaction-pool = { version = "34.0.0", default-features = false }
 sp-trie = { version = "37.0.0", default-features = false }
 sp-version = { version = "37.0.0", default-features = false }
+sp-weights = { version = "31.0.0", default-features = false }
 substrate-build-script-utils = { version = "11.0.0" }
 substrate-frame-rpc-system = { version = "39.0.0", default-features = false }
 substrate-prometheus-endpoint = { version = "0.17.0", default-features = false }

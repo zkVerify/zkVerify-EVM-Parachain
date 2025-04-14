@@ -70,6 +70,7 @@ substrate-prometheus-endpoint = { workspace = true }
 # Polkadot
 polkadot-cli = { workspace = true }
 polkadot-primitives = { workspace = true }
+polkadot-runtime-common = { workspace = true }
 xcm = { workspace = true }
 
 # Cumulus
