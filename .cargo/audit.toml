@@ -1,0 +1,15 @@
+[advisories]
+ignore = [
+    # Coming from outdated libp2p and litep2p dependencies from which
+    # some Polkadot libraries are dependent on. They will be updated
+    # once we update Polkadot packages to latest version
+    "RUSTSEC-2024-0421",
+    "RUSTSEC-2024-0336",
+    "RUSTSEC-2025-0009",
+]
+informational_warnings = ["unmaintained", "yanked"]
+
+[output]
+deny = ["unsound"]
+quiet = false
+show_tree = false

@@ -1,0 +1,73 @@
+{
+  "settings": {
+    "timeout": 30000,
+    "provider": "native"
+  },
+  "relaychain": {
+    "chain": "local",
+    "default_command": "../relay_bin/zkv-relay",
+    "default_args": [
+      "--no-hardware-benchmarks",
+      "-lparachain=debug",
+      "--database=paritydb"
+    ],
+    "genesis": {
+      "runtimeGenesis": {
+        "patch": {
+          "configuration": {
+            "config": {
+              "async_backing_params": {
+                "max_candidate_depth": 3,
+                "allowed_ancestry_len": 2
+              }
+            }
+          }
+        }
+      }
+    },
+    "nodes": [
+      {
+        "name": "alice",
+        "validator": true,
+        "ws_port": 9900
+      },
+      {
+        "name": "bob",
+        "validator": true
+      },
+      {
+        "name": "charlie",
+        "validator": true
+      }
+    ]
+  },
+  "parachains": [
+    {
+      "add_to_genesis": true,
+      "chain": "local",
+      "cumulus_based": true,
+      "force_decorator": "generic-evm",
+      "id": 1000,
+      "collators": [
+        {
+          "args": [],
+          "command": "../target/release/zkv-para-evm-node",
+          "name": "zkv-para-evm-parachain-collator01",
+          "ws_port": 9910
+        },
+        {
+          "newRpcBehaviour": true,
+          "args": [
+            "--ethapi=debug",
+            "-levm=debug",
+            "-lrpc=debug",
+            "--wasm-runtime-overrides=tmp/"
+          ],
+          "command": "../target/release/zkv-para-evm-node",
+          "name": "zkv-para-evm-parachain-rpc",
+          "ws_port": 9920
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+version: '3'
+services:
+  relay_alice:
+    image: horizenlabs/zkverify:0.7.0-0.9.0-relay
+    volumes:
+      - ./staging/relay-spec-raw.json:/data/chain_spec.json
+      - ../resources/envs/relaychain/alice_secret_phrase.dat:/data/alice_secret_phrase.dat
+    env_file:
+      - ../resources/envs/relaychain/.env.alice
+  relay_bob:
+    image: horizenlabs/zkverify:0.7.0-0.9.0-relay
+    volumes:
+      - ./staging/relay-spec-raw.json:/data/chain_spec.json
+      - ../resources/envs/relaychain/bob_secret_phrase.dat:/data/bob_secret_phrase.dat
+    env_file:
+      - ../resources/envs/relaychain/.env.bob
+
+  para_alith:
+    image: horizenlabs/zkv-para-evm-node:local
+    volumes:
+      - ./staging/relay-spec-raw.json:/data/relay-chain_spec.json
+      - ./staging/para-spec-raw.json:/data/para-chain_spec.json
+      - ../resources/envs/parachain/alith_secret_phrase.dat:/data/alith_secret_phrase.dat
+      - ../resources/envs/parachain/alith_nodekey.dat:/data/alith_nodekey.dat
+      # Uncomment this if you want (for dev purposes) to override the build in the docker image with your own local one
+      #- ../../target/release/zkv-para-evm-node:/usr/local/bin/zkv-para-evm-node
+    env_file:
+      - ../resources/envs/parachain/.env.alith
+  para_baltathar:
+    image: horizenlabs/zkv-para-evm-node:local
+    volumes:
+      - ./staging/relay-spec-raw.json:/data/relay-chain_spec.json
+      - ./staging/para-spec-raw.json:/data/para-chain_spec.json
+      - ../resources/envs/parachain/baltathar_secret_phrase.dat:/data/baltathar_secret_phrase.dat
+      - ../resources/envs/parachain/baltathar_nodekey.dat:/data/baltathar_nodekey.dat
+    env_file:
+      - ../resources/envs/parachain/.env.baltathar
+  para_rpc:
+    image: horizenlabs/zkv-para-evm-node:local
+    volumes:
+      - ./staging/relay-spec-raw.json:/data/relay-chain_spec.json
+      - ./staging/para-spec-raw.json:/data/para-chain_spec.json
+    env_file:
+      - ../resources/envs/parachain/.env.rpc
+    ports:
+      - 9945:9945
+      - 9845:9845
