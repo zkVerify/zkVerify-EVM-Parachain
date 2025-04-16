@@ -21,7 +21,6 @@ pub mod governance;
 mod root_testing;
 mod session;
 mod timestamp;
-pub mod transaction_payment;
 pub mod xcm_config;
 
 use cumulus_pallet_parachain_system::RelayNumberMonotonicallyIncreases;
@@ -30,24 +29,22 @@ use frame_support::{
     derive_impl,
     dispatch::DispatchClass,
     parameter_types,
-    traits::{ConstU32, Contains, EitherOfDiverse, FindAuthor, InstanceFilter, TransformOrigin},
-    weights::Weight,
+    traits::{
+        tokens::imbalance::ResolveTo, ConstU32, Contains, FindAuthor, InstanceFilter,
+        TransformOrigin,
+    },
+    weights::{ConstantMultiplier, Weight},
     PalletId,
 };
 use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot,
 };
-pub use governance::origins::pallet_custom_origins;
-use governance::{origins::Treasurer, TreasurySpender};
 use pallet_ethereum::PostLogContent;
 use pallet_evm::{EVMCurrencyAdapter, EnsureAccountId20, IdentityAddressMapping};
 use parachains_common::message_queue::{NarrowOriginToSibling, ParaIdToSibling};
 use parity_scale_codec::{Decode, Encode, MaxEncodedLen};
-use polkadot_runtime_common::impls::{
-    LocatableAssetConverter, VersionedLocatableAsset, VersionedLocationConverter,
-};
-pub use polkadot_runtime_common::BlockHashCount;
+use polkadot_runtime_common::{BlockHashCount, SlowAdjustingFeeUpdate};
 use scale_info::TypeInfo;
 use sp_core::{H160, U256};
 use sp_runtime::{
@@ -57,11 +54,7 @@ use sp_runtime::{
 use sp_std::marker::PhantomData;
 use sp_version::RuntimeVersion;
 // XCM Imports
-use xcm::{
-    latest::{prelude::BodyId, InteriorLocation, Junction::PalletInstance},
-    VersionedLocation,
-};
-use xcm_builder::PayOverXcm;
+use xcm::latest::prelude::BodyId;
 #[cfg(not(feature = "runtime-benchmarks"))]
 use xcm_builder::ProcessXcmMessage;
 use xcm_config::{RelayLocation, XcmOriginToTransactDispatchOrigin};
@@ -80,10 +73,10 @@ use crate::{
         PriceForSiblingParachainDelivery,
     },
     weights::{self, BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight},
-    Aura, Balances, BaseFee, EVMChainId, MessageQueue, NetworkType, OpenZeppelinPrecompiles,
-    OriginCaller, PalletInfo, ParachainSystem, Preimage, Runtime, RuntimeCall, RuntimeEvent,
-    RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask, System, Timestamp,
-    Treasury, UncheckedExtrinsic, WeightToFee, XcmpQueue, VERSION,
+    Aura, Balances, BaseFee, CollatorSelection, EVMChainId, MessageQueue, NetworkType,
+    OpenZeppelinPrecompiles, OriginCaller, PalletInfo, ParachainSystem, Preimage, Runtime,
+    RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask,
+    System, Timestamp, UncheckedExtrinsic, WeightToFee, XcmpQueue, VERSION,
 };
 
 parameter_types! {
@@ -315,6 +308,18 @@ parameter_types! {
     /// Relay Chain `TransactionByteFee` / 10
     pub const TransactionByteFee: Balance = 10 * MICROCENTS;
     pub const OperationalFeeMultiplier: u8 = 5;
+    pub StakingPot: AccountId = CollatorSelection::account_id();
+}
+
+impl pallet_transaction_payment::Config for Runtime {
+    type FeeMultiplierUpdate = SlowAdjustingFeeUpdate<Self>;
+    type LengthToFee = ConstantMultiplier<Balance, TransactionByteFee>;
+    // All the fees go to the collators, passing through the Pot of the CollatorSelection pallet
+    type OnChargeTransaction =
+        pallet_transaction_payment::FungibleAdapter<Balances, ResolveTo<StakingPot, Balances>>;
+    type OperationalFeeMultiplier = OperationalFeeMultiplier;
+    type RuntimeEvent = RuntimeEvent;
+    type WeightToFee = WeightToFee;
 }
 
 impl pallet_sudo::Config for Runtime {
@@ -457,61 +462,14 @@ parameter_types! {
     pub const ProposalBondMaximum: Balance = 1;// * GRAND;
     pub const SpendPeriod: BlockNumber = 6 * DAYS;
     pub const Burn: Permill = Permill::from_perthousand(2);
-    pub const TreasuryPalletId: PalletId = PalletId(*b"py/trsry");
     pub const PayoutSpendPeriod: BlockNumber = 30 * DAYS;
-    // The asset's interior location for the paying account. This is the Treasury
-    // pallet instance (which sits at index 13).
-    pub TreasuryInteriorLocation: InteriorLocation = PalletInstance(13).into();
     pub const MaxApprovals: u32 = 100;
-    pub TreasuryAccount: AccountId = Treasury::account_id();
 }
 
 #[cfg(feature = "runtime-benchmarks")]
 parameter_types! {
     pub LocationParents: u8 = 1;
     pub BenchmarkParaId: u8 = 0;
-}
-
-type Beneficiary = VersionedLocation;
-type AssetKind = VersionedLocatableAsset;
-
-pub type TreasuryPaymaster = PayOverXcm<
-    TreasuryInteriorLocation,
-    xcm_config::XcmRouter,
-    crate::PolkadotXcm,
-    ConstU32<{ 6 * HOURS }>,
-    Beneficiary,
-    AssetKind,
-    LocatableAssetConverter,
-    VersionedLocationConverter,
->;
-
-impl pallet_treasury::Config for Runtime {
-    type AssetKind = AssetKind;
-    type BalanceConverter = frame_support::traits::tokens::UnityAssetBalanceConversion;
-    #[cfg(feature = "runtime-benchmarks")]
-    type BenchmarkHelper = polkadot_runtime_common::impls::benchmarks::TreasuryArguments<
-        LocationParents,
-        BenchmarkParaId,
-    >;
-    type Beneficiary = Beneficiary;
-    type BeneficiaryLookup = IdentityLookup<Self::Beneficiary>;
-    type Burn = ();
-    type BurnDestination = ();
-    type Currency = Balances;
-    type MaxApprovals = MaxApprovals;
-    type PalletId = TreasuryPalletId;
-    #[cfg(feature = "runtime-benchmarks")]
-    type Paymaster = PayWithEnsure<TreasuryPaymaster, OpenHrmpChannel<BenchmarkParaId>>;
-    #[cfg(not(feature = "runtime-benchmarks"))]
-    type Paymaster = TreasuryPaymaster;
-    type PayoutPeriod = PayoutSpendPeriod;
-    type RejectOrigin = EitherOfDiverse<EnsureRoot<AccountId>, Treasurer>;
-    type RuntimeEvent = RuntimeEvent;
-    type SpendFunds = ();
-    type SpendOrigin = TreasurySpender;
-    type SpendPeriod = SpendPeriod;
-    type WeightInfo = weights::pallet_treasury::WeightInfo<Runtime>;
 }
 
 parameter_types! {

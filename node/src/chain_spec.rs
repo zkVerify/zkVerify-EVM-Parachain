@@ -282,7 +282,6 @@ fn initial_genesis(
             "invulnerables": initial_collators.into_iter().map(|(acc, _)| acc).collect::<Vec<_>>(),
             "candidacyBond": 100,
         },
-        "treasury": {},
         "evmChainId": {
             "chainId": 9999
         },

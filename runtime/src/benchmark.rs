@@ -28,12 +28,8 @@ frame_benchmarking::define_benchmarks!(
     [cumulus_pallet_parachain_system, ParachainSystem]
     [pallet_multisig, Multisig]
     [pallet_utility, Utility]
-    [pallet_treasury, Treasury]
     [pallet_evm, EVM]
     [pallet_xcm, PalletXcmExtrinsicsBenchmark::<Runtime>]
-    [pallet_conviction_voting, ConvictionVoting]
-    [pallet_whitelist, Whitelist]
-    [pallet_referenda, Referenda]
 );
 
 use cumulus_primitives_core::{ChannelStatus, GetChannelInfo};

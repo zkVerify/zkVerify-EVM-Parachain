@@ -66,7 +66,6 @@ use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
 
 use crate::{
-    configs::pallet_custom_origins,
     constants::{currency::MILLICENTS, POLY_DEGREE, P_FACTOR, Q_FACTOR, SLOT_DURATION},
     types::ConsensusHook,
     weights::ExtrinsicBaseWeight,
@@ -246,14 +245,9 @@ construct_runtime!(
         Balances: pallet_balances = 10,
         TransactionPayment: pallet_transaction_payment = 11,
         Assets: pallet_assets = 12,
-        Treasury: pallet_treasury::{Pallet, Call, Storage, Config<T>, Event<T>} = 13,
 
         // Governance
         Sudo: pallet_sudo = 15,
-        ConvictionVoting: pallet_conviction_voting::{Pallet, Call, Storage, Event<T>} = 16,
-        Referenda: pallet_referenda::{Pallet, Call, Storage, Event<T>} = 17,
-        Origins: pallet_custom_origins::{Origin} = 18,
-        Whitelist: pallet_whitelist::{Pallet, Call, Storage, Event<T>} = 19,
 
         // Collator Support. The order of these 5 are important and shall not change.
         Authorship: pallet_authorship = 20,
