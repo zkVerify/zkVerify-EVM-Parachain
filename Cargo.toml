@@ -2,7 +2,7 @@
 authors = ["Horizen Labs <admin@horizenlabs.io>"]
 edition = "2021"
 repository = "https://github.com/zkVerify/zkVerify-EVM-Parachain"
-homepage = "https://www.horizen.io/"
+homepage = "https://www.horizenlabs.io/"
 license = "GPL-3.0-only"
 
 [workspace]
