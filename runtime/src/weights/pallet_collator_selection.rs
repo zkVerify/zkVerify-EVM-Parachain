@@ -38,7 +38,7 @@
 // --header
 // /home/mdamico/devel/zkVerify-EVM-Parachain/HEADER-APACHE2
 // --output
-// /home/mdamico/devel/zkVerify-EVM-Parachain/runtime/src/weights/pallet_colleator_selection.rs
+// /home/mdamico/devel/zkVerify-EVM-Parachain/runtime/src/weights/pallet_collator_selection
 // --template
 // /home/mdamico/devel/zkVerify-EVM-Parachain/scripts/templates/deploy-weight-template.hbs
 

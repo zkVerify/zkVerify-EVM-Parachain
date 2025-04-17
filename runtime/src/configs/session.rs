@@ -42,7 +42,7 @@ impl pallet_collator_selection::Config for Runtime {
     type ValidatorId = <Self as frame_system::Config>::AccountId;
     type ValidatorIdOf = pallet_collator_selection::IdentityCollator;
     type ValidatorRegistration = Session;
-    type WeightInfo = weights::pallet_colleator_selection::ZKVEvmWeight<Runtime>;
+    type WeightInfo = weights::pallet_collator_selection::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {

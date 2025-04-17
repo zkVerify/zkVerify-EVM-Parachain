@@ -22,6 +22,8 @@ pub use crate::{
 };
 use frame_support::weights::Weight;
 
+mod use_correct_weights;
+
 #[derive(Default)]
 pub struct ExtBuilder {
     balances: Vec<(AccountId, u128)>,
