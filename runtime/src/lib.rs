@@ -65,16 +65,16 @@ use sp_std::prelude::{Vec, *};
 use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
 
-use crate::{
-    constants::{currency::MILLICENTS, POLY_DEGREE, P_FACTOR, Q_FACTOR, SLOT_DURATION},
-    types::ConsensusHook,
-    weights::ExtrinsicBaseWeight,
-};
 pub use crate::{
     configs::RuntimeBlockWeights,
     types::{
         AccountId, Balance, Block, BlockNumber, Executive, Nonce, Signature, UncheckedExtrinsic,
     },
+};
+use crate::{
+    constants::{currency::MILLICENTS, POLY_DEGREE, P_FACTOR, Q_FACTOR, SLOT_DURATION},
+    types::ConsensusHook,
+    weights::ExtrinsicBaseWeight,
 };
 
 impl fp_self_contained::SelfContainedCall for RuntimeCall {
@@ -800,7 +800,7 @@ impl_runtime_apis! {
                     ParachainSystem,
                 >;
 
-                use xcm::latest::prelude::{Asset, AssetId, Assets as AssetList, Fungible, Location, Parachain, Parent, ParentThen};
+                use xcm::latest::prelude::{Asset, AssetId, Assets as AssetList, Fungible, Location};
 
                 impl pallet_xcm::benchmarking::Config for Runtime {
                     type DeliveryHelper = cumulus_primitives_utility::ToParentDeliveryHelper<
@@ -810,21 +810,20 @@ impl_runtime_apis! {
                     >;
 
                     fn reachable_dest() -> Option<Location> {
-                        Some(Parent.into())
+                        Some(RelayLocation::get())
                     }
 
                     fn teleportable_asset_and_dest() -> Option<(Asset, Location)> {
-                        None
+                        // Relay/native token can be teleported between EVM and Relay.
+                        Some((
+                            Asset { fun: Fungible(ExistentialDeposit::get()), id: AssetId(RelayLocation::get()) },
+                            RelayLocation::get(),
+                        ))
                     }
 
                     fn reserve_transferable_asset_and_dest() -> Option<(Asset, Location)> {
-                        Some((
-                            Asset {
-                                fun: Fungible(ExistentialDeposit::get()),
-                                id: AssetId(Parent.into())
-                            }.into(),
-                            ParentThen(Parachain(RandomParaId::get().into()).into()).into(),
-                        ))
+                        // Reserve transfers are disabled on EVM.
+            			None
                     }
 
                     fn set_up_complex_asset_transfer(
@@ -834,7 +833,7 @@ impl_runtime_apis! {
 
                     fn get_asset() -> Asset {
                         Asset {
-                            id: AssetId(Location::here()),
+                            id: AssetId(RelayLocation::get()),
                             fun: Fungible(ExistentialDeposit::get()),
                         }
                     }
