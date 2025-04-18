@@ -1,6 +1,6 @@
 use super::*;
 use crate::mock::*;
-use frame_support::{assert_noop, assert_ok};
+use frame_support::{assert_err, assert_noop, assert_ok};
 
 mod grant_deploy_permission {
     use super::*;
@@ -118,6 +118,32 @@ mod revoke_deploy_permission {
             assert_noop!(
                 PalletDeployPermissions::revoke_deploy_permission(RuntimeOrigin::root(), address),
                 Error::<Test>::AddressDoesNotHaveDeployPermission
+            );
+        })
+    }
+}
+
+mod check_create_origin {
+    use super::*;
+
+    #[test]
+    fn returns_ok_for_whitelisted_address() {
+        new_test_ext().execute_with(|| {
+            System::set_block_number(1);
+            let address = H160::repeat_byte(42);
+            Deployers::<Test>::insert(address, ());
+            assert_ok!(<Pallet<Test> as EnsureCreateOrigin<Test>>::check_create_origin(&address));
+        })
+    }
+
+    #[test]
+    fn returns_error_for_non_whitelisted_address() {
+        new_test_ext().execute_with(|| {
+            System::set_block_number(1);
+            let address = H160::repeat_byte(42);
+            assert_err!(
+                <Pallet<Test> as EnsureCreateOrigin<Test>>::check_create_origin(&address),
+                DispatchError::Other("Not allowed to deploy")
             );
         })
     }
