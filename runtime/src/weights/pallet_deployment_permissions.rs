@@ -5,7 +5,7 @@
 //! DATE: 2025-04-18, STEPS: `50`, REPEAT: `20`, LOW RANGE: `[]`, HIGH RANGE: `[]`
 //! WORST CASE MAP SIZE: `1000000`
 //! HOSTNAME: `DESKTOP-37J5UBI`, CPU: `Intel(R) Core(TM) Ultra 9 185H`
-//! WASM-EXECUTION: `Compiled`, CHAIN: `None`, DB CACHE: 1024
+//! WASM-EXECUTION: `Compiled`, CHAIN: `None`, DB CACHE: `1024`
 
 // Executed Command:
 // ./target/release/zkv-para-evm-node
@@ -15,6 +15,8 @@
 // pallet-deployment-permissions
 // --extrinsic
 // 
+// --template
+// scripts/templates/deploy-weight-template.hbs
 // --output
 // runtime/src/weights/pallet_deployment_permissions.rs
 
@@ -23,34 +25,33 @@
 #![allow(unused_imports)]
 #![allow(missing_docs)]
 
-use frame_support::{traits::Get, weights::Weight};
+use frame_support::{traits::Get, weights::{Weight, constants::RocksDbWeight}};
 use core::marker::PhantomData;
 
-/// Weight functions for `pallet_deployment_permissions`.
-pub struct WeightInfo<T>(PhantomData<T>);
-impl<T: frame_system::Config> pallet_deployment_permissions::WeightInfo for WeightInfo<T> {
-	/// Storage: `DeploymentPermissions::Deployers` (r:1 w:1)
-	/// Proof: `DeploymentPermissions::Deployers` (`max_values`: None, `max_size`: Some(36), added: 2511, mode: `MaxEncodedLen`)
-	fn grant_deploy_permission() -> Weight {
-		// Proof Size summary in bytes:
-		//  Measured:  `109`
-		//  Estimated: `3501`
-		// Minimum execution time: 9_202_000 picoseconds.
-		Weight::from_parts(9_609_000, 0)
-			.saturating_add(Weight::from_parts(0, 3501))
-			.saturating_add(T::DbWeight::get().reads(1))
-			.saturating_add(T::DbWeight::get().writes(1))
-	}
-	/// Storage: `DeploymentPermissions::Deployers` (r:1 w:1)
-	/// Proof: `DeploymentPermissions::Deployers` (`max_values`: None, `max_size`: Some(36), added: 2511, mode: `MaxEncodedLen`)
-	fn revoke_deploy_permission() -> Weight {
-		// Proof Size summary in bytes:
-		//  Measured:  `170`
-		//  Estimated: `3501`
-		// Minimum execution time: 11_054_000 picoseconds.
-		Weight::from_parts(11_555_000, 0)
-			.saturating_add(Weight::from_parts(0, 3501))
-			.saturating_add(T::DbWeight::get().reads(1))
-			.saturating_add(T::DbWeight::get().writes(1))
-	}
+/// Weights for `pallet_deployment_permissions` using the zkVerify node and recommended hardware.
+pub struct ZKVEvmWeight<T>(PhantomData<T>);
+
+impl<T: frame_system::Config> pallet_deployment_permissions::WeightInfo for ZKVEvmWeight<T> {
+    /// Storage: `DeploymentPermissions::Deployers` (r:1 w:1)
+    /// Proof: `DeploymentPermissions::Deployers` (`max_values`: None, `max_size`: Some(36), added: 2511, mode: `MaxEncodedLen`)
+    fn grant_deploy_permission() -> Weight {
+        // Proof Size summary in bytes:
+        //  Measured:  `109`
+        //  Estimated: `3501`
+        // Minimum execution time: 8_770_000 picoseconds.
+        Weight::from_parts(9_236_000, 3501)
+            .saturating_add(T::DbWeight::get().reads(1_u64))
+            .saturating_add(T::DbWeight::get().writes(1_u64))
+    }
+    /// Storage: `DeploymentPermissions::Deployers` (r:1 w:1)
+    /// Proof: `DeploymentPermissions::Deployers` (`max_values`: None, `max_size`: Some(36), added: 2511, mode: `MaxEncodedLen`)
+    fn revoke_deploy_permission() -> Weight {
+        // Proof Size summary in bytes:
+        //  Measured:  `170`
+        //  Estimated: `3501`
+        // Minimum execution time: 10_586_000 picoseconds.
+        Weight::from_parts(10_921_000, 3501)
+            .saturating_add(T::DbWeight::get().reads(1_u64))
+            .saturating_add(T::DbWeight::get().writes(1_u64))
+    }
 }

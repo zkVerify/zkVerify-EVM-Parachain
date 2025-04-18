@@ -521,7 +521,7 @@ impl pallet_network_type::Config for Runtime {
 
 impl pallet_deployment_permissions::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_deployment_permissions::WeightInfo<Self>;
+    type WeightInfo = weights::pallet_deployment_permissions::ZKVEvmWeight<Self>;
 }
 
 pub struct FindAuthorSession<Inner>(PhantomData<Inner>);

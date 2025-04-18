@@ -15,10 +15,10 @@
 // pallet-deployment-permissions
 // --extrinsic
 // 
+// --template
+// scripts/templates/pallets-weight-template.hbs
 // --output
 // pallets/deployment-permissions/src/weights.rs
-// --template
-// pallets-weight-template.hbs
 
 #![cfg_attr(rustfmt, rustfmt_skip)]
 #![allow(unused_parens)]
@@ -42,8 +42,8 @@ impl WeightInfo for () {
         // Proof Size summary in bytes:
         //  Measured:  `109`
         //  Estimated: `3501`
-        // Minimum execution time: 9_029_000 picoseconds.
-        Weight::from_parts(9_753_000, 3501)
+        // Minimum execution time: 8_740_000 picoseconds.
+        Weight::from_parts(9_191_000, 3501)
             .saturating_add(RocksDbWeight::get().reads(1_u64))
             .saturating_add(RocksDbWeight::get().writes(1_u64))
     }
@@ -53,8 +53,8 @@ impl WeightInfo for () {
         // Proof Size summary in bytes:
         //  Measured:  `170`
         //  Estimated: `3501`
-        // Minimum execution time: 10_814_000 picoseconds.
-        Weight::from_parts(11_506_000, 3501)
+        // Minimum execution time: 10_396_000 picoseconds.
+        Weight::from_parts(10_677_000, 3501)
             .saturating_add(RocksDbWeight::get().reads(1_u64))
             .saturating_add(RocksDbWeight::get().writes(1_u64))
     }
