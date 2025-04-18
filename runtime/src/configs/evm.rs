@@ -17,8 +17,8 @@
 
 use crate::{
     constants::{MAXIMUM_BLOCK_WEIGHT, NORMAL_DISPATCH_RATIO, WEIGHT_PER_GAS},
-    opaque, weights, AccountId, Aura, Balances, BaseFee, EVMChainId, Permill, Precompiles, Runtime,
-    RuntimeEvent, Timestamp, UncheckedExtrinsic,
+    opaque, weights, AccountId, Aura, Balances, BaseFee, DeploymentPermissions, EVMChainId,
+    Permill, Precompiles, Runtime, RuntimeEvent, Timestamp, UncheckedExtrinsic,
 };
 use frame_support::{pallet_prelude::ConstU32, parameter_types, traits::FindAuthor};
 use pallet_ethereum::PostLogContent;
@@ -50,6 +50,18 @@ parameter_types! {
     pub WeightPerGas: Weight = Weight::from_parts(WEIGHT_PER_GAS, 0);
 }
 
+impl pallet_deployment_permissions::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type WeightInfo = weights::pallet_deployment_permissions::ZKVEvmWeight<Self>;
+}
+
+type BaseRunner<T> = pallet_evm::runner::stack::Runner<T>;
+type PermissionedRunner<T> = pallet_deployment_permissions::runner::PermissionedDeploy<
+    T,
+    BaseRunner<T>,
+    DeploymentPermissions,
+>;
+
 impl pallet_evm::Config for Runtime {
     type AccountProvider = pallet_evm::FrameSystemAccountProvider<Self>;
     type FeeCalculator = BaseFee;
@@ -65,7 +77,7 @@ impl pallet_evm::Config for Runtime {
     type PrecompilesValue = PrecompilesValue;
     type ChainId = EVMChainId;
     type BlockGasLimit = BlockGasLimit;
-    type Runner = pallet_evm::runner::stack::Runner<Self>;
+    type Runner = PermissionedRunner<Self>;
     type OnChargeTransaction = EVMCurrencyAdapter<Balances, ()>;
     type OnCreate = ();
     type FindAuthor = FindAuthorSession<pallet_session::FindAccountFromAuthorIndex<Self, Aura>>;
