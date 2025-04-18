@@ -161,7 +161,7 @@ fn pallet_xcm() {
 
     assert_eq!(
         <Runtime as pallet_xcm::Config>::WeightInfo::send(),
-        weights::pallet_xcm::WeightInfo::<Runtime>::send()
+        weights::pallet_xcm::ZKVEvmWeight::<Runtime>::send()
     )
 }
 
