@@ -251,8 +251,11 @@ fn initial_genesis(
 
     #[cfg(feature = "runtime-benchmarks")]
     {
-        endowed_accounts.push(AccountId::from(hex!("1000000000000000000000000000000000000001")));
-        let acc = sp_core::ecdsa::Pair::from_string("//Bob", None).expect("static values are valid; qed");
+        endowed_accounts.push(AccountId::from(hex!(
+            "1000000000000000000000000000000000000001"
+        )));
+        let acc =
+            sp_core::ecdsa::Pair::from_string("//Bob", None).expect("static values are valid; qed");
         endowed_accounts.push(AccountId::from(acc.public()));
     }
 

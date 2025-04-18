@@ -70,9 +70,9 @@ use crate::{
     },
     weights::{self, ExtrinsicBaseWeight},
     Aura, Balances, BaseFee, CollatorSelection, EVMChainId, MessageQueue, NetworkType,
-    OpenZeppelinPrecompiles, OriginCaller, PalletInfo, ParachainSystem, Runtime,
-    RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask,
-    System, Timestamp, UncheckedExtrinsic, WeightToFee, XcmpQueue, VERSION,
+    OpenZeppelinPrecompiles, OriginCaller, PalletInfo, ParachainSystem, Runtime, RuntimeCall,
+    RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask, System,
+    Timestamp, UncheckedExtrinsic, WeightToFee, XcmpQueue, VERSION,
 };
 
 parameter_types! {
