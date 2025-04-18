@@ -14,7 +14,7 @@ members = [
 	"node",
 	"pallets/network_type",
 	"pallets/parachain-inherent",
-	"pallets/permissioned-deploy",
+	"pallets/deployment-permissions",
 	"primitives/ext",
 	"primitives/rpc/debug",
 	"primitives/rpc/evm-tracing-events",
@@ -30,7 +30,7 @@ resolver = "2"
 cumulus-client-parachain-inherent = { path = "pallets/parachain-inherent", default-features = false }
 evm-tracing-events = { path = "primitives/rpc/evm-tracing-events", default-features = false }
 pallet-network-type = { path = "pallets/network_type", default-features = false }
-pallet-permissioned-deploy = { path = "pallets/permissioned-deploy", default-features = false }
+pallet-deployment-permissions = { path = "pallets/deployment-permissions", default-features = false }
 test-utils = { path = "utils/test", default-features = false }
 zkv-para-evm-client-evm-tracing = { path = "client/evm-tracing" }
 zkv-para-evm-evm-tracer = { path = "runtime/evm_tracer", default-features = false }

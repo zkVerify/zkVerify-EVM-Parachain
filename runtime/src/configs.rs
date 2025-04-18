@@ -69,10 +69,10 @@ use crate::{
         PriceForSiblingParachainDelivery,
     },
     weights::{self, ExtrinsicBaseWeight},
-    Aura, Balances, BaseFee, CollatorSelection, EVMChainId, MessageQueue, NetworkType,
-    OpenZeppelinPrecompiles, OriginCaller, PalletInfo, ParachainSystem, PermissionedDeploy,
-    Runtime, RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin,
-    RuntimeTask, System, Timestamp, UncheckedExtrinsic, WeightToFee, XcmpQueue, VERSION,
+    Aura, Balances, BaseFee, CollatorSelection, DeploymentPermissions, EVMChainId, MessageQueue,
+    NetworkType, OpenZeppelinPrecompiles, OriginCaller, PalletInfo, ParachainSystem, Runtime,
+    RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask,
+    System, Timestamp, UncheckedExtrinsic, WeightToFee, XcmpQueue, VERSION,
 };
 
 parameter_types! {
@@ -451,8 +451,11 @@ parameter_types! {
 }
 
 type BaseRunner<T> = pallet_evm::runner::stack::Runner<T>;
-type PermissionedRunner<T> =
-    pallet_permissioned_deploy::runner::PermissionedDeploy<T, BaseRunner<T>, PermissionedDeploy>;
+type PermissionedRunner<T> = pallet_deployment_permissions::runner::PermissionedDeploy<
+    T,
+    BaseRunner<T>,
+    DeploymentPermissions,
+>;
 
 impl pallet_evm::Config for Runtime {
     type AccountProvider = pallet_evm::FrameSystemAccountProvider<Self>;
@@ -516,9 +519,9 @@ impl pallet_network_type::Config for Runtime {
     type NT = NetworkType;
 }
 
-impl pallet_permissioned_deploy::Config for Runtime {
+impl pallet_deployment_permissions::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_permissioned_deploy::WeightInfo<Self>;
+    type WeightInfo = weights::pallet_deployment_permissions::WeightInfo<Self>;
 }
 
 pub struct FindAuthorSession<Inner>(PhantomData<Inner>);

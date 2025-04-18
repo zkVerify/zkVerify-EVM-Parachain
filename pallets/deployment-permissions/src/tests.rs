@@ -11,7 +11,7 @@ mod grant_deploy_permission {
             System::set_block_number(1);
             let address = H160::repeat_byte(42);
             assert!(!Deployers::<Test>::contains_key(address));
-            assert_ok!(PalletPermissionedDeploy::grant_deploy_permission(
+            assert_ok!(PalletDeployPermissions::grant_deploy_permission(
                 RuntimeOrigin::root(),
                 address
             ));
@@ -24,7 +24,7 @@ mod grant_deploy_permission {
         new_test_ext().execute_with(|| {
             System::set_block_number(1);
             let address = H160::repeat_byte(42);
-            assert_ok!(PalletPermissionedDeploy::grant_deploy_permission(
+            assert_ok!(PalletDeployPermissions::grant_deploy_permission(
                 RuntimeOrigin::root(),
                 address
             ));
@@ -39,7 +39,7 @@ mod grant_deploy_permission {
             let caller: <Test as frame_system::Config>::AccountId = 1;
             let address = H160::repeat_byte(42);
             assert_noop!(
-                PalletPermissionedDeploy::grant_deploy_permission(
+                PalletDeployPermissions::grant_deploy_permission(
                     RuntimeOrigin::signed(caller),
                     address
                 ),
@@ -55,7 +55,7 @@ mod grant_deploy_permission {
             let address = H160::repeat_byte(42);
             Deployers::<Test>::insert(address, ());
             assert_noop!(
-                PalletPermissionedDeploy::grant_deploy_permission(RuntimeOrigin::root(), address),
+                PalletDeployPermissions::grant_deploy_permission(RuntimeOrigin::root(), address),
                 Error::<Test>::AddressAlreadyHasDeployPermission
             );
         })
@@ -71,7 +71,7 @@ mod revoke_deploy_permission {
             System::set_block_number(1);
             let address = H160::repeat_byte(42);
             Deployers::<Test>::insert(address, ());
-            assert_ok!(PalletPermissionedDeploy::revoke_deploy_permission(
+            assert_ok!(PalletDeployPermissions::revoke_deploy_permission(
                 RuntimeOrigin::root(),
                 address
             ));
@@ -85,7 +85,7 @@ mod revoke_deploy_permission {
             System::set_block_number(1);
             let address = H160::repeat_byte(42);
             Deployers::<Test>::insert(address, ());
-            assert_ok!(PalletPermissionedDeploy::revoke_deploy_permission(
+            assert_ok!(PalletDeployPermissions::revoke_deploy_permission(
                 RuntimeOrigin::root(),
                 address
             ));
@@ -101,7 +101,7 @@ mod revoke_deploy_permission {
             let address = H160::repeat_byte(42);
             Deployers::<Test>::insert(address, ());
             assert_noop!(
-                PalletPermissionedDeploy::revoke_deploy_permission(
+                PalletDeployPermissions::revoke_deploy_permission(
                     RuntimeOrigin::signed(caller),
                     address
                 ),
@@ -116,7 +116,7 @@ mod revoke_deploy_permission {
             System::set_block_number(1);
             let address = H160::repeat_byte(42);
             assert_noop!(
-                PalletPermissionedDeploy::revoke_deploy_permission(RuntimeOrigin::root(), address),
+                PalletDeployPermissions::revoke_deploy_permission(RuntimeOrigin::root(), address),
                 Error::<Test>::AddressDoesNotHaveDeployPermission
             );
         })

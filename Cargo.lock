@@ -9641,6 +9641,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-deployment-permissions"
+version = "0.1.0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "pallet-evm",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+]
+
+[[package]]
 name = "pallet-dev-mode"
 version = "20.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -10374,21 +10389,6 @@ dependencies = [
  "scale-info",
  "serde",
  "sp-core",
- "sp-runtime",
-]
-
-[[package]]
-name = "pallet-permissioned-deploy"
-version = "0.1.0"
-dependencies = [
- "frame-benchmarking",
- "frame-support",
- "frame-system",
- "pallet-evm",
- "parity-scale-codec",
- "scale-info",
- "sp-core",
- "sp-io",
  "sp-runtime",
 ]
 
@@ -21443,6 +21443,7 @@ dependencies = [
  "pallet-balances",
  "pallet-base-fee",
  "pallet-collator-selection",
+ "pallet-deployment-permissions",
  "pallet-ethereum",
  "pallet-evm",
  "pallet-evm-chain-id",
@@ -21452,7 +21453,6 @@ dependencies = [
  "pallet-message-queue",
  "pallet-multisig",
  "pallet-network-type",
- "pallet-permissioned-deploy",
  "pallet-proxy",
  "pallet-session",
  "pallet-sudo",

@@ -1,4 +1,4 @@
-use crate as pallet_permissioned_deploy;
+use crate as pallet_deploy_permissions;
 use frame_support::derive_impl;
 use sp_runtime::BuildStorage;
 
@@ -24,7 +24,7 @@ mod runtime {
     pub type System = frame_system::Pallet<Test>;
 
     #[runtime::pallet_index(1)]
-    pub type PalletPermissionedDeploy = pallet_permissioned_deploy::Pallet<Test>;
+    pub type PalletDeployPermissions = pallet_deploy_permissions::Pallet<Test>;
 }
 
 // System pallet configuration
@@ -33,7 +33,7 @@ impl frame_system::Config for Test {
     type Block = Block;
 }
 
-impl pallet_permissioned_deploy::Config for Test {
+impl pallet_deploy_permissions::Config for Test {
     type RuntimeEvent = RuntimeEvent;
     type WeightInfo = ();
 }
