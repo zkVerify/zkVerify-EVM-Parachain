@@ -38,6 +38,7 @@ pallet-authorship = { workspace = true }
 pallet-balances = { workspace = true, features = ["insecure_zero_ed"] }
 pallet-message-queue = { workspace = true }
 pallet-multisig = { workspace = true }
+pallet-permissioned-deploy = { workspace = true }
 pallet-proxy = { workspace = true }
 pallet-session = { workspace = true }
 pallet-collator-selection = { workspace = true }
@@ -151,6 +152,7 @@ std = [
 	"pallet-message-queue/std",
 	"pallet-multisig/std",
 	"pallet-network-type/std",
+	"pallet-permissioned-deploy/std",
 	"pallet-proxy/std",
 	"pallet-session/std",
 	"pallet-sudo/std",
@@ -208,6 +210,7 @@ runtime-benchmarks = [
 	"pallet-evm/runtime-benchmarks",
 	"pallet-message-queue/runtime-benchmarks",
 	"pallet-multisig/runtime-benchmarks",
+	"pallet-permissioned-deploy/runtime-benchmarks",
 	"pallet-proxy/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
@@ -243,6 +246,7 @@ try-runtime = [
 	"pallet-message-queue/try-runtime",
 	"pallet-multisig/try-runtime",
 	"pallet-network-type/try-runtime",
+	"pallet-permissioned-deploy/try-runtime",
 	"pallet-proxy/try-runtime",
 	"pallet-session/try-runtime",
 	"pallet-sudo/try-runtime",

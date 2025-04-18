@@ -268,6 +268,9 @@ construct_runtime!(
 
         // Network Type
         NetworkType: pallet_network_type = 70, // No weight
+
+        // zkVerify Custom Pallets
+        PermissionedDeploy: pallet_permissioned_deploy = 100,
     }
 );
 

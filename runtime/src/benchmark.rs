@@ -34,6 +34,8 @@ frame_benchmarking::define_benchmarks!(
     [pallet_message_queue, MessageQueue]
 
     [pallet_evm, EVM]
+
+    [pallet_permissioned_deploy, PermissionedDeploy]
 );
 
 use cumulus_primitives_core::{ChannelStatus, GetChannelInfo};

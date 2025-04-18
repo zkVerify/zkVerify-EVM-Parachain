@@ -10378,6 +10378,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "pallet-permissioned-deploy"
+version = "0.1.0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "pallet-evm",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
+ "sp-io",
+ "sp-runtime",
+]
+
+[[package]]
 name = "pallet-plonky2-verifier"
 version = "0.1.1"
 source = "git+https://github.com/zkVerify/zkVerify.git?tag=0.9.1-0.13.0#44fed482a11e6185c67e193627863ec729e43b07"
@@ -21437,6 +21452,7 @@ dependencies = [
  "pallet-message-queue",
  "pallet-multisig",
  "pallet-network-type",
+ "pallet-permissioned-deploy",
  "pallet-proxy",
  "pallet-session",
  "pallet-sudo",

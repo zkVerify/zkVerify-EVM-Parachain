@@ -70,9 +70,9 @@ use crate::{
     },
     weights::{self, ExtrinsicBaseWeight},
     Aura, Balances, BaseFee, CollatorSelection, EVMChainId, MessageQueue, NetworkType,
-    OpenZeppelinPrecompiles, OriginCaller, PalletInfo, ParachainSystem, Runtime, RuntimeCall,
-    RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask, System,
-    Timestamp, UncheckedExtrinsic, WeightToFee, XcmpQueue, VERSION,
+    OpenZeppelinPrecompiles, OriginCaller, PalletInfo, ParachainSystem, PermissionedDeploy,
+    Runtime, RuntimeCall, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin,
+    RuntimeTask, System, Timestamp, UncheckedExtrinsic, WeightToFee, XcmpQueue, VERSION,
 };
 
 parameter_types! {
@@ -450,6 +450,10 @@ parameter_types! {
     //pub SuicideQuickClearLimit: u32 = 0;
 }
 
+type BaseRunner<T> = pallet_evm::runner::stack::Runner<T>;
+type PermissionedRunner<T> =
+    pallet_permissioned_deploy::runner::PermissionedDeploy<T, BaseRunner<T>, PermissionedDeploy>;
+
 impl pallet_evm::Config for Runtime {
     type AccountProvider = pallet_evm::FrameSystemAccountProvider<Self>;
     type GasLimitStorageGrowthRatio = GasLimitStorageGrowthRatio;
@@ -467,7 +471,7 @@ impl pallet_evm::Config for Runtime {
     type OnCreate = ();
     type PrecompilesType = OpenZeppelinPrecompiles<Self>;
     type PrecompilesValue = PrecompilesValue;
-    type Runner = pallet_evm::runner::stack::Runner<Self>;
+    type Runner = PermissionedRunner<Self>;
     type RuntimeEvent = RuntimeEvent;
     //type SuicideQuickClearLimit = SuicideQuickClearLimit;
     type Timestamp = Timestamp;
@@ -510,6 +514,11 @@ impl pallet_base_fee::Config for Runtime {
 /// Configure the pallet network type in pallets/network_type.
 impl pallet_network_type::Config for Runtime {
     type NT = NetworkType;
+}
+
+impl pallet_permissioned_deploy::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type WeightInfo = weights::pallet_permissioned_deploy::WeightInfo<Self>;
 }
 
 pub struct FindAuthorSession<Inner>(PhantomData<Inner>);
