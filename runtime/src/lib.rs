@@ -258,6 +258,9 @@ construct_runtime!(
         EVM: pallet_evm = 41,
         BaseFee: pallet_base_fee = 42, // No weight
         EVMChainId: pallet_evm_chain_id = 43, // No weight
+
+        // zkVerify Custom Pallets
+        DeploymentPermissions: pallet_deployment_permissions = 100,
     }
 );
 

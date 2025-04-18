@@ -24,6 +24,7 @@ pub mod extrinsic_weights;
 pub mod frame_system;
 pub mod pallet_balances;
 pub mod pallet_collator_selection;
+pub mod pallet_deployment_permissions;
 pub mod pallet_evm;
 pub mod pallet_message_queue;
 pub mod pallet_multisig;
