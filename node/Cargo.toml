@@ -116,6 +116,7 @@ runtime-benchmarks = [
 	"zkv-para-evm-runtime/runtime-benchmarks",
 	"polkadot-cli/runtime-benchmarks",
 	"polkadot-primitives/runtime-benchmarks",
+	"polkadot-runtime-common/runtime-benchmarks",
 	"sc-service/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
 ]
@@ -125,6 +126,7 @@ try-runtime = [
 	"zkv-para-evm-runtime/try-runtime",
 	"pallet-transaction-payment/try-runtime",
 	"polkadot-cli/try-runtime",
+	"polkadot-runtime-common/try-runtime",
 	"sp-runtime/try-runtime",
 ]
 txpool = ["fc-rpc/txpool"]
