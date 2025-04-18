@@ -297,9 +297,8 @@ fn initial_genesis(
 
     if add_dev_test_data {
         //ZK Verify Wrapper test data
-        match ret_json.as_object_mut() {
-            Some(obj) => {
-                obj.insert(
+        if let Some(obj) = ret_json.as_object_mut() {
+            obj.insert(
 					"assets".to_string(),
 					serde_json::json!({
 						"assets": vec![(1, root, false, 1)],
@@ -307,8 +306,6 @@ fn initial_genesis(
 						"accounts": vec![(1, root, 1_000_000)]
 					}),
 				);
-            }
-            None => {}
         }
     }
 

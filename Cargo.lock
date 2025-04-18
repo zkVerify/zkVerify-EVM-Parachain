@@ -2245,12 +2245,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "case"
-version = "1.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd6c0e7b807d60291f42f33f58480c0bfafe28ed08286446f45e463728cf9c1c"
-
-[[package]]
 name = "cc"
 version = "1.2.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3133,13 +3127,11 @@ dependencies = [
  "cumulus-test-relay-sproof-builder",
  "parity-scale-codec",
  "sc-client-api",
- "sp-api",
  "sp-crypto-hashing",
  "sp-inherents",
  "sp-runtime",
  "sp-state-machine",
  "sp-storage",
- "sp-trie",
  "tracing",
 ]
 
@@ -4570,7 +4562,6 @@ name = "evm-tracing-events"
 version = "0.1.0"
 dependencies = [
  "environmental",
- "ethereum",
  "ethereum-types",
  "evm 0.41.1",
  "evm-gasometer 0.41.0",
@@ -4686,22 +4677,6 @@ dependencies = [
  "parity-scale-codec",
  "sp-core",
  "sp-runtime",
-]
-
-[[package]]
-name = "fc-consensus"
-version = "2.0.0-dev"
-source = "git+https://github.com/HorizenLabs/frontier?branch=stable2409#a91ff6d8af92f1b938bf0388e66078eba64db7a8"
-dependencies = [
- "async-trait",
- "fp-consensus",
- "fp-rpc",
- "sc-consensus",
- "sp-api",
- "sp-block-builder",
- "sp-consensus",
- "sp-runtime",
- "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -13394,44 +13369,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "precompile-utils"
-version = "0.1.0"
-source = "git+https://github.com/HorizenLabs/frontier?branch=stable2409#a91ff6d8af92f1b938bf0388e66078eba64db7a8"
-dependencies = [
- "environmental",
- "evm 0.42.0",
- "fp-evm",
- "frame-support",
- "frame-system",
- "hex",
- "impl-trait-for-tuples",
- "log",
- "num_enum",
- "pallet-evm",
- "parity-scale-codec",
- "precompile-utils-macro",
- "sp-core",
- "sp-io",
- "sp-runtime",
- "sp-weights",
- "staging-xcm",
-]
-
-[[package]]
-name = "precompile-utils-macro"
-version = "0.1.0"
-source = "git+https://github.com/HorizenLabs/frontier?branch=stable2409#a91ff6d8af92f1b938bf0388e66078eba64db7a8"
-dependencies = [
- "case",
- "num_enum",
- "prettyplease 0.2.32",
- "proc-macro2",
- "quote",
- "sp-crypto-hashing",
- "syn 2.0.100",
-]
-
-[[package]]
 name = "precomputed-hash"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -18918,15 +18855,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f50febec83f5ee1df3015341d8bd429f2d1cc62bcba7ea2076759d315084683"
 
 [[package]]
-name = "test-utils"
-version = "0.1.0"
-dependencies = [
- "frame-support",
- "sp-core",
- "sp-std",
-]
-
-[[package]]
 name = "testnet-parachains-constants"
 version = "10.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -21198,27 +21126,19 @@ dependencies = [
  "hex",
  "parity-scale-codec",
  "serde",
- "serde_json",
  "sp-runtime",
  "sp-std",
- "zkv-para-evm-rpc-primitives-debug",
 ]
 
 [[package]]
 name = "zkv-para-evm-evm-tracer"
 version = "0.1.0"
 dependencies = [
- "ethereum-types",
  "evm 0.41.1",
  "evm-gasometer 0.41.0",
  "evm-runtime 0.41.0",
  "evm-tracing-events",
- "fp-evm",
- "pallet-evm",
  "parity-scale-codec",
- "sp-core",
- "sp-io",
- "sp-runtime",
  "sp-std",
  "zkv-para-evm-primitives-ext",
 ]
@@ -21238,27 +21158,21 @@ dependencies = [
  "cumulus-client-parachain-inherent 0.1.0",
  "cumulus-client-service",
  "cumulus-primitives-core",
- "cumulus-primitives-parachain-inherent",
  "cumulus-primitives-storage-weight-reclaim",
  "cumulus-relay-chain-interface",
- "cumulus-test-relay-sproof-builder",
  "fc-api",
- "fc-consensus",
  "fc-db",
  "fc-mapping-sync",
  "fc-rpc",
  "fc-rpc-core",
  "fc-storage",
- "fp-account",
  "fp-dynamic-fee",
  "fp-evm",
  "fp-rpc",
- "fp-self-contained",
  "frame-benchmarking",
  "frame-benchmarking-cli",
  "frame-system",
  "futures 0.3.31",
- "hex",
  "hex-literal",
  "jsonrpsee",
  "log",
@@ -21286,7 +21200,6 @@ dependencies = [
  "sc-transaction-pool",
  "sc-transaction-pool-api",
  "serde",
- "serde_derive",
  "serde_json",
  "sp-api",
  "sp-block-builder",
@@ -21298,7 +21211,6 @@ dependencies = [
  "sp-keystore",
  "sp-runtime",
  "sp-timestamp",
- "sp-trie",
  "staging-xcm",
  "substrate-build-script-utils",
  "substrate-frame-rpc-system",
@@ -21315,10 +21227,8 @@ dependencies = [
 name = "zkv-para-evm-primitives-ext"
 version = "0.1.0"
 dependencies = [
- "ethereum-types",
  "evm-tracing-events",
  "parity-scale-codec",
- "sp-externalities",
  "sp-runtime-interface",
  "sp-std",
 ]
@@ -21328,11 +21238,8 @@ name = "zkv-para-evm-rpc-core-debug"
 version = "0.1.0"
 dependencies = [
  "ethereum-types",
- "futures 0.3.31",
  "jsonrpsee",
  "serde",
- "serde_json",
- "sp-core",
  "zkv-para-evm-client-evm-tracing",
  "zkv-para-evm-rpc-core-types",
 ]
@@ -21343,18 +21250,14 @@ version = "0.1.0"
 dependencies = [
  "ethereum-types",
  "serde",
- "serde_json",
 ]
 
 [[package]]
 name = "zkv-para-evm-rpc-debug"
 version = "0.1.0"
 dependencies = [
- "ethereum",
  "ethereum-types",
  "fc-api",
- "fc-consensus",
- "fc-db",
  "fc-rpc",
  "fc-storage",
  "fp-rpc",
@@ -21366,7 +21269,6 @@ dependencies = [
  "sp-api",
  "sp-block-builder",
  "sp-blockchain",
- "sp-core",
  "sp-io",
  "sp-runtime",
  "tokio",
@@ -21380,15 +21282,10 @@ dependencies = [
 name = "zkv-para-evm-rpc-primitives-debug"
 version = "0.1.0"
 dependencies = [
- "environmental",
  "ethereum",
  "ethereum-types",
- "hex",
  "parity-scale-codec",
- "serde",
  "sp-api",
- "sp-core",
- "sp-io",
  "sp-runtime",
  "sp-std",
 ]
@@ -21408,7 +21305,6 @@ dependencies = [
  "cumulus-primitives-utility",
  "ethereum",
  "fp-account",
- "fp-evm",
  "fp-rpc",
  "fp-self-contained",
  "frame-benchmarking",
@@ -21419,8 +21315,6 @@ dependencies = [
  "frame-system-rpc-runtime-api",
  "frame-try-runtime",
  "hex",
- "hex-literal",
- "log",
  "pallet-aura",
  "pallet-authorship",
  "pallet-balances",
@@ -21445,13 +21339,10 @@ dependencies = [
  "pallet-xcm",
  "parachains-common",
  "parity-scale-codec",
- "polkadot-parachain-primitives",
  "polkadot-runtime-common",
- "precompile-utils",
  "scale-info",
  "smallvec",
  "sp-api",
- "sp-arithmetic",
  "sp-block-builder",
  "sp-consensus-aura",
  "sp-core",
@@ -21470,7 +21361,6 @@ dependencies = [
  "staging-xcm-builder",
  "staging-xcm-executor",
  "substrate-wasm-builder",
- "test-utils",
  "zkv-para-evm-evm-tracer",
  "zkv-para-evm-rpc-primitives-debug",
 ]

@@ -1,6 +1,6 @@
-name: build-and-test
+name: global
 
-run-name: "Build and Test"
+run-name: "All CI checks"
 
 on:
   push:
@@ -53,8 +53,9 @@ jobs:
         run: |
           rustup update
 
-      - name: Build
-        run: cargo build --release --all-features
+      - name: Install cargo-make
+        run: |
+          cargo install cargo-make --locked
 
-      - name: Run tests
-        run: cargo test --release --all-features
+      - name: Run ci
+        run: cargo make ci-remote

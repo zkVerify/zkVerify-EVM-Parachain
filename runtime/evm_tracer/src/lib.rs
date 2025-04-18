@@ -55,6 +55,7 @@ pub mod tracer {
     }
 
     impl EvmTracer {
+        #[allow(clippy::new_without_default)]
         pub fn new() -> Self {
             Self {
                 step_event_filter: zkv_para_evm_primitives_ext::zkv_para_evm_ext::step_event_filter(

@@ -9,16 +9,14 @@ license = "GPL-3.0-only"
 
 
 [dependencies]
-ethereum-types = { workspace = true, features = ["std"] }
-hex = { workspace = true, features = ["serde"] }
-serde = { workspace = true, features = ["derive", "std"] }
-serde_json = { workspace = true }
+ethereum-types = {workspace = true, features = ["std"]}
+hex = {workspace = true, features = ["serde"]}
+serde = {workspace = true, features = ["derive", "std"]}
 
 # Local
-evm-tracing-events = { workspace = true, features = ["std"] }
-zkv-para-evm-rpc-primitives-debug = { workspace = true, features = ["std"] }
+evm-tracing-events = {workspace = true, features = ["std"]}
 
 # Substrate
-parity-scale-codec = { workspace = true, features = ["std"] }
-sp-std = { workspace = true, features = ["std"] }
-sp-runtime = { workspace = true, features = ["std"] }
+parity-scale-codec = {workspace = true, features = ["std"]}
+sp-std = {workspace = true, features = ["std"]}
+sp-runtime = {workspace = true, features = ["std"]}

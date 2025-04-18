@@ -11,103 +11,95 @@ license = "GPL-3.0-only"
 publish = false
 
 [dependencies]
-clap = { workspace = true }
-futures = { workspace = true }
-hex = { workspace = true }
-hex-literal = { workspace = true }
-jsonrpsee = { workspace = true, features = ["server"] }
-log = { workspace = true }
-parity-scale-codec = { workspace = true }
-serde = { workspace = true, features = ["derive"] }
-serde_derive = { workspace = true }
-serde_json = { workspace = true }
-tokio = { workspace = true, features = ["macros", "sync"] }
+clap = {workspace = true}
+futures = {workspace = true}
+hex-literal = {workspace = true}
+jsonrpsee = {workspace = true, features = ["server"]}
+log = {workspace = true}
+parity-scale-codec = {workspace = true}
+serde = {workspace = true, features = ["derive"]}
+serde_json = {workspace = true}
+tokio = {workspace = true, features = ["macros", "sync"]}
 
 # Local
-zkv-para-evm-runtime = { workspace = true }
-zkv-para-evm-rpc-debug = { workspace = true }
-zkv-para-evm-rpc-primitives-debug = { workspace = true }
-zkv-para-evm-primitives-ext = { workspace = true }
+zkv-para-evm-runtime = {workspace = true}
+zkv-para-evm-rpc-debug = {workspace = true}
+zkv-para-evm-rpc-primitives-debug = {workspace = true}
+zkv-para-evm-primitives-ext = {workspace = true}
 
 # Substrate
-frame-benchmarking = { workspace = true }
-frame-benchmarking-cli = { workspace = true }
-frame-system = { workspace = true }
-pallet-transaction-payment-rpc = { workspace = true }
-pallet-transaction-payment = { workspace = true }
-sc-basic-authorship = { workspace = true }
-sc-chain-spec = { workspace = true }
-sc-cli = { workspace = true }
-sc-client-api = { workspace = true }
-sc-consensus = { workspace = true }
-sc-consensus-aura = { workspace = true }
-sc-consensus-manual-seal = { workspace = true }
-sc-executor = { workspace = true }
-sc-network = { workspace = true }
-sc-network-sync = { workspace = true }
-sc-offchain = { workspace = true }
-sc-rpc = { workspace = true }
-sc-service = { workspace = true }
-sc-sysinfo = { workspace = true }
-sc-telemetry = { workspace = true }
-sc-tracing = { workspace = true }
-sc-transaction-pool = { workspace = true }
-sc-transaction-pool-api = { workspace = true }
-sp-api = { workspace = true }
-sp-block-builder = { workspace = true }
-sp-blockchain = { workspace = true }
-sp-consensus-aura = { workspace = true }
-sp-core = { workspace = true }
-sp-inherents = { workspace = true }
-sp-io = { workspace = true }
-sp-keystore = { workspace = true }
-sp-runtime = { workspace = true }
-sp-timestamp = { workspace = true }
-sp-trie = { workspace = true }
-substrate-frame-rpc-system = { workspace = true }
-substrate-prometheus-endpoint = { workspace = true }
+frame-benchmarking = {workspace = true}
+frame-benchmarking-cli = {workspace = true}
+frame-system = {workspace = true}
+pallet-transaction-payment-rpc = {workspace = true}
+pallet-transaction-payment = {workspace = true}
+sc-basic-authorship = {workspace = true}
+sc-chain-spec = {workspace = true}
+sc-cli = {workspace = true}
+sc-client-api = {workspace = true}
+sc-consensus = {workspace = true}
+sc-consensus-aura = {workspace = true}
+sc-consensus-manual-seal = {workspace = true}
+sc-executor = {workspace = true}
+sc-network = {workspace = true}
+sc-network-sync = {workspace = true}
+sc-offchain = {workspace = true}
+sc-rpc = {workspace = true}
+sc-service = {workspace = true}
+sc-sysinfo = {workspace = true}
+sc-telemetry = {workspace = true}
+sc-tracing = {workspace = true}
+sc-transaction-pool = {workspace = true}
+sc-transaction-pool-api = {workspace = true}
+sp-api = {workspace = true}
+sp-block-builder = {workspace = true}
+sp-blockchain = {workspace = true}
+sp-consensus-aura = {workspace = true}
+sp-core = {workspace = true}
+sp-inherents = {workspace = true}
+sp-io = {workspace = true}
+sp-keystore = {workspace = true}
+sp-runtime = {workspace = true}
+sp-timestamp = {workspace = true}
+substrate-frame-rpc-system = {workspace = true}
+substrate-prometheus-endpoint = {workspace = true}
 
 # Polkadot
-polkadot-cli = { workspace = true }
-polkadot-primitives = { workspace = true }
-polkadot-runtime-common = { workspace = true }
-xcm = { workspace = true }
+polkadot-cli = {workspace = true}
+polkadot-primitives = {workspace = true}
+polkadot-runtime-common = {workspace = true}
+xcm = {workspace = true}
 
 # Cumulus
-color-print = { workspace = true }
-cumulus-client-cli = { workspace = true }
-cumulus-client-collator = { workspace = true }
-cumulus-client-consensus-aura = { workspace = true }
-cumulus-client-consensus-common = { workspace = true }
-cumulus-client-consensus-proposer = { workspace = true }
-cumulus-client-parachain-inherent = { workspace = true }
-cumulus-client-service = { workspace = true }
-cumulus-primitives-core = { workspace = true }
-cumulus-primitives-parachain-inherent = { workspace = true }
-cumulus-relay-chain-interface = { workspace = true }
-cumulus-primitives-storage-weight-reclaim = { workspace = true }
-cumulus-test-relay-sproof-builder = { workspace = true, default-features = true }
+color-print = {workspace = true}
+cumulus-client-cli = {workspace = true}
+cumulus-client-collator = {workspace = true}
+cumulus-client-consensus-aura = {workspace = true}
+cumulus-client-consensus-common = {workspace = true}
+cumulus-client-consensus-proposer = {workspace = true}
+cumulus-client-parachain-inherent = {workspace = true}
+cumulus-client-service = {workspace = true}
+cumulus-primitives-core = {workspace = true}
+cumulus-relay-chain-interface = {workspace = true}
+cumulus-primitives-storage-weight-reclaim = {workspace = true}
 
 # Frontier
-fc-api = { workspace = true }
-fc-consensus = { workspace = true }
-fc-db = { workspace = true, features = ["rocksdb"] }
-fc-mapping-sync = { workspace = true, features = ["sql"] }
-fc-rpc = { workspace = true, features = ["aura"] }
-fc-rpc-core = { workspace = true }
-fc-storage = { workspace = true }
-fp-dynamic-fee = { workspace = true, features = ["std"] }
-fp-evm = { workspace = true }
-fp-rpc = { workspace = true }
-fp-self-contained = { workspace = true }
-fp-account = { workspace = true }
+fc-api = {workspace = true}
+fc-db = {workspace = true, features = ["rocksdb"]}
+fc-mapping-sync = {workspace = true, features = ["sql"]}
+fc-rpc = {workspace = true, features = ["aura"]}
+fc-rpc-core = {workspace = true}
+fc-storage = {workspace = true}
+fp-dynamic-fee = {workspace = true, features = ["std"]}
+fp-evm = {workspace = true}
+fp-rpc = {workspace = true}
 async-trait = "0.1.81"
 
 [build-dependencies]
-substrate-build-script-utils = { workspace = true }
+substrate-build-script-utils = {workspace = true}
 
 [features]
-default = ["txpool"]
+default = [ "txpool" ]
 runtime-benchmarks = [
 	"cumulus-primitives-core/runtime-benchmarks",
 	"frame-benchmarking-cli/runtime-benchmarks",
@@ -121,7 +113,6 @@ runtime-benchmarks = [
 	"zkv-para-evm-runtime/runtime-benchmarks",
 ]
 try-runtime = [
-	"fp-self-contained/try-runtime",
 	"frame-system/try-runtime",
 	"pallet-transaction-payment/try-runtime",
 	"polkadot-cli/try-runtime",
@@ -129,7 +120,7 @@ try-runtime = [
 	"sp-runtime/try-runtime",
 	"zkv-para-evm-runtime/try-runtime",
 ]
-txpool = ["fc-rpc/txpool"]
+txpool = [ "fc-rpc/txpool" ]
 
 [lints]
 workspace = true
