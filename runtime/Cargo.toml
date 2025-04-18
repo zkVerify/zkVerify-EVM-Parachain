@@ -36,6 +36,7 @@ pallet-assets = { workspace = true }
 pallet-aura = { workspace = true }
 pallet-authorship = { workspace = true }
 pallet-balances = { workspace = true, features = ["insecure_zero_ed"] }
+pallet-deployment-permissions = { workspace = true }
 pallet-message-queue = { workspace = true }
 pallet-multisig = { workspace = true }
 pallet-proxy = { workspace = true }
@@ -142,6 +143,7 @@ std = [
 	"pallet-balances/std",
 	"pallet-base-fee/std",
 	"pallet-collator-selection/std",
+	"pallet-deployment-permissions/std",
 	"pallet-ethereum/std",
 	"pallet-evm-chain-id/std",
 	"pallet-evm-precompile-modexp/std",
@@ -204,6 +206,7 @@ runtime-benchmarks = [
 	"pallet-assets/runtime-benchmarks",
 	"pallet-balances/runtime-benchmarks",
 	"pallet-collator-selection/runtime-benchmarks",
+	"pallet-deployment-permissions/runtime-benchmarks",
 	"pallet-ethereum/runtime-benchmarks",
 	"pallet-evm/runtime-benchmarks",
 	"pallet-message-queue/runtime-benchmarks",
@@ -237,6 +240,7 @@ try-runtime = [
 	"pallet-balances/try-runtime",
 	"pallet-base-fee/try-runtime",
 	"pallet-collator-selection/try-runtime",
+	"pallet-deployment-permissions/try-runtime",
 	"pallet-ethereum/try-runtime",
 	"pallet-evm-chain-id/try-runtime",
 	"pallet-evm/try-runtime",
