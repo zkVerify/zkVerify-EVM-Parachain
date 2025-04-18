@@ -34,15 +34,15 @@ impl pallet_collator_selection::Config for Runtime {
     type Currency = Balances;
     type UpdateOrigin = CollatorSelectionUpdateOrigin;
     type PotId = PotId;
-    type MaxCandidates = ConstU32<100>;
-    type MinEligibleCollators = ConstU32<4>;
-    type MaxInvulnerables = ConstU32<20>;
+    type MaxCandidates = ConstU32<50>;
+    type MinEligibleCollators = ConstU32<2>;
+    type MaxInvulnerables = ConstU32<5>;
     // should be a multiple of session or things will get inconsistent
     type KickThreshold = Period;
     type ValidatorId = <Self as frame_system::Config>::AccountId;
     type ValidatorIdOf = pallet_collator_selection::IdentityCollator;
     type ValidatorRegistration = Session;
-    type WeightInfo = ();
+    type WeightInfo = weights::pallet_collator_selection::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -60,5 +60,5 @@ impl pallet_session::Config for Runtime {
     type ShouldEndSession = pallet_session::PeriodicSessions<Period, Offset>;
     type ValidatorId = AccountId;
     type ValidatorIdOf = pallet_collator_selection::IdentityCollator;
-    type WeightInfo = weights::pallet_session::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_session::ZKVEvmWeight<Runtime>;
 }

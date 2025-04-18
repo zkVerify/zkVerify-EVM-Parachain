@@ -12,24 +12,24 @@ license = "GPL-3.0-only"
 targets = ["x86_64-unknown-linux-gnu"]
 
 [dependencies]
-parity-scale-codec = { workspace = true, features = ["derive"] }
-scale-info = { workspace = true, features = ["derive"] }
-serde = { workspace = true }
+parity-scale-codec = {workspace = true, features = ["derive"]}
+scale-info = {workspace = true, features = ["derive"]}
+serde = {workspace = true}
 # Substrate
-frame-support = { workspace = true }
-frame-system = { workspace = true }
+frame-support = {workspace = true}
+frame-system = {workspace = true}
 
 [features]
-default = ["std"]
+default = [ "std" ]
 std = [
-	"parity-scale-codec/std",
-	"scale-info/std",
-	"serde/std",
 	# Substrate
 	"frame-support/std",
 	"frame-system/std",
+	"parity-scale-codec/std",
+	"scale-info/std",
+	"serde/std",
 ]
-try-runtime = [
-	"frame-support/try-runtime",
-	"frame-system/try-runtime",
-]
+try-runtime = [ "frame-support/try-runtime", "frame-system/try-runtime" ]
+
+[package.metadata.cargo-machete]
+ignored = ["parity-scale-codec", "scale-info"]

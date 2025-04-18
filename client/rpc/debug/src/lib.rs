@@ -46,6 +46,7 @@ pub enum RequesterInput {
     Block(RequestBlockId),
 }
 
+#[allow(clippy::large_enum_variant)]
 pub enum Response {
     Single(single::TransactionTrace),
     Block(Vec<single::TransactionTrace>),
@@ -245,7 +246,7 @@ where
                     hex_literal::hex!("94d9f08796f91eb13a2e82a6066882f7");
                 const BLOCKSCOUT_JS_CODE_HASH_V2: [u8; 16] =
                     hex_literal::hex!("89db13694675692951673a1e6e18ff02");
-                let hash = sp_io::hashing::twox_128(&tracer.as_bytes());
+                let hash = sp_io::hashing::twox_128(tracer.as_bytes());
                 let tracer =
                     if hash == BLOCKSCOUT_JS_CODE_HASH || hash == BLOCKSCOUT_JS_CODE_HASH_V2 {
                         Some(TracerInput::Blockscout)
@@ -257,10 +258,10 @@ where
                 if let Some(tracer) = tracer {
                     Ok((tracer, single::TraceType::CallList))
                 } else {
-                    return Err(internal_err(format!(
+                    Err(internal_err(format!(
                         "javascript based tracing is not available (hash :{:?})",
                         hash
-                    )));
+                    )))
                 }
             }
             Some(params) => Ok((
@@ -355,8 +356,7 @@ where
             api.initialize_block(parent_block_hash, &header)
                 .map_err(|e| internal_err(format!("Runtime api access error: {:?}", e)))?;
 
-            let _result = api
-                .trace_block(parent_block_hash, exts, eth_tx_hashes)
+            api.trace_block(parent_block_hash, exts, eth_tx_hashes)
                 .map_err(|e| {
                     internal_err(format!(
                         "Blockchain error when replaying block {} : {:?}",
@@ -372,7 +372,7 @@ where
             Ok(zkv_para_evm_rpc_primitives_debug::Response::Block)
         };
 
-        return match trace_type {
+        match trace_type {
             single::TraceType::CallList => {
                 let mut proxy = zkv_para_evm_client_evm_tracing::listeners::CallList::default();
                 proxy.using(f)?;
@@ -395,7 +395,7 @@ where
 				by providing `{{'tracer': 'callTracer'}}` in the request)."
                     .to_string(),
             )),
-        };
+        }
     }
 
     /// Replays a transaction in the Runtime at a given block height.
@@ -481,8 +481,7 @@ where
                         .map_err(|e| internal_err(format!("Runtime api access error: {:?}", e)))?;
 
                     if trace_api_version == 1 {
-                        let _result = api
-                            .trace_transaction(parent_block_hash, exts, &transaction)
+                        api.trace_transaction(parent_block_hash, exts, transaction)
                             .map_err(|e| {
                                 internal_err(format!(
                                     "Runtime api access error (version {:?}): {:?}",

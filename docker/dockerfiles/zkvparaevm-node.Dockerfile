@@ -4,6 +4,7 @@ RUN apt-get update -qq \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       clang \
       cmake \
+      lld \
       protobuf-compiler \
     && apt-get -y clean \
     && apt-get -y autoclean \
@@ -45,7 +46,7 @@ LABEL io.image.authors="${AUTHORS}" \
 USER root
 WORKDIR /app
 
-COPY --from=builder "/usr/src/node/target/${PROFILE}/zkverify-evm-para-node" "/usr/local/bin/"
+COPY --from=builder "/usr/src/node/target/${PROFILE}/zkv-para-evm-node" "/usr/local/bin/"
 COPY --from=builder "/usr/src/node/target/${PROFILE}/wbuild/zkv-para-evm-runtime/zkv_para_evm_runtime.compact.wasm" "./zkv_para_evm_runtime.compact.wasm"
 RUN chmod -R a+rx "/usr/local/bin"
 

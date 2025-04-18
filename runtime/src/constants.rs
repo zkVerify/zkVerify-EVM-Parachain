@@ -31,7 +31,7 @@ pub mod currency {
     pub const EXISTENTIAL_DEPOSIT: Balance = 0;
 
     #[cfg(feature = "runtime-benchmarks")]
-    pub const EXISTENTIAL_DEPOSIT: Balance = 1;
+    pub const EXISTENTIAL_DEPOSIT: Balance = 100;
 
     pub const fn deposit(items: u32, bytes: u32) -> Balance {
         items as Balance * 15 * CENTS + (bytes as Balance) * 6 * CENTS

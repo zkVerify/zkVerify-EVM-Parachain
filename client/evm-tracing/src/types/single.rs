@@ -49,6 +49,7 @@ pub enum TraceType {
 /// Single transaction trace.
 #[derive(Clone, Eq, PartialEq, Debug, Encode, Decode, Serialize)]
 #[serde(rename_all = "camelCase", untagged)]
+#[allow(clippy::large_enum_variant)]
 pub enum TransactionTrace {
     /// Classical output of `debug_trace`.
     #[serde(rename_all = "camelCase")]

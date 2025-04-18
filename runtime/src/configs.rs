@@ -13,15 +13,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-pub mod asset_config;
-pub use asset_config::AssetType;
 mod aura;
 mod authorship;
-pub mod governance;
-mod root_testing;
 mod session;
 mod timestamp;
-pub mod transaction_payment;
 pub mod xcm_config;
 
 use cumulus_pallet_parachain_system::RelayNumberMonotonicallyIncreases;
@@ -30,24 +25,22 @@ use frame_support::{
     derive_impl,
     dispatch::DispatchClass,
     parameter_types,
-    traits::{ConstU32, Contains, EitherOfDiverse, FindAuthor, InstanceFilter, TransformOrigin},
-    weights::Weight,
+    traits::{
+        tokens::imbalance::ResolveTo, ConstU32, Contains, FindAuthor, InstanceFilter,
+        TransformOrigin,
+    },
+    weights::{ConstantMultiplier, Weight},
     PalletId,
 };
 use frame_system::{
     limits::{BlockLength, BlockWeights},
     EnsureRoot,
 };
-pub use governance::origins::pallet_custom_origins;
-use governance::{origins::Treasurer, TreasurySpender};
 use pallet_ethereum::PostLogContent;
 use pallet_evm::{EVMCurrencyAdapter, EnsureAccountId20, IdentityAddressMapping};
 use parachains_common::message_queue::{NarrowOriginToSibling, ParaIdToSibling};
 use parity_scale_codec::{Decode, Encode, MaxEncodedLen};
-use polkadot_runtime_common::impls::{
-    LocatableAssetConverter, VersionedLocatableAsset, VersionedLocationConverter,
-};
-pub use polkadot_runtime_common::BlockHashCount;
+use polkadot_runtime_common::{BlockHashCount, SlowAdjustingFeeUpdate};
 use scale_info::TypeInfo;
 use sp_core::{H160, U256};
 use sp_runtime::{
@@ -57,17 +50,11 @@ use sp_runtime::{
 use sp_std::marker::PhantomData;
 use sp_version::RuntimeVersion;
 // XCM Imports
-use xcm::{
-    latest::{prelude::BodyId, InteriorLocation, Junction::PalletInstance},
-    VersionedLocation,
-};
-use xcm_builder::PayOverXcm;
+use xcm::latest::prelude::BodyId;
 #[cfg(not(feature = "runtime-benchmarks"))]
 use xcm_builder::ProcessXcmMessage;
 use xcm_config::{RelayLocation, XcmOriginToTransactDispatchOrigin};
 
-#[cfg(feature = "runtime-benchmarks")]
-use crate::benchmark::{OpenHrmpChannel, PayWithEnsure};
 use crate::{
     constants::{
         currency::{deposit, CENTS, EXISTENTIAL_DEPOSIT, MICROCENTS},
@@ -79,11 +66,11 @@ use crate::{
         AccountId, Balance, Block, BlockNumber, ConsensusHook, Hash, Nonce,
         PriceForSiblingParachainDelivery,
     },
-    weights::{self, BlockExecutionWeight, ExtrinsicBaseWeight, RocksDbWeight},
-    Aura, Balances, BaseFee, EVMChainId, MessageQueue, NetworkType, OpenZeppelinPrecompiles,
-    OriginCaller, PalletInfo, ParachainSystem, Preimage, Runtime, RuntimeCall, RuntimeEvent,
-    RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask, System, Timestamp,
-    Treasury, UncheckedExtrinsic, WeightToFee, XcmpQueue, VERSION,
+    weights::{self, ExtrinsicBaseWeight},
+    Aura, Balances, BaseFee, CollatorSelection, EVMChainId, MessageQueue, NetworkType,
+    OpenZeppelinPrecompiles, OriginCaller, PalletInfo, ParachainSystem, Runtime, RuntimeCall,
+    RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, RuntimeOrigin, RuntimeTask, System,
+    Timestamp, UncheckedExtrinsic, WeightToFee, XcmpQueue, VERSION,
 };
 
 parameter_types! {
@@ -96,7 +83,7 @@ parameter_types! {
     pub RuntimeBlockLength: BlockLength =
         BlockLength::max_with_normal_ratio(MAX_BLOCK_LENGTH, NORMAL_DISPATCH_RATIO);
     pub RuntimeBlockWeights: BlockWeights = BlockWeights::builder()
-        .base_block(BlockExecutionWeight::get())
+        .base_block(weights::block_weights::BlockExecutionWeight::get())
         .for_class(DispatchClass::all(), |weights| {
             weights.base_extrinsic = ExtrinsicBaseWeight::get();
         })
@@ -154,7 +141,7 @@ impl frame_system::Config for Runtime {
     /// Block & extrinsics weights: base values and limits.
     type BlockWeights = RuntimeBlockWeights;
     /// The weight of database operations that the runtime can invoke.
-    type DbWeight = RocksDbWeight;
+    type DbWeight = weights::db::constants::RocksDbWeight;
     /// The type for hashing blocks and tries.
     type Hash = Hash;
     /// The lookup mechanism to get account ID from whatever is passed in
@@ -178,48 +165,8 @@ impl frame_system::Config for Runtime {
     type SS58Prefix = SS58Prefix;
     /// Runtime version.
     type Version = Version;
-}
-
-parameter_types! {
-    pub MaximumSchedulerWeight: frame_support::weights::Weight = Perbill::from_percent(80) *
-        RuntimeBlockWeights::get().max_block;
-    pub const MaxScheduledRuntimeCallsPerBlock: u32 = 50;
-}
-
-impl pallet_scheduler::Config for Runtime {
-    type MaxScheduledPerBlock = MaxScheduledRuntimeCallsPerBlock;
-    type MaximumWeight = MaximumSchedulerWeight;
-    type OriginPrivilegeCmp = frame_support::traits::EqualPrivilegeOnly;
-    type PalletsOrigin = OriginCaller;
-    type Preimages = Preimage;
-    type RuntimeCall = RuntimeCall;
-    type RuntimeEvent = RuntimeEvent;
-    type RuntimeOrigin = RuntimeOrigin;
-    type ScheduleOrigin = EnsureRoot<AccountId>;
-    type WeightInfo = weights::pallet_scheduler::WeightInfo<Runtime>;
-}
-
-parameter_types! {
-    pub const PreimageBaseDeposit: Balance = deposit(2, 64);
-    pub const PreimageByteDeposit: Balance = deposit(0, 1);
-    pub const PreimageHoldReason: RuntimeHoldReason = RuntimeHoldReason::Preimage(pallet_preimage::HoldReason::Preimage);
-}
-
-impl pallet_preimage::Config for Runtime {
-    type Consideration = frame_support::traits::fungible::HoldConsideration<
-        AccountId,
-        Balances,
-        PreimageHoldReason,
-        frame_support::traits::LinearStoragePrice<
-            PreimageBaseDeposit,
-            PreimageByteDeposit,
-            Balance,
-        >,
-    >;
-    type Currency = Balances;
-    type ManagerOrigin = EnsureRoot<AccountId>;
-    type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_preimage::WeightInfo<Runtime>;
+    /// Weights
+    type SystemWeightInfo = weights::frame_system::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -283,7 +230,7 @@ impl pallet_proxy::Config for Runtime {
     type ProxyType = ProxyType;
     type RuntimeCall = RuntimeCall;
     type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_proxy::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_proxy::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -308,19 +255,31 @@ impl pallet_balances::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type RuntimeFreezeReason = RuntimeFreezeReason;
     type RuntimeHoldReason = RuntimeHoldReason;
-    type WeightInfo = weights::pallet_balances::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_balances::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
     /// Relay Chain `TransactionByteFee` / 10
     pub const TransactionByteFee: Balance = 10 * MICROCENTS;
     pub const OperationalFeeMultiplier: u8 = 5;
+    pub StakingPot: AccountId = CollatorSelection::account_id();
+}
+
+impl pallet_transaction_payment::Config for Runtime {
+    type FeeMultiplierUpdate = SlowAdjustingFeeUpdate<Self>;
+    type LengthToFee = ConstantMultiplier<Balance, TransactionByteFee>;
+    // All the fees go to the collators, passing through the Pot of the CollatorSelection pallet
+    type OnChargeTransaction =
+        pallet_transaction_payment::FungibleAdapter<Balances, ResolveTo<StakingPot, Balances>>;
+    type OperationalFeeMultiplier = OperationalFeeMultiplier;
+    type RuntimeEvent = RuntimeEvent;
+    type WeightToFee = WeightToFee;
 }
 
 impl pallet_sudo::Config for Runtime {
     type RuntimeCall = RuntimeCall;
     type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_sudo::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_sudo::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -339,7 +298,7 @@ impl cumulus_pallet_parachain_system::Config for Runtime {
     type ReservedXcmpWeight = ReservedXcmpWeight;
     type RuntimeEvent = RuntimeEvent;
     type SelfParaId = parachain_info::Pallet<Runtime>;
-    type WeightInfo = weights::cumulus_pallet_parachain_system::WeightInfo<Runtime>;
+    type WeightInfo = weights::cumulus_pallet_parachain_system::ZKVEvmWeight<Runtime>;
     type XcmpMessageHandler = XcmpQueue;
 }
 
@@ -371,7 +330,7 @@ impl pallet_message_queue::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type ServiceWeight = MessageQueueServiceWeight;
     type Size = u32;
-    type WeightInfo = weights::pallet_message_queue::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_message_queue::ZKVEvmWeight<Runtime>;
 }
 
 impl cumulus_pallet_aura_ext::Config for Runtime {}
@@ -392,7 +351,7 @@ impl cumulus_pallet_xcmp_queue::Config for Runtime {
     type PriceForSiblingDelivery = PriceForSiblingParachainDelivery;
     type RuntimeEvent = RuntimeEvent;
     type VersionWrapper = ();
-    type WeightInfo = weights::cumulus_pallet_xcmp_queue::WeightInfo<Runtime>;
+    type WeightInfo = weights::cumulus_pallet_xcmp_queue::ZKVEvmWeight<Runtime>;
     // Enqueue XCMP messages from siblings for later processing.
     type XcmpQueue = TransformOrigin<MessageQueue, AggregateMessageOrigin, ParaId, ParaIdToSibling>;
     type MaxActiveOutboundChannels = ConstU32<128>;
@@ -417,7 +376,7 @@ impl pallet_multisig::Config for Runtime {
     type MaxSignatories = MaxSignatories;
     type RuntimeCall = RuntimeCall;
     type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_multisig::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_multisig::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -448,7 +407,7 @@ impl pallet_utility::Config for Runtime {
     type PalletsOrigin = OriginCaller;
     type RuntimeCall = RuntimeCall;
     type RuntimeEvent = RuntimeEvent;
-    type WeightInfo = weights::pallet_utility::WeightInfo<Runtime>;
+    type WeightInfo = weights::pallet_utility::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {
@@ -457,61 +416,14 @@ parameter_types! {
     pub const ProposalBondMaximum: Balance = 1;// * GRAND;
     pub const SpendPeriod: BlockNumber = 6 * DAYS;
     pub const Burn: Permill = Permill::from_perthousand(2);
-    pub const TreasuryPalletId: PalletId = PalletId(*b"py/trsry");
     pub const PayoutSpendPeriod: BlockNumber = 30 * DAYS;
-    // The asset's interior location for the paying account. This is the Treasury
-    // pallet instance (which sits at index 13).
-    pub TreasuryInteriorLocation: InteriorLocation = PalletInstance(13).into();
     pub const MaxApprovals: u32 = 100;
-    pub TreasuryAccount: AccountId = Treasury::account_id();
 }
 
 #[cfg(feature = "runtime-benchmarks")]
 parameter_types! {
     pub LocationParents: u8 = 1;
     pub BenchmarkParaId: u8 = 0;
-}
-
-type Beneficiary = VersionedLocation;
-type AssetKind = VersionedLocatableAsset;
-
-pub type TreasuryPaymaster = PayOverXcm<
-    TreasuryInteriorLocation,
-    xcm_config::XcmRouter,
-    crate::PolkadotXcm,
-    ConstU32<{ 6 * HOURS }>,
-    Beneficiary,
-    AssetKind,
-    LocatableAssetConverter,
-    VersionedLocationConverter,
->;
-
-impl pallet_treasury::Config for Runtime {
-    type AssetKind = AssetKind;
-    type BalanceConverter = frame_support::traits::tokens::UnityAssetBalanceConversion;
-    #[cfg(feature = "runtime-benchmarks")]
-    type BenchmarkHelper = polkadot_runtime_common::impls::benchmarks::TreasuryArguments<
-        LocationParents,
-        BenchmarkParaId,
-    >;
-    type Beneficiary = Beneficiary;
-    type BeneficiaryLookup = IdentityLookup<Self::Beneficiary>;
-    type Burn = ();
-    type BurnDestination = ();
-    type Currency = Balances;
-    type MaxApprovals = MaxApprovals;
-    type PalletId = TreasuryPalletId;
-    #[cfg(feature = "runtime-benchmarks")]
-    type Paymaster = PayWithEnsure<TreasuryPaymaster, OpenHrmpChannel<BenchmarkParaId>>;
-    #[cfg(not(feature = "runtime-benchmarks"))]
-    type Paymaster = TreasuryPaymaster;
-    type PayoutPeriod = PayoutSpendPeriod;
-    type RejectOrigin = EitherOfDiverse<EnsureRoot<AccountId>, Treasurer>;
-    type RuntimeEvent = RuntimeEvent;
-    type SpendFunds = ();
-    type SpendOrigin = TreasurySpender;
-    type SpendPeriod = SpendPeriod;
-    type WeightInfo = weights::pallet_treasury::WeightInfo<Runtime>;
 }
 
 parameter_types! {
@@ -557,7 +469,7 @@ impl pallet_evm::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     //type SuicideQuickClearLimit = SuicideQuickClearLimit;
     type Timestamp = Timestamp;
-    type WeightInfo = weights::pallet_evm::WeightInfo<Self>;
+    type WeightInfo = weights::pallet_evm::ZKVEvmWeight<Self>;
     type WeightPerGas = WeightPerGas;
     type WithdrawOrigin = EnsureAccountId20;
 }

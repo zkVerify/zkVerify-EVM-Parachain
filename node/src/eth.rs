@@ -175,7 +175,6 @@ impl<Api> EthCompatRuntimeApiCollection for Api where
 {
 }
 */
-
 pub async fn spawn_frontier_tasks(
     task_manager: &TaskManager,
     client: Arc<ParachainClient>,
