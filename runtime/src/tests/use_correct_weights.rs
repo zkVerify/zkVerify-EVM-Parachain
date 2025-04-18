@@ -106,16 +106,6 @@ fn pallet_balances() {
 }
 
 #[test]
-fn pallet_assets() {
-    use pallet_assets::WeightInfo;
-
-    assert_eq!(
-        <Runtime as pallet_assets::Config>::WeightInfo::create(),
-        weights::pallet_assets::ZKVEvmWeight::<Runtime>::create()
-    );
-}
-
-#[test]
 fn pallet_sudo() {
     use pallet_sudo::WeightInfo;
 

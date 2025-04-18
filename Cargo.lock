@@ -21397,7 +21397,6 @@ dependencies = [
 name = "zkv-para-evm-runtime"
 version = "0.2.0"
 dependencies = [
- "assets-common",
  "cumulus-pallet-aura-ext",
  "cumulus-pallet-parachain-system",
  "cumulus-pallet-session-benchmarking",
@@ -21422,7 +21421,6 @@ dependencies = [
  "hex",
  "hex-literal",
  "log",
- "pallet-assets",
  "pallet-aura",
  "pallet-authorship",
  "pallet-balances",

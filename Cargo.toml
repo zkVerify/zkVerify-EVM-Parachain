@@ -68,7 +68,6 @@ frame-system = { version = "38.0.0", default-features = false }
 frame-system-benchmarking = { version = "38.0.0", default-features = false }
 frame-system-rpc-runtime-api = { version = "34.0.0", default-features = false }
 frame-try-runtime = { version = "0.44.0", default-features = false }
-pallet-assets = { version = "40.0.0", default-features = false }
 pallet-aura = { version = "37.0.0", default-features = false }
 pallet-authorship = { version = "38.0.0", default-features = false }
 pallet-balances = { version = "39.0.1", default-features = false }
@@ -81,7 +80,6 @@ pallet-timestamp = { version = "37.0.0", default-features = false }
 pallet-transaction-payment = { version = "38.0.2", default-features = false }
 pallet-transaction-payment-rpc = { version = "41.0.0", default-features = false }
 pallet-transaction-payment-rpc-runtime-api = { version = "38.0.0", default-features = false }
-pallet-treasury = { version = "37.0.0", default-features = false }
 pallet-utility = { version = "38.0.0", default-features = false }
 sc-basic-authorship = { version = "0.45.0", default-features = false }
 sc-chain-spec = { version = "38.0.0", default-features = false }
@@ -107,7 +105,6 @@ sp-arithmetic = { version = "26.0.0", default-features = false }
 sp-block-builder = { version = "34.0.0", default-features = false }
 sp-blockchain = { version = "37.0.1", default-features = false }
 sp-consensus-aura = { version = "0.40.0", default-features = false }
-sp-consensus-slots = { version = "0.40.1", default-features = false }
 sp-core = { version = "34.0.0", default-features = false }
 sp-crypto-hashing = { version = "0.1.0", default-features = false }
 sp-externalities = { version = "0.29.0", default-features = false }
@@ -119,7 +116,6 @@ sp-offchain = { version = "34.0.0", default-features = false }
 sp-runtime = { version = "39.0.5", default-features = false, features = ["serde"] }
 sp-runtime-interface = { version = "28.0.0", default-features = false }
 sp-session = { version = "36.0.0", default-features = false }
-sp-staking = { version = "36.0.0", default-features = false }
 sp-state-machine = { version = "0.43.0", default-features = false }
 sp-std = { version = "14.0.0", default-features = false }
 sp-storage = { version = "21.0.0", default-features = false }
@@ -144,7 +140,6 @@ xcm-builder = { version = "17.0.4", package = "staging-xcm-builder", default-fea
 xcm-executor = { version = "17.0.1", package = "staging-xcm-executor", default-features = false }
 
 # Cumulus
-assets-common = { version = "0.18.3", default-features = false }
 cumulus-client-cli = { version = "0.18.0", default-features = false }
 cumulus-client-collator = { version = "0.18.0", default-features = false }
 cumulus-client-consensus-aura = { version = "0.18.1", default-features = false }

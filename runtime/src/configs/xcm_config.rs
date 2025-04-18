@@ -24,10 +24,10 @@ use xcm::latest::prelude::*;
 use xcm_builder::{
     AccountKey20Aliases, AllowExplicitUnpaidExecutionFrom, AllowTopLevelPaidExecutionFrom,
     DenyReserveTransferToRelayChain, DenyThenTry, EnsureXcmOrigin, FixedWeightBounds,
-    FrameTransactionalProcessor, FungibleAdapter, FungiblesAdapter, IsConcrete, NativeAsset,
-    NoChecking, ParentIsPreset, RelayChainAsNative, SiblingParachainAsNative,
-    SignedAccountKey20AsNative, SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId,
-    UsingComponents, WithComputedOrigin, WithUniqueTopic,
+    FrameTransactionalProcessor, FungibleAdapter, IsConcrete, NativeAsset, ParentIsPreset,
+    RelayChainAsNative, SiblingParachainAsNative, SignedAccountKey20AsNative,
+    SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId, UsingComponents,
+    WithComputedOrigin, WithUniqueTopic,
 };
 use xcm_executor::XcmExecutor;
 
@@ -35,23 +35,17 @@ use crate::{
     configs::{
         ParachainSystem, Runtime, RuntimeCall, RuntimeEvent, RuntimeOrigin, WeightToFee, XcmpQueue,
     },
-    types::{AccountId, Balance},
-    weights, AllPalletsWithSystem, Assets, Balances, ParachainInfo, PolkadotXcm,
+    types::AccountId,
+    weights, AllPalletsWithSystem, Balances, ParachainInfo, PolkadotXcm,
 };
 
 parameter_types! {
     pub const RelayLocation: Location = Location::parent();
     pub const RelayNetwork: Option<NetworkId> = None;
-    pub AssetsPalletLocation: Location =
-        PalletInstance(<Assets as PalletInfoAccess>::index() as u8).into();
     pub BalancesPalletLocation: Location = PalletInstance(<Balances as PalletInfoAccess>::index() as u8).into();
     pub RelayChainOrigin: RuntimeOrigin = cumulus_pallet_xcm::Origin::Relay.into();
     pub UniversalLocation: InteriorLocation = Parachain(ParachainInfo::parachain_id().into()).into();
 }
-
-/// `AssetId/Balancer` converter for `TrustBackedAssets`
-pub type TrustBackedAssetsConvertedConcreteId =
-    assets_common::TrustBackedAssetsConvertedConcreteId<AssetsPalletLocation, Balance>;
 
 /// Type for specifying how a `Location` can be converted into an
 /// `AccountId`. This is used when determining ownership of accounts for asset
@@ -78,24 +72,8 @@ pub type FungibleTransactor = FungibleAdapter<
     (),
 >;
 
-/// Means for transacting assets besides the native currency on this chain.
-pub type LocalFungiblesTransactor = FungiblesAdapter<
-    // Use this fungibles implementation:
-    Assets,
-    // Use this currency when it is a fungible asset matching the given location or name:
-    TrustBackedAssetsConvertedConcreteId,
-    // Convert an XCM MultiLocation into a local account id:
-    LocationToAccountId,
-    // Our chain's account ID type (we can't get away without mentioning it explicitly):
-    AccountId,
-    // We don't track any teleports of `Assets`.
-    NoChecking,
-    // We don't track any teleports.
-    (),
->;
-
 /// Means for transacting assets on this chain.
-pub type AssetTransactors = (FungibleTransactor, LocalFungiblesTransactor);
+pub type AssetTransactors = FungibleTransactor;
 
 /// This is the type we use to convert an (incoming) XCM origin into a local
 /// `Origin` instance, ready for dispatching a transaction with Xcm's

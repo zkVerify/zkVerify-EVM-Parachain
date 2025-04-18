@@ -242,7 +242,6 @@ construct_runtime!(
         // Monetary
         Balances: pallet_balances = 10,
         TransactionPayment: pallet_transaction_payment = 11, // No weight
-        Assets: pallet_assets = 12,
 
         // Governance
         Sudo: pallet_sudo = 15,

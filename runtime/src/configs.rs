@@ -13,8 +13,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-pub mod asset_config;
-pub use asset_config::AssetType;
 mod aura;
 mod authorship;
 mod session;
