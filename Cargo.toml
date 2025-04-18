@@ -28,6 +28,8 @@ resolver = "2"
 # Local
 cumulus-client-parachain-inherent = { path = "pallets/parachain-inherent", default-features = false }
 evm-tracing-events = { path = "primitives/rpc/evm-tracing-events", default-features = false }
+pallet-network-type = { path = "pallets/network_type", default-features = false }
+test-utils = { path = "utils/test", default-features = false }
 zkv-para-evm-client-evm-tracing = { path = "client/evm-tracing" }
 zkv-para-evm-evm-tracer = { path = "runtime/evm_tracer", default-features = false }
 zkv-para-evm-primitives-ext = { path = "primitives/ext", default-features = false }
@@ -36,8 +38,6 @@ zkv-para-evm-rpc-core-types = { path = "client/rpc-core/types" }
 zkv-para-evm-rpc-debug = { path = "client/rpc/debug" }
 zkv-para-evm-rpc-primitives-debug = { path = "primitives/rpc/debug", default-features = false }
 zkv-para-evm-runtime = { path = "runtime" }
-pallet-network-type = { path = "pallets/network_type", default-features = false }
-test-utils = { path = "utils/test", default-features = false }
 
 # Common
 async-trait = { version = "0.1.42" }
@@ -163,9 +163,9 @@ cumulus-primitives-storage-weight-reclaim = { version = "8.0.0", default-feature
 cumulus-primitives-utility = { version = "0.17.0", default-features = false }
 cumulus-relay-chain-interface = { version = "0.18.0", default-features = false }
 cumulus-test-relay-sproof-builder = { version = "0.16.0", default-features = false }
+pallet-collator-selection = { version = "19.0.0", default-features = false }
 parachain-info = { version = "0.17.0", package = "staging-parachain-info", default-features = false }
 parachains-common = { version = "18.0.0", default-features = false }
-pallet-collator-selection = { version = "19.0.0", default-features = false }
 
 # EVM
 fc-api = { git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false }

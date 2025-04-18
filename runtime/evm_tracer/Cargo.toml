@@ -38,11 +38,11 @@ std = [
 	"evm/std",
 	"evm/with-serde",
 	"fp-evm/std",
-	"zkv-para-evm-primitives-ext/std",
 	"pallet-evm/std",
 	"parity-scale-codec/std",
 	"sp-core/std",
 	"sp-io/std",
 	"sp-runtime/std",
 	"sp-std/std",
+	"zkv-para-evm-primitives-ext/std",
 ]
