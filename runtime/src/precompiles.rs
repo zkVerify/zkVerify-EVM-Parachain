@@ -24,9 +24,9 @@ use pallet_evm_precompile_simple::{ECRecover, ECRecoverPublicKey, Identity, Ripe
 use sp_core::H160;
 
 #[derive(Default)]
-pub struct OpenZeppelinPrecompiles<R>(PhantomData<R>);
+pub struct Precompiles<R>(PhantomData<R>);
 
-impl<R> OpenZeppelinPrecompiles<R>
+impl<R> Precompiles<R>
 where
     R: pallet_evm::Config,
 {
@@ -48,7 +48,7 @@ where
         ]
     }
 }
-impl<R> PrecompileSet for OpenZeppelinPrecompiles<R>
+impl<R> PrecompileSet for Precompiles<R>
 where
     R: pallet_evm::Config + pallet_balances::Config,
     R::Balance: From<u128>,

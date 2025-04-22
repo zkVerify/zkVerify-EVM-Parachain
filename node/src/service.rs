@@ -52,7 +52,7 @@ use sp_keystore::KeystorePtr;
 use sp_runtime::traits::Header;
 use substrate_prometheus_endpoint::Registry;
 use zkv_para_evm_runtime::{
-    configs::TransactionConverter,
+    configs::evm::TransactionConverter,
     opaque::{Block, Hash},
     RuntimeApi,
 };

@@ -26,8 +26,7 @@ use serde_json::{Map, Value};
 use sp_core::{ecdsa, Pair, Public, H160, U256};
 use sp_runtime::traits::{IdentifyAccount, Verify};
 use zkv_para_evm_runtime::{
-    pallet_network_type::NetworkTypeEnum, AccountId, AuraId,
-    OpenZeppelinPrecompiles as Precompiles, Runtime, Signature,
+    pallet_network_type::NetworkTypeEnum, AccountId, AuraId, Precompiles, Runtime, Signature,
 };
 
 /// Specialized `ChainSpec` for the normal parachain runtime.

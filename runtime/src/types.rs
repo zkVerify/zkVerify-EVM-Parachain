@@ -20,7 +20,6 @@ use sp_runtime::{
 };
 
 pub use crate::{
-    configs::{FeeAssetId, ToSiblingBaseDeliveryFee, TransactionByteFee},
     constants::{
         BLOCK_PROCESSING_VELOCITY, RELAY_CHAIN_SLOT_DURATION_MILLIS, UNINCLUDED_SEGMENT_CAPACITY,
     },
@@ -88,9 +87,9 @@ pub type Executive = frame_executive::Executive<
 
 /// Price For Sibling Parachain Delivery
 pub type PriceForSiblingParachainDelivery = polkadot_runtime_common::xcm_sender::ExponentialPrice<
-    FeeAssetId,
-    ToSiblingBaseDeliveryFee,
-    TransactionByteFee,
+    crate::configs::xcm::FeeAssetId,
+    crate::configs::xcm::ToSiblingBaseDeliveryFee,
+    crate::configs::monetary::TransactionByteFee,
     XcmpQueue,
 >;
 

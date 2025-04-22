@@ -24,7 +24,7 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 pub mod configs;
 pub mod constants;
 mod precompiles;
-pub use precompiles::OpenZeppelinPrecompiles;
+pub use precompiles::Precompiles;
 #[cfg(test)]
 mod tests;
 pub mod types;
@@ -65,11 +65,8 @@ use sp_std::prelude::{Vec, *};
 use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
 
-pub use crate::{
-    configs::RuntimeBlockWeights,
-    types::{
-        AccountId, Balance, Block, BlockNumber, Executive, Nonce, Signature, UncheckedExtrinsic,
-    },
+pub use crate::types::{
+    AccountId, Balance, Block, BlockNumber, Executive, Nonce, Signature, UncheckedExtrinsic,
 };
 use crate::{
     constants::{currency::MILLICENTS, POLY_DEGREE, P_FACTOR, Q_FACTOR, SLOT_DURATION},
@@ -246,6 +243,7 @@ construct_runtime!(
         // Governance
         Sudo: pallet_sudo = 15,
 
+        // Consensus
         // Collator Support. The order of these 5 are important and shall not change.
         Authorship: pallet_authorship = 20, // No weight
         CollatorSelection: pallet_collator_selection = 21,
@@ -730,7 +728,7 @@ impl_runtime_apis! {
     #[cfg(feature = "try-runtime")]
     impl frame_try_runtime::TryRuntime<Block> for Runtime {
         fn on_runtime_upgrade(checks: frame_try_runtime::UpgradeCheckSelect) -> (Weight, Weight) {
-            use configs::RuntimeBlockWeights;
+            use configs::system::RuntimeBlockWeights;
 
             let weight = Executive::try_runtime_upgrade(checks).unwrap();
             (weight, RuntimeBlockWeights::get().max_block)
@@ -778,22 +776,23 @@ impl_runtime_apis! {
 
             pub mod xcm {
                 use super::*;
-                use crate::{types::*, configs::*, configs::xcm_config::RelayLocation, constants::currency::CENTS};
+                use crate::{configs::monetary::*, configs::xcm::*, constants::currency::CENTS};
                 use cumulus_primitives_core::ParaId;
                 use frame_support::parameter_types;
+
 
                 parameter_types! {
                     pub const RandomParaId: ParaId = ParaId::new(43211234);
                     pub ExistentialDepositAsset: Option<Asset> = Some((
                         RelayLocation::get(),
-                        ExistentialDeposit::get()
+                        configs::monetary::ExistentialDeposit::get()
                     ).into());
                     /// The base fee for the message delivery fees. Kusama is based for the reference.
                     pub const ToParentBaseDeliveryFee: u128 = CENTS.saturating_mul(3);
                 }
 
                 pub type PriceForParentDelivery = polkadot_runtime_common::xcm_sender::ExponentialPrice<
-                    FeeAssetId,
+                    configs::xcm::FeeAssetId,
                     ToParentBaseDeliveryFee,
                     TransactionByteFee,
                     ParachainSystem,
@@ -803,7 +802,7 @@ impl_runtime_apis! {
 
                 impl pallet_xcm::benchmarking::Config for Runtime {
                     type DeliveryHelper = cumulus_primitives_utility::ToParentDeliveryHelper<
-                        xcm_config::XcmConfig,
+                        XcmConfig,
                         ExistentialDepositAsset,
                         PriceForParentDelivery,
                     >;

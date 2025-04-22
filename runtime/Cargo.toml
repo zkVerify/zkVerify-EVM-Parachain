@@ -237,3 +237,6 @@ on-chain-release-build = [ "sp-api/disable-logging" ]
 
 # Must be enabled for tracing runtimes only
 evm-tracing = [ "zkv-para-evm-evm-tracer", "zkv-para-evm-rpc-primitives-debug" ]
+
+[package.metadata.cargo-machete]
+ignored = ["scale-info"]

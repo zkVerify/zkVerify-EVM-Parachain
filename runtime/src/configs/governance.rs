@@ -13,9 +13,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-use crate::{Aura, Runtime};
+//! In this module, we provide the configurations about parachain governance.
+//! For now, we just use sudo.
 
-impl pallet_authorship::Config for Runtime {
-    type EventHandler = ();
-    type FindAuthor = pallet_session::FindAccountFromAuthorIndex<Self, Aura>;
+use crate::{weights, Runtime, RuntimeCall, RuntimeEvent};
+
+impl pallet_sudo::Config for Runtime {
+    type RuntimeEvent = RuntimeEvent;
+    type RuntimeCall = RuntimeCall;
+    type WeightInfo = weights::pallet_sudo::ZKVEvmWeight<Runtime>;
 }

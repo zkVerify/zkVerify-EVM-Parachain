@@ -17,7 +17,7 @@
 
 // ExtBuilder impl for all runtime integration tests
 pub use crate::{
-    configs::TransactionConverter, AccountId, Balance, BuildStorage, Runtime, System,
+    configs::evm::TransactionConverter, AccountId, Balance, BuildStorage, Runtime, System,
     UncheckedExtrinsic,
 };
 use frame_support::weights::Weight;
