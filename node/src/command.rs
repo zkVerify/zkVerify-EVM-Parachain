@@ -43,13 +43,11 @@ fn load_spec(id: &str) -> std::result::Result<Box<dyn ChainSpec>, String> {
             ChainType::Local,
             "Local Testnet",
             "local_testnet",
-            true,
         )),
         "pretestnet" => Box::new(chain_spec::local_testnet_config(
             ChainType::Live,
             "Pretestnet",
             "pretestnet",
-            false,
         )),
         path => Box::new(GenericChainSpec::from_json_file(std::path::PathBuf::from(
             path,

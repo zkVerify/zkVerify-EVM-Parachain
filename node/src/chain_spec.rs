@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-use std::{collections::BTreeMap, str::FromStr};
+use std::collections::BTreeMap;
 
 use cumulus_primitives_core::ParaId;
 use fp_evm::GenesisAccount;
@@ -23,7 +23,7 @@ use sc_chain_spec::{ChainSpecExtension, ChainSpecGroup};
 use sc_service::ChainType;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
-use sp_core::{ecdsa, Pair, Public, H160, U256};
+use sp_core::{ecdsa, Pair, Public, H160};
 use sp_runtime::traits::{IdentifyAccount, Verify};
 use zkv_para_evm_runtime::{AccountId, AuraId, Precompiles, Runtime, Signature};
 
@@ -32,8 +32,6 @@ pub type ChainSpec = sc_service::GenericChainSpec<Extensions>;
 
 /// The default XCM version to set in genesis config.
 const SAFE_XCM_VERSION: u32 = xcm::prelude::XCM_VERSION;
-const WEI_TO_VFY: u128 = 1_000_000_000_000_000_000;
-
 //the default account IDs used in PolkadotJS for ethereum dev accounts
 //they are added in the PolkadotJs consolle only if chain is dev or local
 //They can also be generated with a wallet created using the below SUBSTRATE_DEFAULT_SEED_PHRASE with Metamask or Ganache
@@ -136,7 +134,6 @@ pub fn development_config() -> ChainSpec {
                 )),
             ),
         ],
-        true,
         vec![
             AccountId::from(ALITH),     // Alith
             AccountId::from(BALTATHAR), // Baltathar
@@ -149,12 +146,7 @@ pub fn development_config() -> ChainSpec {
     .build()
 }
 
-pub fn local_testnet_config(
-    chain_type: ChainType,
-    name: &str,
-    id: &str,
-    add_dev_test_data: bool,
-) -> ChainSpec {
+pub fn local_testnet_config(chain_type: ChainType, name: &str, id: &str) -> ChainSpec {
     #[allow(deprecated)]
     ChainSpec::builder(
         zkv_para_evm_runtime::WASM_BINARY.expect("WASM binary was not built, please build it!"),
@@ -186,7 +178,6 @@ pub fn local_testnet_config(
                 )),
             ),
         ],
-        add_dev_test_data,
         vec![
             AccountId::from(ALITH),     // Alith
             AccountId::from(BALTATHAR), // Baltathar
@@ -211,7 +202,6 @@ fn initial_genesis(
     id: ParaId,
     root: AccountId,
     initial_collators: Vec<(AccountId, AuraId)>,
-    add_dev_test_data: bool,
     #[cfg(not(feature = "runtime-benchmarks"))] endowed_accounts: Vec<AccountId>,
     #[cfg(feature = "runtime-benchmarks")] mut endowed_accounts: Vec<AccountId>,
 ) -> serde_json::Value {
@@ -230,21 +220,7 @@ fn initial_genesis(
             )
         })
         .into_iter();
-    let mut accounts: BTreeMap<H160, GenesisAccount> = precompiles.collect();
-
-    if add_dev_test_data {
-        // e2e useful account
-        accounts.insert(
-            H160::from_str("A0CCf49aDBbdfF7A814C07D1FcBC2b719d674959")
-                .expect("internal H160 is valid"),
-            fp_evm::GenesisAccount {
-                balance: U256::from(2 * WEI_TO_VFY),
-                code: Default::default(),
-                nonce: Default::default(),
-                storage: Default::default(),
-            },
-        );
-    }
+    let accounts: BTreeMap<H160, GenesisAccount> = precompiles.collect();
 
     #[cfg(feature = "runtime-benchmarks")]
     {
@@ -256,7 +232,7 @@ fn initial_genesis(
         endowed_accounts.push(AccountId::from(acc.public()));
     }
 
-    let mut ret_json = serde_json::json!({
+    let ret_json = serde_json::json!({
         "balances": {
             "balances": endowed_accounts.iter().cloned().map(|k| (k, 1u64 << 62)).collect::<Vec<_>>(),
         },
@@ -290,20 +266,6 @@ fn initial_genesis(
         },
         "sudo": { "key": Some(root) },
     });
-
-    if add_dev_test_data {
-        //ZK Verify Wrapper test data
-        if let Some(obj) = ret_json.as_object_mut() {
-            obj.insert(
-					"assets".to_string(),
-					serde_json::json!({
-						"assets": vec![(1, root, false, 1)],
-						"metadata": vec![(1, "ZK Verify Wrapper".as_bytes().to_vec(), "xcZKV".as_bytes().to_vec(), 18)],
-						"accounts": vec![(1, root, 1_000_000)]
-					}),
-				);
-        }
-    }
 
     ret_json
 }
