@@ -70,8 +70,10 @@ parameter_types! {
         })
         .avg_block_initialization(AVERAGE_ON_INITIALIZE_RATIO)
         .build_or_panic();
-        // generic substrate prefix. For more info, see: [Polkadot Accounts In-Depth](https://wiki.polkadot.network/docs/learn-account-advanced#:~:text=The%20address%20format%20used%20in,belonging%20to%20a%20specific%20network)
-    pub const SS58Prefix: u16 = 42;
+
+    // System parachain prefix. We use the same approach that polkadot do: all system parachain use
+    // 0 ss58prefix
+    pub const SS58Prefix: u16 = 0;
 }
 
 pub struct NormalFilter;
