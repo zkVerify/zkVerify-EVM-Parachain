@@ -22,6 +22,9 @@ pub use crate::{
 };
 use frame_support::weights::Weight;
 
+mod constants_test;
+mod multiplier;
+mod storage;
 mod use_correct_weights;
 
 #[derive(Default)]

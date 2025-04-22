@@ -14,10 +14,8 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 // Integration transaction weight-fee tests
-mod common;
-use common::*;
+use crate::{configs::system::RuntimeBlockWeights, tests::run_with_system_weight, Runtime};
 use frame_support::pallet_prelude::*;
-use zkv_para_evm_runtime::{Runtime, RuntimeBlockWeights};
 use pallet_transaction_payment::Multiplier;
 use polkadot_runtime_common::MinimumMultiplier;
 use sp_runtime::{traits::Convert, Perquintill};
