@@ -7,17 +7,9 @@ license = "GPL-3.0-only"
 
 [workspace]
 members = [
-    "client/evm-tracing",
-    "client/rpc-core/debug",
-    "client/rpc-core/types",
-    "client/rpc/debug",
     "node",
     "pallets/parachain-inherent",
-    "primitives/ext",
-    "primitives/rpc/debug",
-    "primitives/rpc/evm-tracing-events",
     "runtime",
-    "runtime/evm_tracer"
 ]
 resolver = "2"
 
@@ -25,14 +17,6 @@ resolver = "2"
 
 # Local
 cumulus-client-parachain-inherent = {path = "pallets/parachain-inherent", default-features = false}
-evm-tracing-events = {path = "primitives/rpc/evm-tracing-events", default-features = false}
-zkv-para-evm-client-evm-tracing = {path = "client/evm-tracing"}
-zkv-para-evm-evm-tracer = {path = "runtime/evm_tracer", default-features = false}
-zkv-para-evm-primitives-ext = {path = "primitives/ext", default-features = false}
-zkv-para-evm-rpc-core-debug = {path = "client/rpc-core/debug"}
-zkv-para-evm-rpc-core-types = {path = "client/rpc-core/types"}
-zkv-para-evm-rpc-debug = {path = "client/rpc/debug"}
-zkv-para-evm-rpc-primitives-debug = {path = "primitives/rpc/debug", default-features = false}
 zkv-para-evm-runtime = {path = "runtime"}
 
 # Common
@@ -91,21 +75,18 @@ sc-telemetry = {version = "25.0.0", default-features = false}
 sc-tracing = {version = "37.0.1", default-features = false}
 sc-transaction-pool = {version = "37.0.0", default-features = false}
 sc-transaction-pool-api = {version = "37.0.0", default-features = false}
-sc-utils = {version = "17.0.0", default-features = false}
 sp-api = {version = "34.0.0", default-features = false}
 sp-block-builder = {version = "34.0.0", default-features = false}
 sp-blockchain = {version = "37.0.1", default-features = false}
 sp-consensus-aura = {version = "0.40.0", default-features = false}
 sp-core = {version = "34.0.0", default-features = false}
 sp-crypto-hashing = {version = "0.1.0", default-features = false}
-sp-externalities = {version = "0.29.0", default-features = false}
 sp-genesis-builder = {version = "0.15.1", default-features = false}
 sp-inherents = {version = "34.0.0", default-features = false}
 sp-io = {version = "38.0.0", default-features = false}
 sp-keystore = {version = "0.40.0", default-features = false}
 sp-offchain = {version = "34.0.0", default-features = false}
 sp-runtime = {version = "39.0.5", default-features = false, features = ["serde"]}
-sp-runtime-interface = {version = "28.0.0", default-features = false}
 sp-session = {version = "36.0.0", default-features = false}
 sp-state-machine = {version = "0.43.0", default-features = false}
 sp-std = {version = "14.0.0", default-features = false}
@@ -172,13 +153,8 @@ pallet-evm-precompile-sha3fips = {git = "https://github.com/HorizenLabs/frontier
 pallet-evm-precompile-simple = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
 
 ethereum = {version = "0.15.0", default-features = false, features = ["with-codec"]}
-ethereum-types = {version = "0.14.1", default-features = false}
-evm = {version = "0.41.1", default-features = false}
-evm-gasometer = {version = "0.41.0", default-features = false}
-evm-runtime = {version = "0.41.0", default-features = false}
 
 # Other
-environmental = {version = "1.1.2", default-features = false}
 tokio = {version = "1.13"}
 
 [patch.crates-io]

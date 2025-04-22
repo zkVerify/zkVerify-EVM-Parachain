@@ -19,13 +19,9 @@ log = {workspace = true}
 parity-scale-codec = {workspace = true}
 serde = {workspace = true, features = ["derive"]}
 serde_json = {workspace = true}
-tokio = {workspace = true, features = ["macros", "sync"]}
 
 # Local
 zkv-para-evm-runtime = {workspace = true}
-zkv-para-evm-rpc-debug = {workspace = true}
-zkv-para-evm-rpc-primitives-debug = {workspace = true}
-zkv-para-evm-primitives-ext = {workspace = true}
 
 # Substrate
 frame-benchmarking = {workspace = true}

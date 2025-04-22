@@ -16,11 +16,6 @@ parity-scale-codec = {workspace = true, features = ["derive"]}
 scale-info = {workspace = true, features = ["derive"]}
 smallvec = {workspace = true}
 
-# Local
-zkv-para-evm-evm-tracer = {workspace = true, optional = true}
-zkv-para-evm-rpc-primitives-debug = {workspace = true, optional = true}
-
-
 # Substrate
 frame-benchmarking = {workspace = true, optional = true}
 frame-executive = {workspace = true}
@@ -163,8 +158,6 @@ std = [
 	"xcm-builder/std",
 	"xcm-executor/std",
 	"xcm/std",
-	"zkv-para-evm-evm-tracer/std",
-	"zkv-para-evm-rpc-primitives-debug/std",
 ]
 
 runtime-benchmarks = [
@@ -231,9 +224,6 @@ try-runtime = [
 # deployment. This will disable stuff that shouldn't be part of the on-chain wasm
 # to make it smaller, like logging for example.
 on-chain-release-build = [ "sp-api/disable-logging" ]
-
-# Must be enabled for tracing runtimes only
-evm-tracing = [ "zkv-para-evm-evm-tracer", "zkv-para-evm-rpc-primitives-debug" ]
 
 [package.metadata.cargo-machete]
 ignored = ["scale-info"]
