@@ -10136,17 +10136,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pallet-network-type"
-version = "0.1.0"
-dependencies = [
- "frame-support",
- "frame-system",
- "parity-scale-codec",
- "scale-info",
- "serde",
-]
-
-[[package]]
 name = "pallet-nft-fractionalization"
 version = "21.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -21328,7 +21317,6 @@ dependencies = [
  "pallet-evm-precompile-simple",
  "pallet-message-queue",
  "pallet-multisig",
- "pallet-network-type",
  "pallet-proxy",
  "pallet-session",
  "pallet-sudo",

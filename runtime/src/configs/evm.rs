@@ -17,8 +17,8 @@
 
 use crate::{
     constants::{MAXIMUM_BLOCK_WEIGHT, NORMAL_DISPATCH_RATIO, WEIGHT_PER_GAS},
-    opaque, weights, AccountId, Aura, Balances, BaseFee, EVMChainId, NetworkType, Permill,
-    Precompiles, Runtime, RuntimeEvent, Timestamp, UncheckedExtrinsic,
+    opaque, weights, AccountId, Aura, Balances, BaseFee, EVMChainId, Permill, Precompiles, Runtime,
+    RuntimeEvent, Timestamp, UncheckedExtrinsic,
 };
 use frame_support::{pallet_prelude::ConstU32, parameter_types, traits::FindAuthor};
 use pallet_ethereum::PostLogContent;
@@ -105,11 +105,6 @@ impl pallet_base_fee::Config for Runtime {
     type Threshold = BaseFeeThreshold;
     type DefaultBaseFeePerGas = DefaultBaseFeePerGas;
     type DefaultElasticity = DefaultElasticity;
-}
-
-/// Configure the pallet network type in pallets/network_type.
-impl pallet_network_type::Config for Runtime {
-    type NT = NetworkType;
 }
 
 pub struct FindAuthorSession<Inner>(PhantomData<Inner>);

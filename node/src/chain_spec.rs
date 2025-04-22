@@ -25,9 +25,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 use sp_core::{ecdsa, Pair, Public, H160, U256};
 use sp_runtime::traits::{IdentifyAccount, Verify};
-use zkv_para_evm_runtime::{
-    pallet_network_type::NetworkTypeEnum, AccountId, AuraId, Precompiles, Runtime, Signature,
-};
+use zkv_para_evm_runtime::{AccountId, AuraId, Precompiles, Runtime, Signature};
 
 /// Specialized `ChainSpec` for the normal parachain runtime.
 pub type ChainSpec = sc_service::GenericChainSpec<Extensions>;
@@ -291,7 +289,6 @@ fn initial_genesis(
             "safeXcmVersion": Some(SAFE_XCM_VERSION),
         },
         "sudo": { "key": Some(root) },
-        "networkType": {"value": NetworkTypeEnum::TestNet},
     });
 
     if add_dev_test_data {

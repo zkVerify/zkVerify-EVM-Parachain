@@ -17,7 +17,6 @@ scale-info = {workspace = true, features = ["derive"]}
 smallvec = {workspace = true}
 
 # Local
-pallet-network-type = {workspace = true, default-features = false}
 zkv-para-evm-evm-tracer = {workspace = true, optional = true}
 zkv-para-evm-rpc-primitives-debug = {workspace = true, optional = true}
 
@@ -134,7 +133,6 @@ std = [
 	"pallet-evm/std",
 	"pallet-message-queue/std",
 	"pallet-multisig/std",
-	"pallet-network-type/std",
 	"pallet-proxy/std",
 	"pallet-session/std",
 	"pallet-sudo/std",
@@ -217,7 +215,6 @@ try-runtime = [
 	"pallet-evm/try-runtime",
 	"pallet-message-queue/try-runtime",
 	"pallet-multisig/try-runtime",
-	"pallet-network-type/try-runtime",
 	"pallet-proxy/try-runtime",
 	"pallet-session/try-runtime",
 	"pallet-sudo/try-runtime",

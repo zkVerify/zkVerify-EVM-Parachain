@@ -12,7 +12,6 @@ members = [
     "client/rpc-core/types",
     "client/rpc/debug",
     "node",
-    "pallets/network_type",
     "pallets/parachain-inherent",
     "primitives/ext",
     "primitives/rpc/debug",
@@ -27,7 +26,6 @@ resolver = "2"
 # Local
 cumulus-client-parachain-inherent = {path = "pallets/parachain-inherent", default-features = false}
 evm-tracing-events = {path = "primitives/rpc/evm-tracing-events", default-features = false}
-pallet-network-type = {path = "pallets/network_type", default-features = false}
 zkv-para-evm-client-evm-tracing = {path = "client/evm-tracing"}
 zkv-para-evm-evm-tracer = {path = "runtime/evm_tracer", default-features = false}
 zkv-para-evm-primitives-ext = {path = "primitives/ext", default-features = false}

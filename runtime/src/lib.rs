@@ -41,10 +41,6 @@ use pallet_ethereum::{
     TransactionStatus,
 };
 use pallet_evm::{Account as EVMAccount, FeeCalculator, Runner};
-/// Import the template pallet.
-//pub use pallet_template;
-/// Import the network type pallet.
-pub use pallet_network_type;
 use smallvec::smallvec;
 use sp_api::impl_runtime_apis;
 pub use sp_consensus_aura::sr25519::AuthorityId as AuraId;
@@ -262,9 +258,6 @@ construct_runtime!(
         EVM: pallet_evm = 41,
         BaseFee: pallet_base_fee = 42, // No weight
         EVMChainId: pallet_evm_chain_id = 43, // No weight
-
-        // Network Type
-        NetworkType: pallet_network_type = 70, // No weight
     }
 );
 
