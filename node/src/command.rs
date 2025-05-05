@@ -43,13 +43,11 @@ fn load_spec(id: &str) -> std::result::Result<Box<dyn ChainSpec>, String> {
             ChainType::Local,
             "Local Testnet",
             "local_testnet",
-            true,
         )),
         "pretestnet" => Box::new(chain_spec::local_testnet_config(
             ChainType::Live,
             "Pretestnet",
             "pretestnet",
-            false,
         )),
         path => Box::new(GenericChainSpec::from_json_file(std::path::PathBuf::from(
             path,
@@ -147,7 +145,7 @@ pub fn run() -> Result<()> {
     match &cli.subcommand {
         Some(Subcommand::Key(cmd)) => cmd.run(&cli),
         Some(Subcommand::ZkvEvmParaKeysFromSeed(cmd)) => {
-            let ethereum_key = chain_spec::get_ethereum_keys_from_seed(&*(cmd.uri));
+            let ethereum_key = chain_spec::get_ethereum_keys_from_seed(&cmd.uri);
             println!(
                 "Ethereum public key (ecdsa) - hex format:            0x{}",
                 HexDisplay::from(&ethereum_key.as_ref())
@@ -158,9 +156,9 @@ pub fn run() -> Result<()> {
             );
             println!(
                 "AccountID / Ethereum address:                        {}",
-                chain_spec::get_account_id_from_seed::<ecdsa::Public>(&*(cmd.uri))
+                chain_spec::get_account_id_from_seed::<ecdsa::Public>(&cmd.uri)
             );
-            let aura_key = chain_spec::get_collator_keys_from_seed(&*(cmd.uri));
+            let aura_key = chain_spec::get_collator_keys_from_seed(&cmd.uri);
             println!(
                 "Collator Session public key (sr25519) - hex format:  0x{}",
                 HexDisplay::from(&aura_key.as_ref())

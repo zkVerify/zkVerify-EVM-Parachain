@@ -52,7 +52,7 @@ use sp_keystore::KeystorePtr;
 use sp_runtime::traits::Header;
 use substrate_prometheus_endpoint::Registry;
 use zkv_para_evm_runtime::{
-    configs::TransactionConverter,
+    configs::evm::TransactionConverter,
     opaque::{Block, Hash},
     RuntimeApi,
 };
@@ -62,13 +62,12 @@ use crate::eth::{
     FrontierBackend, FrontierPartialComponents,
 };
 // Local Runtime Types
-use crate::{cli::Sealing, eth::EthApi};
+use crate::cli::Sealing;
 
 #[cfg(not(feature = "runtime-benchmarks"))]
 pub type HostFunctions = (
     sp_io::SubstrateHostFunctions,
     cumulus_client_service::storage_proof_size::HostFunctions,
-    zkv_para_evm_primitives_ext::zkv_para_evm_ext::HostFunctions,
 );
 
 #[cfg(feature = "runtime-benchmarks")]
@@ -76,7 +75,6 @@ pub type HostFunctions = (
     sp_io::SubstrateHostFunctions,
     cumulus_client_service::storage_proof_size::HostFunctions,
     frame_benchmarking::benchmarking::HostFunctions,
-    zkv_para_evm_primitives_ext::zkv_para_evm_ext::HostFunctions,
 );
 
 type ParachainExecutor = WasmExecutor<HostFunctions>;
@@ -319,25 +317,6 @@ where
     > = Default::default();
     let pubsub_notification_sinks = Arc::new(pubsub_notification_sinks);
 
-    //Adding debug rpc.
-    let tracing_requesters = if eth_config.ethapi.contains(&EthApi::Debug) {
-        crate::rpc::tracing::spawn_tracing_tasks(
-            eth_config,
-            crate::rpc::tracing::SpawnTasksParams {
-                task_manager: &task_manager,
-                client: client.clone(),
-                substrate_backend: backend.clone(),
-                frontier_backend: frontier_backend.clone(),
-                filter_pool: filter_pool.clone(),
-                overrides: overrides.clone(),
-                fee_history_limit: eth_config.fee_history_limit,
-                fee_history_cache: fee_history_cache.clone(),
-            },
-        )
-    } else {
-        crate::rpc::tracing::RpcRequesters { debug: None }
-    };
-
     let rpc_builder = {
         let client = client.clone();
         let transaction_pool = transaction_pool.clone();
@@ -406,9 +385,6 @@ where
                 deps,
                 subscription_task_executor,
                 pubsub_notification_sinks.clone(),
-                Some(crate::rpc::tracing::TracingConfig {
-                    tracing_requesters: tracing_requesters.clone(),
-                }),
             )
             .map_err(Into::into)
         })
@@ -783,25 +759,6 @@ pub fn start_manual_seal_node<N: NetworkBackend<Block, <Block as BlockT>::Hash>>
         .spawn_essential_handle() /**/
         .spawn_blocking("manual-seal", None, authorship_future);
 
-    //Adding debug rpc.
-    let tracing_requesters = if eth_config.ethapi.contains(&EthApi::Debug) {
-        crate::rpc::tracing::spawn_tracing_tasks(
-            eth_config,
-            crate::rpc::tracing::SpawnTasksParams {
-                task_manager: &task_manager,
-                client: client.clone(),
-                substrate_backend: backend.clone(),
-                frontier_backend: frontier_backend.clone(),
-                filter_pool: filter_pool.clone(),
-                overrides: overrides.clone(),
-                fee_history_limit: eth_config.fee_history_limit,
-                fee_history_cache: fee_history_cache.clone(),
-            },
-        )
-    } else {
-        crate::rpc::tracing::RpcRequesters { debug: None }
-    };
-
     let rpc_extensions_builder = {
         let client = client.clone();
         let transaction_pool = transaction_pool.clone();
@@ -870,9 +827,6 @@ pub fn start_manual_seal_node<N: NetworkBackend<Block, <Block as BlockT>::Hash>>
                 deps,
                 subscription_task_executor,
                 pubsub_notification_sinks.clone(),
-                Some(crate::rpc::tracing::TracingConfig {
-                    tracing_requesters: tracing_requesters.clone(),
-                }),
             )
             .map_err(Into::into)
         })

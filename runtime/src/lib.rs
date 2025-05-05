@@ -24,7 +24,7 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 pub mod configs;
 pub mod constants;
 mod precompiles;
-pub use precompiles::OpenZeppelinPrecompiles;
+pub use precompiles::Precompiles;
 #[cfg(test)]
 mod tests;
 pub mod types;
@@ -41,10 +41,6 @@ use pallet_ethereum::{
     TransactionStatus,
 };
 use pallet_evm::{Account as EVMAccount, FeeCalculator, Runner};
-/// Import the template pallet.
-//pub use pallet_template;
-/// Import the network type pallet.
-pub use pallet_network_type;
 use smallvec::smallvec;
 use sp_api::impl_runtime_apis;
 pub use sp_consensus_aura::sr25519::AuthorityId as AuraId;
@@ -65,17 +61,13 @@ use sp_std::prelude::{Vec, *};
 use sp_version::NativeVersion;
 use sp_version::RuntimeVersion;
 
+pub use crate::types::{
+    AccountId, Balance, Block, BlockNumber, Executive, Nonce, Signature, UncheckedExtrinsic,
+};
 use crate::{
-    configs::pallet_custom_origins,
     constants::{currency::MILLICENTS, POLY_DEGREE, P_FACTOR, Q_FACTOR, SLOT_DURATION},
     types::ConsensusHook,
     weights::ExtrinsicBaseWeight,
-};
-pub use crate::{
-    configs::RuntimeBlockWeights,
-    types::{
-        AccountId, Balance, Block, BlockNumber, Executive, Nonce, Signature, UncheckedExtrinsic,
-    },
 };
 
 impl fp_self_contained::SelfContainedCall for RuntimeCall {
@@ -235,52 +227,37 @@ construct_runtime!(
         System: frame_system = 0,
         ParachainSystem: cumulus_pallet_parachain_system = 1,
         Timestamp: pallet_timestamp = 2,
-        ParachainInfo: parachain_info = 3,
+        ParachainInfo: parachain_info = 3, // No weight
         Proxy: pallet_proxy = 4,
         Utility: pallet_utility = 5,
         Multisig: pallet_multisig = 6,
-        Scheduler: pallet_scheduler::{Pallet, Call, Storage, Event<T>} = 7,
-        Preimage: pallet_preimage::{Pallet, Call, Storage, Event<T>, HoldReason} = 8,
 
         // Monetary
         Balances: pallet_balances = 10,
-        TransactionPayment: pallet_transaction_payment = 11,
-        Assets: pallet_assets = 12,
-        Treasury: pallet_treasury::{Pallet, Call, Storage, Config<T>, Event<T>} = 13,
+        TransactionPayment: pallet_transaction_payment = 11, // No weight
 
         // Governance
         Sudo: pallet_sudo = 15,
-        ConvictionVoting: pallet_conviction_voting::{Pallet, Call, Storage, Event<T>} = 16,
-        Referenda: pallet_referenda::{Pallet, Call, Storage, Event<T>} = 17,
-        Origins: pallet_custom_origins::{Origin} = 18,
-        Whitelist: pallet_whitelist::{Pallet, Call, Storage, Event<T>} = 19,
 
+        // Consensus
         // Collator Support. The order of these 5 are important and shall not change.
-        Authorship: pallet_authorship = 20,
+        Authorship: pallet_authorship = 20, // No weight
         CollatorSelection: pallet_collator_selection = 21,
         Session: pallet_session = 22,
-        Aura: pallet_aura = 23,
-        AuraExt: cumulus_pallet_aura_ext = 24,
+        Aura: pallet_aura = 23, // No weight
+        AuraExt: cumulus_pallet_aura_ext = 24, // No weight
 
         // XCM Helpers
         XcmpQueue: cumulus_pallet_xcmp_queue = 30,
         PolkadotXcm: pallet_xcm = 31,
-        CumulusXcm: cumulus_pallet_xcm = 32,
+        CumulusXcm: cumulus_pallet_xcm = 32, // No weight
         MessageQueue: pallet_message_queue = 33,
 
         // EVM
-        Ethereum: pallet_ethereum = 40,
+        Ethereum: pallet_ethereum = 40, // No weight
         EVM: pallet_evm = 41,
-        BaseFee: pallet_base_fee = 42,
-        EVMChainId: pallet_evm_chain_id = 43,
-
-        // Test Utils
-        RootTesting: pallet_root_testing = 47,
-
-        // Network Type
-        NetworkType: pallet_network_type = 70,
-
-        //PalletTemplate: pallet_template = 100,
+        BaseFee: pallet_base_fee = 42, // No weight
+        EVMChainId: pallet_evm_chain_id = 43, // No weight
     }
 );
 
@@ -423,89 +400,6 @@ impl_runtime_apis! {
             TransactionPayment::length_to_fee(length)
         }
     }
-
-
-    impl zkv_para_evm_rpc_primitives_debug::DebugRuntimeApi<Block> for Runtime {
-        fn trace_transaction(
-            _extrinsics: Vec<<Block as BlockT>::Extrinsic>,
-            _traced_transaction: &EthereumTransaction,
-        ) -> Result<
-            (),
-            sp_runtime::DispatchError,
-        > {
-            #[cfg(feature = "evm-tracing")]
-            {
-                use zkv_para_evm_evm_tracer::tracer::EvmTracer;
-
-                // Apply the a subset of extrinsics: all the substrate-specific or ethereum
-                // transactions that preceded the requested transaction.
-                for ext in _extrinsics.into_iter() {
-                    let _ = match &ext.0.function {
-                        RuntimeCall::Ethereum(transact { transaction }) => {
-                            if transaction == _traced_transaction {
-                                EvmTracer::new().trace(|| Executive::apply_extrinsic(ext));
-                                return Ok(());
-                            } else {
-                                Executive::apply_extrinsic(ext)
-                            }
-                        }
-                        _ => Executive::apply_extrinsic(ext),
-                    };
-                    return Ok(());
-                }
-                Err(sp_runtime::DispatchError::Other(
-                    "Failed to find Ethereum transaction among the extrinsics.",
-                ))
-            }
-            #[cfg(not(feature = "evm-tracing"))]
-            Err(sp_runtime::DispatchError::Other(
-                "Missing `evm-tracing` compile time feature flag.",
-            ))
-
-        }
-
-        fn trace_block(
-            _extrinsics: Vec<<Block as BlockT>::Extrinsic>,
-            _known_transactions: Vec<H256>,
-        ) -> Result<
-            (),
-            sp_runtime::DispatchError,
-        > {
-            #[cfg(feature = "evm-tracing")]
-            {
-                use zkv_para_evm_evm_tracer::tracer::EvmTracer;
-
-                let mut config = <Runtime as pallet_evm::Config>::config().clone();
-                config.estimate = true;
-
-                // Apply all extrinsics. Ethereum extrinsics are traced.
-                for ext in _extrinsics.into_iter() {
-                    match &ext.0.function {
-                        RuntimeCall::Ethereum(transact { transaction }) => {
-                            if _known_transactions.contains(&transaction.hash()) {
-                                // Each known extrinsic is a new call stack.
-                                EvmTracer::emit_new();
-                                EvmTracer::new().trace(|| Executive::apply_extrinsic(ext));
-                            } else {
-                                let _ = Executive::apply_extrinsic(ext);
-                            }
-                        }
-                        _ => {
-                            let _ = Executive::apply_extrinsic(ext);
-                        }
-                    };
-                }
-
-                Ok(())
-            }
-            #[cfg(not(feature = "evm-tracing"))]
-            Err(sp_runtime::DispatchError::Other(
-                "Missing `evm-tracing` compile time feature flag.",
-            ))
-        }
-    }
-
-
 
     impl fp_rpc::EthereumRuntimeRPCApi<Block> for Runtime {
         /// Returns runtime defined pallet_evm::ChainId.
@@ -744,7 +638,7 @@ impl_runtime_apis! {
     #[cfg(feature = "try-runtime")]
     impl frame_try_runtime::TryRuntime<Block> for Runtime {
         fn on_runtime_upgrade(checks: frame_try_runtime::UpgradeCheckSelect) -> (Weight, Weight) {
-            use configs::RuntimeBlockWeights;
+            use configs::system::RuntimeBlockWeights;
 
             let weight = Executive::try_runtime_upgrade(checks).unwrap();
             (weight, RuntimeBlockWeights::get().max_block)
@@ -792,52 +686,52 @@ impl_runtime_apis! {
 
             pub mod xcm {
                 use super::*;
-                use crate::{types::*, configs::*, configs::xcm_config::RelayLocation, constants::currency::CENTS};
+                use crate::{configs::monetary::*, configs::xcm::*, constants::currency::CENTS};
                 use cumulus_primitives_core::ParaId;
                 use frame_support::parameter_types;
+
 
                 parameter_types! {
                     pub const RandomParaId: ParaId = ParaId::new(43211234);
                     pub ExistentialDepositAsset: Option<Asset> = Some((
                         RelayLocation::get(),
-                        ExistentialDeposit::get()
+                        configs::monetary::ExistentialDeposit::get()
                     ).into());
                     /// The base fee for the message delivery fees. Kusama is based for the reference.
                     pub const ToParentBaseDeliveryFee: u128 = CENTS.saturating_mul(3);
                 }
 
                 pub type PriceForParentDelivery = polkadot_runtime_common::xcm_sender::ExponentialPrice<
-                    FeeAssetId,
+                    configs::xcm::FeeAssetId,
                     ToParentBaseDeliveryFee,
                     TransactionByteFee,
                     ParachainSystem,
                 >;
 
-                use xcm::latest::prelude::{Asset, AssetId, Assets as AssetList, Fungible, Location, Parachain, Parent, ParentThen};
+                use xcm::latest::prelude::{Asset, AssetId, Assets as AssetList, Fungible, Location};
 
                 impl pallet_xcm::benchmarking::Config for Runtime {
                     type DeliveryHelper = cumulus_primitives_utility::ToParentDeliveryHelper<
-                        xcm_config::XcmConfig,
+                        XcmConfig,
                         ExistentialDepositAsset,
                         PriceForParentDelivery,
                     >;
 
                     fn reachable_dest() -> Option<Location> {
-                        Some(Parent.into())
+                        Some(RelayLocation::get())
                     }
 
                     fn teleportable_asset_and_dest() -> Option<(Asset, Location)> {
-                        None
+                        // Relay/native token can be teleported between EVM and Relay.
+                        Some((
+                            Asset { fun: Fungible(ExistentialDeposit::get()), id: AssetId(RelayLocation::get()) },
+                            RelayLocation::get(),
+                        ))
                     }
 
                     fn reserve_transferable_asset_and_dest() -> Option<(Asset, Location)> {
-                        Some((
-                            Asset {
-                                fun: Fungible(ExistentialDeposit::get()),
-                                id: AssetId(Parent.into())
-                            }.into(),
-                            ParentThen(Parachain(RandomParaId::get().into()).into()).into(),
-                        ))
+                        // Reserve transfers are disabled on EVM.
+                        None
                     }
 
                     fn set_up_complex_asset_transfer(
@@ -847,7 +741,7 @@ impl_runtime_apis! {
 
                     fn get_asset() -> Asset {
                         Asset {
-                            id: AssetId(Location::here()),
+                            id: AssetId(RelayLocation::get()),
                             fun: Fungible(ExistentialDeposit::get()),
                         }
                     }

@@ -21,7 +21,6 @@
 
 #![warn(missing_docs)]
 mod eth;
-pub mod tracing;
 use std::sync::Arc;
 
 use polkadot_primitives::Hash;
@@ -39,7 +38,6 @@ use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_inherents::CreateInherentDataProviders;
 use sp_runtime::traits::Block as BlockT;
-use zkv_para_evm_rpc_debug::Debug;
 use zkv_para_evm_runtime::{opaque::Block, AccountId, Balance, Nonce};
 
 pub use self::eth::EthDeps;
@@ -47,7 +45,6 @@ use crate::rpc::eth::create_eth;
 
 /// A type representing all RPC extensions.
 pub type RpcExtension = jsonrpsee::RpcModule<()>;
-use zkv_para_evm_rpc_debug::DebugServer;
 
 /// Full client dependencies
 pub struct FullDeps<C, P, A: ChainApi, CT, CIDP> {
@@ -82,7 +79,6 @@ pub fn create_full<C, P, A, CT, CIDP, BE>(
             fc_mapping_sync::EthereumBlockNotification<Block>,
         >,
     >,
-    maybe_tracing_config: Option<tracing::TracingConfig>,
 ) -> Result<RpcExtension, Box<dyn std::error::Error + Send + Sync>>
 where
     C: ProvideRuntimeApi<Block>
@@ -121,12 +117,6 @@ where
 
     module.merge(System::new(client.clone(), pool).into_rpc())?;
     module.merge(TransactionPayment::new(client).into_rpc())?;
-
-    if let Some(tracing_config) = maybe_tracing_config {
-        if let Some(debug_requester) = tracing_config.tracing_requesters.debug {
-            module.merge(Debug::new(debug_requester).into_rpc())?;
-        }
-    }
 
     let mut module = create_eth::<_, _, _, _, _, _, _, DefaultEthConfig<C, BE>>(
         module,

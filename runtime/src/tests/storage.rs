@@ -14,12 +14,8 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 // Storage indices integration checks
+use crate::*;
 use frame_support::traits::PalletInfo;
-use zkv_para_evm_runtime::{
-    Aura, AuraExt, Authorship, Balances, CumulusXcm, MessageQueue, Multisig, ParachainInfo,
-    ParachainSystem, PolkadotXcm, Proxy, Runtime, Session, Sudo, System, Timestamp,
-    TransactionPayment, XcmpQueue,
-};
 
 fn assert_pallet_prefix<P: 'static>(name: &str) {
     assert_eq!(

@@ -46,19 +46,6 @@ build_zkVerify() {
   popd
 }
 
-# fetch_zkVerify() {
-#  TDB
-#  echo "fetching from zkVerify repository..."
-#  echo $BIN_DIR
-#  mkdir -p "$BIN_DIR"
-#  pushd "$BIN_DIR"
-#    wget https://github.com/paritytech/polkadot-sdk/releases/download/polkadot-$POLKADOT_V/polkadot
-#    wget https://github.com/paritytech/polkadot-sdk/releases/download/polkadot-$POLKADOT_V/polkadot-execute-worker
-#    wget https://github.com/paritytech/polkadot-sdk/releases/download/polkadot-$POLKADOT_V/polkadot-prepare-worker
-#    chmod +x *
-#  popd
-# }
-
 zombienet_init() {
   if [ ! -f $ZOMBIENET_BIN ]; then
     echo "fetching zombienet executable..."

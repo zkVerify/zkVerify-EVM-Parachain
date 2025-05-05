@@ -57,7 +57,6 @@ pub enum BackendType {
 #[derive(Debug, PartialEq, Clone)]
 pub enum EthApi {
     Txpool,
-    Debug,
 }
 
 impl FromStr for EthApi {
@@ -66,7 +65,6 @@ impl FromStr for EthApi {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(match s {
             "txpool" => Self::Txpool,
-            "debug" => Self::Debug,
             _ => {
                 return Err(format!(
                     "`{}` is not recognized as a supported Ethereum Api",
@@ -175,7 +173,6 @@ impl<Api> EthCompatRuntimeApiCollection for Api where
 {
 }
 */
-
 pub async fn spawn_frontier_tasks(
     task_manager: &TaskManager,
     client: Arc<ParachainClient>,

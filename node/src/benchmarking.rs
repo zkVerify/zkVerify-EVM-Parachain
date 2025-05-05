@@ -89,7 +89,7 @@ pub fn create_benchmark_extrinsic(
     let best_hash = client.chain_info().best_hash;
     let best_block = client.chain_info().best_number;
 
-    let period = runtime::configs::BlockHashCount::get()
+    let period = polkadot_runtime_common::BlockHashCount::get()
         .checked_next_power_of_two()
         .map(|c| c / 2)
         .unwrap_or(2) as u64;
