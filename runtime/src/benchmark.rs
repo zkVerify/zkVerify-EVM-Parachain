@@ -13,6 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+use cumulus_primitives_core::{ChannelStatus, GetChannelInfo};
+use frame_support::traits::{
+    tokens::{Pay, PaymentStatus},
+    Get,
+};
+use sp_std::marker::PhantomData;
+
+use crate::ParachainSystem;
+
 frame_benchmarking::define_benchmarks!(
     [frame_system, SystemBench::<Runtime>]
     [cumulus_pallet_parachain_system, ParachainSystem]
@@ -35,16 +44,9 @@ frame_benchmarking::define_benchmarks!(
     [pallet_evm, EVM]
 
     [pallet_deployment_permissions, DeploymentPermissions]
+    [pallet_xcm_benchmarks::generic, xcm::XcmPalletBenchGeneric::<Runtime>]
+    [pallet_xcm_benchmarks::fungible, xcm::XcmPalletBenchFungible::<Runtime>]
 );
-
-use cumulus_primitives_core::{ChannelStatus, GetChannelInfo};
-use frame_support::traits::{
-    tokens::{Pay, PaymentStatus},
-    Get,
-};
-use sp_std::marker::PhantomData;
-
-use crate::ParachainSystem;
 
 /// Trait for setting up any prerequisites for successful execution of benchmarks.
 pub trait EnsureSuccessful {

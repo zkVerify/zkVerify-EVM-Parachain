@@ -18,7 +18,7 @@
 use crate::{
     configs::system::RuntimeBlockWeights, constants::currency::CENTS, types::AccountId, weights,
     AllPalletsWithSystem, Balances, MessageQueue, ParachainInfo, ParachainSystem, Perbill, Runtime,
-    RuntimeCall, RuntimeEvent, RuntimeOrigin, WeightToFee, XcmpQueue, ZKVXcm,
+    RuntimeCall, RuntimeEvent, RuntimeOrigin, WeightToFee, XcmpQueue, ZKVXcm, H160,
 };
 use cumulus_primitives_core::{AggregateMessageOrigin, ParaId};
 use frame_support::{
@@ -46,7 +46,9 @@ use xcm_builder::{
     SignedAccountKey20AsNative, SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId,
     UsingComponents, WithComputedOrigin, WithUniqueTopic, XcmFeeManagerFromComponents,
 };
-use xcm_executor::XcmExecutor;
+use xcm_executor::{traits::ConvertLocation, XcmExecutor};
+
+use crate::weights::xcm::ZKVEvmWeight as XcmZKVEvmWeight;
 
 const ZKV_GENESIS_HASH: [u8; 32] =
     hex_literal::hex!("ff7fe5a610f15fe7a0c52f94f86313fb7db7d3786e7f8acf2b66c11d5be7c242");
@@ -68,7 +70,31 @@ pub type LocationToAccountId = (
     ParentIsPreset<AccountId>,
     // If we receive a Location of type AccountKey20, just generate a native account
     AccountKey20Aliases<RelayNetwork, AccountId>,
+    // Generate remote accounts according to polkadot standards
+    HashedDescription<AccountId, DescribeFamily<DescribeAllTerminal>>,
 );
+
+pub struct LocationToH160;
+impl ConvertLocation<AccountId> for LocationToH160 {
+    fn convert_location(location: &Location) -> Option<AccountId> {
+        use xcm::opaque::lts::Junctions::X1;
+        //log::error!("Converting {:?}", location);
+        match location.unpack() {
+            (0, [AccountId32 { network, id }]) => {
+                LocationToAccountId::convert_location(&Location {
+                    parents: 0,
+                    interior: X1(sp_std::sync::Arc::new([AccountKey20 {
+                        network: *network,
+                        key: id.as_slice()[0..20].try_into().expect("Cannot convert AccountId32 to AccountKey20"),
+                    }]))
+                    .into(),
+                })
+            }
+            _ => LocationToAccountId::convert_location(&location),
+        }
+        .map(Into::into)
+    }
+}
 
 /// Means for transacting the native currency on this chain.
 pub type FungibleTransactor = FungibleAdapter<
@@ -77,7 +103,7 @@ pub type FungibleTransactor = FungibleAdapter<
     // Use this currency when it is a fungible asset matching the given location or name:
     IsConcrete<RelayLocation>,
     // Convert an XCM `Location` into a local account ID:
-    LocationToAccountId,
+    LocationToH160,
     // Our chain's account ID type (we can't get away without mentioning it explicitly):
     AccountId,
     // We don't track any teleports of `Balances`.
@@ -110,8 +136,6 @@ pub type XcmOriginToTransactDispatchOrigin = (
 );
 
 parameter_types! {
-    // One XCM operation is 1_000_000_000 weight - almost certainly a conservative estimate.
-    pub const UnitWeightCost: Weight = Weight::from_parts(1_000_000_000, 64 * 1024);
     pub const MaxInstructions: u32 = 100;
     pub const MaxAssetsIntoHolding: u32 = 64;
     pub StakingPot: AccountId = crate::CollatorSelection::account_id();
@@ -156,7 +180,7 @@ impl xcm_executor::Config for XcmConfig {
     type Aliasers = Nothing;
     type UniversalLocation = UniversalLocation;
     type Barrier = Barrier;
-    type Weigher = FixedWeightBounds<UnitWeightCost, RuntimeCall, MaxInstructions>;
+    type Weigher = WeightInfoBounds<XcmZKVEvmWeight<RuntimeCall>, RuntimeCall, MaxInstructions>;
     // Can only buy weight with the native token
     type Trader = UsingComponents<
         WeightToFee,
@@ -241,7 +265,7 @@ impl pallet_xcm::Config for Runtime {
     type XcmExecutor = XcmExecutor<XcmConfig>;
     type XcmTeleportFilter = Everything;
     type XcmReserveTransferFilter = Nothing;
-    type Weigher = FixedWeightBounds<UnitWeightCost, RuntimeCall, MaxInstructions>;
+    type Weigher = WeightInfoBounds<XcmZKVEvmWeight<RuntimeCall>, RuntimeCall, MaxInstructions>;
     type UniversalLocation = UniversalLocation;
     type RuntimeOrigin = RuntimeOrigin;
     type RuntimeCall = RuntimeCall;

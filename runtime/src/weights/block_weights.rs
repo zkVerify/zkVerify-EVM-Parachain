@@ -14,21 +14,21 @@
 // limitations under the License.
 
 //! THIS FILE WAS AUTO-GENERATED USING THE SUBSTRATE BENCHMARK CLI VERSION 43.0.0
-//! DATE: 2025-04-14 (Y/M/D)
-//! HOSTNAME: `miklap`, CPU: `11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz`
+//! DATE: 2025-05-05 (Y/M/D)
+//! HOSTNAME: `drhorizen`, CPU: `11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz`
 //!
 //! SHORT-NAME: `block`, LONG-NAME: `BlockExecution`, RUNTIME: `Development`
 //! WARMUPS: `10`, REPEAT: `100`
-//! WEIGHT-PATH: `/home/mdamico/devel/zkVerify-EVM-Parachain/runtime/src/weights`
+//! WEIGHT-PATH: `/home/daniele/horizen/git/zkVerify-EVM-Parachain/runtime/src/weights`
 //! WEIGHT-METRIC: `Average`, WEIGHT-MUL: `1.0`, WEIGHT-ADD: `0`
 
 // Executed Command:
-//   /home/mdamico/devel/zkVerify-EVM-Parachain/target/release/zkv-evm-para-node
+//   /home/daniele/horizen/git/zkVerify-EVM-Parachain/target/release/zkv-para-evm-node
 //   benchmark
 //   overhead
 //   --chain=dev
-//   --weight-path=/home/mdamico/devel/zkVerify-EVM-Parachain/runtime/src/weights
-//   --header=/home/mdamico/devel/zkVerify-EVM-Parachain/HEADER-APACHE2
+//   --weight-path=/home/daniele/horizen/git/zkVerify-EVM-Parachain/runtime/src/weights
+//   --header=/home/daniele/horizen/git/zkVerify-EVM-Parachain/HEADER-APACHE2
 //   --warmup=10
 //   --repeat=100
 
@@ -40,17 +40,17 @@ parameter_types! {
     /// Calculated by multiplying the *Average* with `1.0` and adding `0`.
     ///
     /// Stats nanoseconds:
-    ///   Min, Max: 675_778, 795_266
-    ///   Average:  693_476
-    ///   Median:   685_356
-    ///   Std-Dev:  19477.86
+    ///   Min, Max: 668_196, 967_978
+    ///   Average:  735_632
+    ///   Median:   728_323
+    ///   Std-Dev:  54307.24
     ///
     /// Percentiles nanoseconds:
-    ///   99th: 778_949
-    ///   95th: 721_034
-    ///   75th: 700_715
+    ///   99th: 943_501
+    ///   95th: 846_344
+    ///   75th: 752_734
     pub const BlockExecutionWeight: Weight =
-        Weight::from_parts(WEIGHT_REF_TIME_PER_NANOS.saturating_mul(693_476), 0);
+        Weight::from_parts(WEIGHT_REF_TIME_PER_NANOS.saturating_mul(735_632), 0);
 }
 
 #[cfg(test)]

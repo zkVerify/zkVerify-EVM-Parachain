@@ -104,6 +104,7 @@ substrate-wasm-builder = { version = "25.0.1" }
 
 # Polkadot
 pallet-xcm = { version = "18.1.1", default-features = false }
+pallet-xcm-benchmarks = {version = "17.0.0", default-features = false}
 polkadot-cli = {package = "zkv-cli", git = "https://github.com/zkVerify/zkVerify", branch = "dr/stable2412"}
 polkadot-primitives = { version = "17.1.0", default-features = false }
 polkadot-runtime-common = { version = "18.1.0", default-features = false }

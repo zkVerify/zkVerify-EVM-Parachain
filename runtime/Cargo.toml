@@ -18,6 +18,7 @@ smallvec = {workspace = true}
 hex-literal = {workspace = true}
 
 # Substrate
+log = {workspace=true}
 frame-benchmarking = {workspace = true, optional = true}
 frame-executive = {workspace = true}
 frame-support = {workspace = true}
@@ -56,6 +57,7 @@ sp-weights = {workspace = true}
 
 # Polkadot
 pallet-xcm = {workspace = true}
+pallet-xcm-benchmarks = {workspace = true,optional=true}
 polkadot-runtime-common = {workspace = true}
 xcm = {workspace = true}
 xcm-builder = {workspace = true}
@@ -97,6 +99,7 @@ hex = {workspace = true, features = ["std"]}
 [features]
 default = [ "std" ]
 std = [
+  "log/std",
 	"cumulus-pallet-aura-ext/std",
 	"cumulus-pallet-parachain-system/std",
 	"cumulus-pallet-session-benchmarking/std",
@@ -139,6 +142,7 @@ std = [
 	"pallet-transaction-payment/std",
 	"pallet-utility/std",
 	"pallet-xcm/std",
+	"pallet-xcm-benchmarks?/std",
 	"parachain-info/std",
 	"parachains-common/std",
 	"parity-scale-codec/std",
@@ -185,6 +189,7 @@ runtime-benchmarks = [
 	"pallet-timestamp/runtime-benchmarks",
 	"pallet-utility/runtime-benchmarks",
 	"pallet-xcm/runtime-benchmarks",
+	"pallet-xcm-benchmarks/runtime-benchmarks",
 	"parachains-common/runtime-benchmarks",
 	"polkadot-runtime-common/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
