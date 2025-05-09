@@ -249,7 +249,7 @@ construct_runtime!(
 
         // XCM Helpers
         XcmpQueue: cumulus_pallet_xcmp_queue = 30,
-        PolkadotXcm: pallet_xcm = 31,
+        ZKVXcm: pallet_xcm = 31,
         CumulusXcm: cumulus_pallet_xcm = 32, // No weight
         MessageQueue: pallet_message_queue = 33,
 
@@ -687,12 +687,10 @@ impl_runtime_apis! {
             pub mod xcm {
                 use super::*;
                 use crate::{configs::monetary::*, configs::xcm::*, constants::currency::CENTS};
-                use cumulus_primitives_core::ParaId;
                 use frame_support::parameter_types;
 
 
                 parameter_types! {
-                    pub const RandomParaId: ParaId = ParaId::new(43211234);
                     pub ExistentialDepositAsset: Option<Asset> = Some((
                         RelayLocation::get(),
                         configs::monetary::ExistentialDeposit::get()
@@ -724,7 +722,7 @@ impl_runtime_apis! {
                     fn teleportable_asset_and_dest() -> Option<(Asset, Location)> {
                         // Relay/native token can be teleported between EVM and Relay.
                         Some((
-                            Asset { fun: Fungible(ExistentialDeposit::get()), id: AssetId(RelayLocation::get()) },
+                            ExistentialDepositAsset::get()?,
                             RelayLocation::get(),
                         ))
                     }

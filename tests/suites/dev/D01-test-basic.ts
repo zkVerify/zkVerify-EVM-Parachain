@@ -3,7 +3,7 @@ import { CHARLETH_ADDRESS, BALTATHAR_ADDRESS, alith, setupLogger } from "@moonwa
 import {parseEther, formatEther, Wallet} from "ethers";
 import { BN } from "@polkadot/util";
 import { ApiPromise } from "@polkadot/api";
-import {ZEN} from "../../helpers/constants";
+import {VFY} from "../../helpers/constants";
 
 
 describeSuite({
@@ -20,7 +20,7 @@ describeSuite({
             randomWeb3Account = context.web3().eth.accounts.create();
             privateKey = randomWeb3Account.privateKey;
             const { result, block } = await context.createBlock(
-                context.polkadotJs().tx.balances.transferAllowDeath(randomWeb3Account.address, ZEN)
+                context.polkadotJs().tx.balances.transferAllowDeath(randomWeb3Account.address, VFY)
             );
             expect(result!.successful, result!.error?.name).to.be.true;
 
@@ -55,7 +55,7 @@ describeSuite({
                 log(
                     `Baltathar account balance before ${formatEther(
                         balanceBefore.toBigInt()
-                    )} ZEN, balance after ${formatEther(balanceAfter.toBigInt())} ZEN`
+                    )} VFY, balance after ${formatEther(balanceAfter.toBigInt())} VFY`
                 );
                 expect(balanceBefore.lt(balanceAfter)).to.be.true;
             },
@@ -94,7 +94,7 @@ describeSuite({
                 log(
                     `Baltathar account balance before ${formatEther(
                         balanceBefore.toBigInt()
-                    )} ZEN, balance after ${formatEther(balanceAfter.toBigInt())} ZEN`
+                    )} tVFY, balance after ${formatEther(balanceAfter.toBigInt())} tVFY`
                 );
                 expect(balanceBefore.lt(balanceAfter)).to.be.true;
             },

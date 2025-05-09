@@ -21129,6 +21129,7 @@ dependencies = [
  "frame-system-rpc-runtime-api",
  "frame-try-runtime",
  "hex",
+ "hex-literal",
  "pallet-aura",
  "pallet-authorship",
  "pallet-balances",

@@ -190,7 +190,7 @@ pub fn local_testnet_config(chain_type: ChainType, name: &str, id: &str) -> Chai
 
 fn chain_properties() -> Map<String, Value> {
     let mut properties = sc_chain_spec::Properties::new();
-    properties.insert("tokenSymbol".into(), "ZEN".into());
+    properties.insert("tokenSymbol".into(), "tVFY".into());
     properties.insert("tokenDecimals".into(), 18.into());
     properties.insert("ss58Format".into(), 0.into());
     // This is very important for us, it lets us track the usage of our templates, and have no downside for the node/runtime. Please do not remove :)
@@ -261,7 +261,7 @@ fn initial_genesis(
         "evm": {
             "accounts": accounts
         },
-        "polkadotXcm": {
+        "zkvXcm": {
             "safeXcmVersion": Some(SAFE_XCM_VERSION),
         },
         "sudo": { "key": Some(root) },

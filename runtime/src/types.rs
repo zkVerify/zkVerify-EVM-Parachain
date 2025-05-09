@@ -85,14 +85,6 @@ pub type Executive = frame_executive::Executive<
     AllPalletsWithSystem,
 >;
 
-/// Price For Sibling Parachain Delivery
-pub type PriceForSiblingParachainDelivery = polkadot_runtime_common::xcm_sender::ExponentialPrice<
-    crate::configs::xcm::FeeAssetId,
-    crate::configs::xcm::ToSiblingBaseDeliveryFee,
-    crate::configs::monetary::TransactionByteFee,
-    XcmpQueue,
->;
-
 /// Configures the number of blocks that can be created without submission of validity proof to the relay chain
 pub type ConsensusHook = cumulus_pallet_aura_ext::FixedVelocityConsensusHook<
     Runtime,

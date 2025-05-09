@@ -16,41 +16,47 @@
 //! In this module, we provide the configurations about xcm subsystem.
 
 use crate::{
-    configs::system::RuntimeBlockWeights, constants::currency::CENTS, types::AccountId,
-    types::PriceForSiblingParachainDelivery, weights, AllPalletsWithSystem, Balances, MessageQueue,
-    ParachainInfo, ParachainSystem, Perbill, PolkadotXcm, Runtime, RuntimeCall, RuntimeEvent,
-    RuntimeOrigin, WeightToFee, XcmpQueue,
+    configs::system::RuntimeBlockWeights, constants::currency::CENTS, types::AccountId, weights,
+    AllPalletsWithSystem, Balances, MessageQueue, ParachainInfo, ParachainSystem, Perbill, Runtime,
+    RuntimeCall, RuntimeEvent, RuntimeOrigin, WeightToFee, XcmpQueue, ZKVXcm,
 };
 use cumulus_primitives_core::{AggregateMessageOrigin, ParaId};
 use frame_support::{
     pallet_prelude::Get,
     parameter_types,
+    traits::tokens::imbalance::ResolveTo,
     traits::OriginTrait,
     traits::TransformOrigin,
-    traits::{ConstU32, Contains, Everything, Nothing, PalletInfoAccess},
+    traits::{ConstU32, Contains, Equals, Everything, Nothing, PalletInfoAccess},
     weights::Weight,
 };
 use frame_system::EnsureRoot;
 use pallet_xcm::XcmPassthrough;
-use parachains_common::message_queue::{NarrowOriginToSibling, ParaIdToSibling};
+use parachains_common::{
+    message_queue::{NarrowOriginToSibling, ParaIdToSibling},
+    xcm_config::ConcreteAssetFromSystem,
+};
 use sp_runtime::traits::TryConvert;
 use xcm::latest::prelude::*;
 use xcm_builder::{
-    AccountKey20Aliases, AllowExplicitUnpaidExecutionFrom, AllowTopLevelPaidExecutionFrom,
-    DenyReserveTransferToRelayChain, DenyThenTry, EnsureXcmOrigin, FixedWeightBounds,
-    FrameTransactionalProcessor, FungibleAdapter, IsConcrete, NativeAsset, ParentIsPreset,
-    RelayChainAsNative, SiblingParachainAsNative, SignedAccountKey20AsNative,
-    SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId, UsingComponents,
-    WithComputedOrigin, WithUniqueTopic,
+    AccountKey20Aliases, AllowKnownQueryResponses, AllowSubscriptionsFrom,
+    AllowTopLevelPaidExecutionFrom, DenyReserveTransferToRelayChain, DenyThenTry, EnsureXcmOrigin,
+    FixedWeightBounds, FrameTransactionalProcessor, FungibleAdapter, IsConcrete, NativeAsset,
+    ParentIsPreset, RelayChainAsNative, SendXcmFeeToAccount, SiblingParachainAsNative,
+    SignedAccountKey20AsNative, SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId,
+    UsingComponents, WithComputedOrigin, WithUniqueTopic, XcmFeeManagerFromComponents,
 };
 use xcm_executor::XcmExecutor;
 
+const ZKV_GENESIS_HASH: [u8; 32] =
+    hex_literal::hex!("ff7fe5a610f15fe7a0c52f94f86313fb7db7d3786e7f8acf2b66c11d5be7c242");
+
 parameter_types! {
     pub const RelayLocation: Location = Location::parent();
-    pub const RelayNetwork: Option<NetworkId> = None;
+    pub const RelayNetwork: Option<NetworkId> = Some(NetworkId::ByGenesis(ZKV_GENESIS_HASH));
     pub BalancesPalletLocation: Location = PalletInstance(<Balances as PalletInfoAccess>::index() as u8).into();
     pub RelayChainOrigin: RuntimeOrigin = cumulus_pallet_xcm::Origin::Relay.into();
-    pub UniversalLocation: InteriorLocation = Parachain(ParachainInfo::parachain_id().into()).into();
+    pub UniversalLocation: InteriorLocation = [GlobalConsensus(RelayNetwork::get().unwrap()), Parachain(ParachainInfo::parachain_id().into())].into();
 }
 
 /// Type for specifying how a `Location` can be converted into an
@@ -108,22 +114,13 @@ parameter_types! {
     pub const UnitWeightCost: Weight = Weight::from_parts(1_000_000_000, 64 * 1024);
     pub const MaxInstructions: u32 = 100;
     pub const MaxAssetsIntoHolding: u32 = 64;
+    pub StakingPot: AccountId = crate::CollatorSelection::account_id();
 }
 
-pub struct ParentOrParentsExecutivePlurality;
-impl Contains<Location> for ParentOrParentsExecutivePlurality {
+pub struct ParentRelayChain;
+impl Contains<Location> for ParentRelayChain {
     fn contains(location: &Location) -> bool {
-        matches!(
-            location.unpack(),
-            (1, [])
-                | (
-                    1,
-                    [Plurality {
-                        id: BodyId::Executive,
-                        ..
-                    }]
-                )
-        )
+        matches!(location.unpack(), (1, []))
     }
 }
 
@@ -132,18 +129,20 @@ pub type Barrier = TrailingSetTopicAsId<
         DenyReserveTransferToRelayChain,
         (
             TakeWeightCredit,
+            AllowKnownQueryResponses<ZKVXcm>,
             WithComputedOrigin<
-                (
-                    AllowTopLevelPaidExecutionFrom<Everything>,
-                    AllowExplicitUnpaidExecutionFrom<ParentOrParentsExecutivePlurality>,
-                    // ^^^ Parent and its exec plurality get free execution
-                ),
+                (AllowTopLevelPaidExecutionFrom<ParentRelayChain>,),
                 UniversalLocation,
                 ConstU32<8>,
             >,
+            AllowSubscriptionsFrom<ParentRelayChain>,
         ),
     >,
 >;
+
+pub type TrustedTeleporters = ConcreteAssetFromSystem<RelayLocation>;
+
+pub type WaivedLocations = Equals<RelayLocation>;
 
 pub struct XcmConfig;
 impl xcm_executor::Config for XcmConfig {
@@ -153,22 +152,31 @@ impl xcm_executor::Config for XcmConfig {
     type AssetTransactor = AssetTransactors;
     type OriginConverter = XcmOriginToTransactDispatchOrigin;
     type IsReserve = NativeAsset;
-    type IsTeleporter = ();
+    type IsTeleporter = TrustedTeleporters;
     type Aliasers = Nothing;
-    // Teleporting is disabled.
     type UniversalLocation = UniversalLocation;
     type Barrier = Barrier;
     type Weigher = FixedWeightBounds<UnitWeightCost, RuntimeCall, MaxInstructions>;
-    type Trader = UsingComponents<WeightToFee, BalancesPalletLocation, AccountId, Balances, ()>;
-    type ResponseHandler = PolkadotXcm;
-    type AssetTrap = PolkadotXcm;
+    // Can only buy weight with the native token
+    type Trader = UsingComponents<
+        WeightToFee,
+        RelayLocation,
+        AccountId,
+        Balances,
+        ResolveTo<StakingPot, Balances>,
+    >;
+    type ResponseHandler = ZKVXcm;
+    type AssetTrap = ZKVXcm;
     type AssetLocker = ();
     type AssetExchanger = ();
-    type AssetClaims = PolkadotXcm;
-    type SubscriptionService = PolkadotXcm;
+    type AssetClaims = ZKVXcm;
+    type SubscriptionService = ZKVXcm;
     type PalletInstancesInfo = AllPalletsWithSystem;
     type MaxAssetsIntoHolding = MaxAssetsIntoHolding;
-    type FeeManager = ();
+    type FeeManager = XcmFeeManagerFromComponents<
+        WaivedLocations,
+        SendXcmFeeToAccount<AssetTransactors, StakingPot>,
+    >;
     type MessageExporter = ();
     type UniversalAliases = Nothing;
     type CallDispatcher = RuntimeCall;
@@ -231,7 +239,7 @@ impl pallet_xcm::Config for Runtime {
     // ^ Disable dispatchable execute on the XCM pallet.
     // Needs to be `Everything` for local testing.
     type XcmExecutor = XcmExecutor<XcmConfig>;
-    type XcmTeleportFilter = Nothing;
+    type XcmTeleportFilter = Everything;
     type XcmReserveTransferFilter = Nothing;
     type Weigher = FixedWeightBounds<UnitWeightCost, RuntimeCall, MaxInstructions>;
     type UniversalLocation = UniversalLocation;
@@ -287,10 +295,18 @@ impl pallet_message_queue::Config for Runtime {
 parameter_types! {
     pub const MaxInboundSuspended: u32 = 1000;
     /// The asset ID for the asset that we use to pay for message delivery fees.
-    pub FeeAssetId: AssetId = AssetId(RelayLocation::get());
-    /// The base fee for the message delivery fees. Kusama is based for the reference.
+    pub FeeAssetId: AssetId = AssetId(RelayLocation::get()); // the relay chain native asset
+    /// The base fee for the message delivery fees. zkVerify is based for the reference.
     pub const ToSiblingBaseDeliveryFee: u128 = CENTS.saturating_mul(3);
 }
+
+/// Price For Sibling Parachain Delivery
+type PriceForSiblingParachainDelivery = polkadot_runtime_common::xcm_sender::ExponentialPrice<
+    FeeAssetId,
+    ToSiblingBaseDeliveryFee,
+    crate::configs::monetary::TransactionByteFee,
+    XcmpQueue,
+>;
 
 impl cumulus_pallet_xcmp_queue::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;

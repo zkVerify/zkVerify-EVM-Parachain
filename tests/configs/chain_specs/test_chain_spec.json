@@ -17366,7 +17366,7 @@
                 "parachainInfo": {
                     "parachainId": 1000
                 },
-                "polkadotXcm": {
+                "zkvXcm": {
                     "safeXcmVersion": 4
                 },
                 "session": {

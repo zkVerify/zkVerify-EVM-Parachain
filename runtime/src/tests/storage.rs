@@ -40,7 +40,7 @@ fn verify_pallet_prefixes() {
     assert_pallet_prefix::<Aura>("Aura");
     assert_pallet_prefix::<AuraExt>("AuraExt");
     assert_pallet_prefix::<XcmpQueue>("XcmpQueue");
-    assert_pallet_prefix::<PolkadotXcm>("PolkadotXcm");
+    assert_pallet_prefix::<ZKVXcm>("ZKVXcm");
     assert_pallet_prefix::<CumulusXcm>("CumulusXcm");
     assert_pallet_prefix::<MessageQueue>("MessageQueue");
 }

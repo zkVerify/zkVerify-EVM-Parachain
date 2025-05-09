@@ -21,7 +21,7 @@ use crate::types::BlockNumber;
 pub mod currency {
     use crate::types::Balance;
 
-    pub const DOLLARS: Balance = 1_000_000_000_000_000_000; //we have 18 decimals, so 1 ZEN is 1*10^18
+    pub const DOLLARS: Balance = 1_000_000_000_000_000_000; // we have 18 decimals, so 1 VFY is 1*10^18
     pub const CENTS: Balance = DOLLARS / 100;
     pub const MILLICENTS: Balance = CENTS / 1_000;
     pub const MICROCENTS: Balance = MILLICENTS / 1_000;
