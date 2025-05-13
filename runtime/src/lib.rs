@@ -760,7 +760,7 @@ impl_runtime_apis! {
 
                 impl pallet_xcm_benchmarks::Config for Runtime {
                     type XcmConfig = XcmConfig;
-                    type AccountIdConverter = configs::xcm::LocationToH160;
+                    type AccountIdConverter = configs::xcm::LocationAccountId32ToAccountId;
                     type DeliveryHelper = ();
                     //    cumulus_primitives_utility::ToParentDeliveryHelper<
                     //    XcmConfig,

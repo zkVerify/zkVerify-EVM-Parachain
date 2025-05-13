@@ -41,7 +41,7 @@ impl From<&Asset> for AssetTypes {
             Asset {
                 id:
                     AssetId(Location {
-                        parents: 0,
+                        parents: 1,
                         interior: Here,
                     }),
                 ..

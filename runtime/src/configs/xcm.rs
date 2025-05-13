@@ -18,7 +18,7 @@
 use crate::{
     configs::system::RuntimeBlockWeights, constants::currency::CENTS, types::AccountId, weights,
     AllPalletsWithSystem, Balances, MessageQueue, ParachainInfo, ParachainSystem, Perbill, Runtime,
-    RuntimeCall, RuntimeEvent, RuntimeOrigin, WeightToFee, XcmpQueue, ZKVXcm, H160,
+    RuntimeCall, RuntimeEvent, RuntimeOrigin, WeightToFee, XcmpQueue, ZKVXcm,
 };
 use cumulus_primitives_core::{AggregateMessageOrigin, ParaId};
 use frame_support::{
@@ -40,11 +40,12 @@ use sp_runtime::traits::TryConvert;
 use xcm::latest::prelude::*;
 use xcm_builder::{
     AccountKey20Aliases, AllowKnownQueryResponses, AllowSubscriptionsFrom,
-    AllowTopLevelPaidExecutionFrom, DenyReserveTransferToRelayChain, DenyThenTry, EnsureXcmOrigin,
-    FixedWeightBounds, FrameTransactionalProcessor, FungibleAdapter, IsConcrete, NativeAsset,
-    ParentIsPreset, RelayChainAsNative, SendXcmFeeToAccount, SiblingParachainAsNative,
-    SignedAccountKey20AsNative, SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId,
-    UsingComponents, WithComputedOrigin, WithUniqueTopic, XcmFeeManagerFromComponents,
+    AllowTopLevelPaidExecutionFrom, DenyReserveTransferToRelayChain, DenyThenTry,
+    DescribeAllTerminal, DescribeFamily, EnsureXcmOrigin, FrameTransactionalProcessor,
+    FungibleAdapter, HashedDescription, IsConcrete, NativeAsset, ParentIsPreset,
+    RelayChainAsNative, SendXcmFeeToAccount, SiblingParachainAsNative, SignedAccountKey20AsNative,
+    SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId, UsingComponents,
+    WeightInfoBounds, WithComputedOrigin, WithUniqueTopic, XcmFeeManagerFromComponents,
 };
 use xcm_executor::{traits::ConvertLocation, XcmExecutor};
 
@@ -74,8 +75,8 @@ pub type LocationToAccountId = (
     HashedDescription<AccountId, DescribeFamily<DescribeAllTerminal>>,
 );
 
-pub struct LocationToH160;
-impl ConvertLocation<AccountId> for LocationToH160 {
+pub struct LocationAccountId32ToAccountId;
+impl ConvertLocation<AccountId> for LocationAccountId32ToAccountId {
     fn convert_location(location: &Location) -> Option<AccountId> {
         use xcm::opaque::lts::Junctions::X1;
         //log::error!("Converting {:?}", location);
@@ -85,7 +86,9 @@ impl ConvertLocation<AccountId> for LocationToH160 {
                     parents: 0,
                     interior: X1(sp_std::sync::Arc::new([AccountKey20 {
                         network: *network,
-                        key: id.as_slice()[0..20].try_into().expect("Cannot convert AccountId32 to AccountKey20"),
+                        key: id.as_slice()[0..20]
+                            .try_into()
+                            .expect("Cannot convert AccountId32 to AccountKey20"),
                     }]))
                     .into(),
                 })
@@ -103,7 +106,7 @@ pub type FungibleTransactor = FungibleAdapter<
     // Use this currency when it is a fungible asset matching the given location or name:
     IsConcrete<RelayLocation>,
     // Convert an XCM `Location` into a local account ID:
-    LocationToH160,
+    LocationAccountId32ToAccountId,
     // Our chain's account ID type (we can't get away without mentioning it explicitly):
     AccountId,
     // We don't track any teleports of `Balances`.
@@ -144,7 +147,8 @@ parameter_types! {
 pub struct ParentRelayChain;
 impl Contains<Location> for ParentRelayChain {
     fn contains(location: &Location) -> bool {
-        matches!(location.unpack(), (1, []))
+        // match the relay chain and any account on it
+        matches!(location.unpack(), (1, [..]))
     }
 }
 
