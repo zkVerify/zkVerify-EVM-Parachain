@@ -174,3 +174,13 @@ fn pallet_evm() {
         weights::pallet_evm::ZKVEvmWeight::<Runtime>::withdraw()
     )
 }
+
+#[test]
+fn pallet_deployment_permissions() {
+    use pallet_deployment_permissions::WeightInfo;
+
+    assert_eq!(
+        <Runtime as pallet_deployment_permissions::Config>::WeightInfo::grant_deploy_permission(),
+        weights::pallet_deployment_permissions::ZKVEvmWeight::<Runtime>::grant_deploy_permission()
+    )
+}
