@@ -17,6 +17,7 @@ scale-info = {workspace = true, features = ["derive"]}
 smallvec = {workspace = true}
 hex-literal = {workspace = true}
 
+sp-debug-derive = {version = "14.0.0", features = ["force-debug"]}
 # Substrate
 log = {workspace=true}
 frame-benchmarking = {workspace = true, optional = true}
@@ -88,6 +89,10 @@ pallet-evm-chain-id = {workspace = true}
 pallet-evm-precompile-modexp = {workspace = true}
 pallet-evm-precompile-sha3fips = {workspace = true}
 pallet-evm-precompile-simple = {workspace = true}
+
+# Moonbeam
+pallet-ethereum-xcm = {workspace = true}
+xcm-primitives = {workspace = true}
 
 [build-dependencies]
 substrate-wasm-builder = {workspace = true}
@@ -165,6 +170,8 @@ std = [
 	"xcm-builder/std",
 	"xcm-executor/std",
 	"xcm/std",
+  "pallet-ethereum-xcm/std",
+  "xcm-primitives/std",
 ]
 
 runtime-benchmarks = [

@@ -14,6 +14,7 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 pub(crate) mod consensus;
+pub mod ethereum_xcm;
 pub mod evm;
 mod governance;
 pub mod monetary;

@@ -158,6 +158,10 @@ pallet-evm-precompile-simple = {git = "https://github.com/HorizenLabs/frontier",
 #ethereum = {version = "0.15.0", default-features = false, features = ["with-codec"]}
 ethereum = {git = "https://github.com/rust-ethereum/ethereum", rev = "bbb544622208ef6e9890a2dbc224248f6dd13318"}
 
+# Moonbeam
+pallet-ethereum-xcm = {git = "https://github.com/moonbeam-foundation/moonbeam/", tag = "v0.44.1", default-features = false}
+xcm-primitives = {git = "https://github.com/moonbeam-foundation/moonbeam/", tag = "v0.44.1", default-features = false}
+
 # Other
 tokio = {version = "1.13"}
 
@@ -248,6 +252,29 @@ xcm = { version = "15.1.0", package = "staging-xcm" }
 
 #[patch."https://github.com/rust-ethereum/ethereum"]
 #ethereum = { git = "https://github.com/rust-ethereum/ethereum", rev = "3be0d8f" }
+
+[patch."https://github.com/moonbeam-foundation/frontier"]
+fp-ethereum = {path="/home/daniele/horizen/git/frontier/primitives/ethereum/"}
+fp-evm = {path="/home/daniele/horizen/git/frontier/primitives/evm/"}
+fp-rpc = {path = "/home/daniele/horizen/git/frontier/primitives/rpc/"}
+fp-self-contained = {path = "/home/daniele/horizen/git/frontier/primitives/self-contained/"}
+pallet-evm = {path = "/home/daniele/horizen/git/frontier/frame/evm/"}
+
+[patch."https://github.com/moonbeam-foundation/polkadot-sdk"]
+frame-system = {version = "38.0.0"}
+pallet-timestamp = {version = "37.0.0"}
+sp-std = {version = "14.0.0"}
+cumulus-primitives-core = {version = "0.16.0"}
+polkadot-runtime-common = {version = "17.0.1"}
+xcm-procedural = {version = "10.1.0"}
+xcm = {version = "14.2.2", package = "staging-xcm"}
+xcm-builder = {version = "17.0.5", package = "staging-xcm-builder"}
+xcm-executor = {version = "17.0.2", package = "staging-xcm-executor"}
+frame-support = {version = "38.2.0"}
+pallet-staking = {version = "38.0.1"}
+polkadot-runtime-parachains = {version = "17.0.2"}
+sp-io = {version = "38.0.2"}
+sp-runtime = {version = "39.0.5"}
 
 [workspace.lints.clippy]
 all = { level = "allow", priority = 0 }                              # Basically, we accept the _perf_ clippy concerns

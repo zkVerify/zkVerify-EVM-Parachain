@@ -36,7 +36,7 @@ use parachains_common::{
     message_queue::{NarrowOriginToSibling, ParaIdToSibling},
     xcm_config::ConcreteAssetFromSystem,
 };
-use sp_runtime::traits::TryConvert;
+use sp_runtime::{DispatchErrorWithPostInfo, traits::{TryConvert, PostDispatchInfoOf}};
 use xcm::latest::prelude::*;
 use xcm_builder::{
     AccountKey20Aliases, AllowKnownQueryResponses, AllowSubscriptionsFrom,
@@ -47,7 +47,7 @@ use xcm_builder::{
     SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId, UsingComponents,
     WeightInfoBounds, WithComputedOrigin, WithUniqueTopic, XcmFeeManagerFromComponents,
 };
-use xcm_executor::{traits::ConvertLocation, XcmExecutor};
+use xcm_executor::{traits::{ConvertLocation, CallDispatcher}, XcmExecutor};
 
 use crate::weights::xcm::ZKVEvmWeight as XcmZKVEvmWeight;
 
@@ -172,6 +172,37 @@ pub type TrustedTeleporters = ConcreteAssetFromSystem<RelayLocation>;
 
 pub type WaivedLocations = Equals<RelayLocation>;
 
+
+		pub struct MoonbeamCall;
+		impl CallDispatcher<RuntimeCall> for MoonbeamCall {
+			fn dispatch(
+				call: RuntimeCall,
+				origin: RuntimeOrigin,
+			) -> Result<
+					PostDispatchInfoOf<RuntimeCall>,
+					DispatchErrorWithPostInfo<PostDispatchInfoOf<RuntimeCall>>
+				> {
+				if let Ok(raw_origin) = TryInto::<frame_system::RawOrigin<AccountId>>::try_into(origin.clone().caller) {
+					match (call.clone(), raw_origin) {
+						(
+							RuntimeCall::EthereumXcm(pallet_ethereum_xcm::Call::transact { .. }) |
+							RuntimeCall::EthereumXcm(pallet_ethereum_xcm::Call::transact_through_proxy { .. }),
+							frame_system::RawOrigin::Signed(account_id)
+						) => {
+							return RuntimeCall::dispatch(
+								call,
+								pallet_ethereum_xcm::Origin::XcmEthereumTransaction(
+									account_id.into()
+								).into()
+							);
+						},
+						_ => {}
+					}
+				}
+				RuntimeCall::dispatch(call, origin)
+			}
+		}
+
 pub struct XcmConfig;
 impl xcm_executor::Config for XcmConfig {
     type RuntimeCall = RuntimeCall;
@@ -207,7 +238,7 @@ impl xcm_executor::Config for XcmConfig {
     >;
     type MessageExporter = ();
     type UniversalAliases = Nothing;
-    type CallDispatcher = RuntimeCall;
+    type CallDispatcher = MoonbeamCall;//RuntimeCall;
     type SafeCallFilter = Everything;
     type TransactionalProcessor = FrameTransactionalProcessor;
     type HrmpNewChannelOpenRequestHandler = ();
@@ -263,9 +294,9 @@ impl pallet_xcm::Config for Runtime {
     type SendXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, LocalOriginToLocation>;
     type XcmRouter = XcmRouter;
     type ExecuteXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, LocalOriginToLocation>;
-    type XcmExecuteFilter = Everything;
-    // ^ Disable dispatchable execute on the XCM pallet.
-    // Needs to be `Everything` for local testing.
+    type XcmExecuteFilter = Everything; // TODO!!!! Check this
+                                        // ^ Disable dispatchable execute on the XCM pallet.
+                                        // Needs to be `Everything` for local testing.
     type XcmExecutor = XcmExecutor<XcmConfig>;
     type XcmTeleportFilter = Everything;
     type XcmReserveTransferFilter = Nothing;
