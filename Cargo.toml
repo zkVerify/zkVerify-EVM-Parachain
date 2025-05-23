@@ -38,121 +38,121 @@ smallvec = "1.11.0"
 tracing = {version = "0.1.37", default-features = false}
 
 # Substrate
-frame-benchmarking = {version = "38.0.0", default-features = false}
-frame-benchmarking-cli = {version = "43.0.0", default-features = false}
-frame-executive = {version = "38.0.0", default-features = false}
-frame-support = {version = "38.2.0", default-features = false}
-frame-system = {version = "38.0.0", default-features = false}
-frame-system-benchmarking = {version = "38.0.0", default-features = false}
-frame-system-rpc-runtime-api = {version = "34.0.0", default-features = false}
-frame-try-runtime = {version = "0.44.0", default-features = false}
-pallet-aura = {version = "37.0.0", default-features = false}
-pallet-authorship = {version = "38.0.0", default-features = false}
-pallet-balances = {version = "39.0.1", default-features = false}
-pallet-message-queue = {version = "41.0.2", default-features = false}
-pallet-multisig = {version = "38.0.0", default-features = false}
-pallet-proxy = {version = "38.0.0", default-features = false}
-pallet-session = {version = "38.0.0", default-features = false}
-pallet-sudo = {version = "38.0.0", default-features = false}
-pallet-timestamp = {version = "37.0.0", default-features = false}
-pallet-transaction-payment = {version = "38.0.2", default-features = false}
-pallet-transaction-payment-rpc = {version = "41.0.0", default-features = false}
-pallet-transaction-payment-rpc-runtime-api = {version = "38.0.0", default-features = false}
-pallet-utility = {version = "38.0.0", default-features = false}
-sc-basic-authorship = {version = "0.45.0", default-features = false}
-sc-chain-spec = {version = "38.0.0", default-features = false}
-sc-cli = {version = "0.47.0", default-features = false}
-sc-client-api = {version = "37.0.0", default-features = false}
-sc-consensus = {version = "0.44.0", default-features = false}
-sc-consensus-aura = {version = "0.45.0", default-features = false}
-sc-consensus-manual-seal = {version = "0.46.0", default-features = false}
-sc-executor = {version = "0.40.1", default-features = false}
-sc-network = {version = "0.45.6", default-features = false}
-sc-network-sync = {version = "0.44.1", default-features = false}
-sc-offchain = {version = "40.0.0", default-features = false}
-sc-rpc = {version = "40.0.0", default-features = false}
-sc-service = {version = "0.46.0", default-features = false}
-sc-sysinfo = {version = "38.0.0", default-features = false}
-sc-telemetry = {version = "25.0.0", default-features = false}
-sc-tracing = {version = "37.0.1", default-features = false}
-sc-transaction-pool = {version = "37.0.0", default-features = false}
-sc-transaction-pool-api = {version = "37.0.0", default-features = false}
-sp-api = {version = "34.0.0", default-features = false}
-sp-block-builder = {version = "34.0.0", default-features = false}
-sp-blockchain = {version = "37.0.1", default-features = false}
-sp-consensus-aura = {version = "0.40.0", default-features = false}
-sp-core = {version = "34.0.0", default-features = false}
-sp-crypto-hashing = {version = "0.1.0", default-features = false}
-sp-genesis-builder = {version = "0.15.1", default-features = false}
-sp-inherents = {version = "34.0.0", default-features = false}
-sp-io = {version = "38.0.0", default-features = false}
-sp-keystore = {version = "0.40.0", default-features = false}
-sp-offchain = {version = "34.0.0", default-features = false}
-sp-runtime = {version = "39.0.5", default-features = false, features = ["serde"]}
-sp-session = {version = "36.0.0", default-features = false}
-sp-state-machine = {version = "0.43.0", default-features = false}
-sp-std = {version = "14.0.0", default-features = false}
-sp-storage = {version = "21.0.0", default-features = false}
-sp-timestamp = {version = "34.0.0", default-features = false}
-sp-transaction-pool = {version = "34.0.0", default-features = false}
-sp-version = {version = "37.0.0", default-features = false}
-sp-weights = {version = "31.0.0", default-features = false}
-substrate-build-script-utils = {version = "11.0.0"}
-substrate-frame-rpc-system = {version = "39.0.0", default-features = false}
-substrate-prometheus-endpoint = {version = "0.17.0", default-features = false}
-substrate-wasm-builder = {version = "24.0.1"}
+frame-benchmarking = { version = "39.0.0", default-features = false }
+frame-benchmarking-cli = { version = "46.1.0", default-features = false }
+frame-executive = { version = "39.1.0", default-features = false }
+frame-support = { version = "39.1.0", default-features = false }
+frame-system = { version = "39.1.0", default-features = false }
+frame-system-benchmarking = { version = "39.0.0", default-features = false }
+frame-system-rpc-runtime-api = { version = "35.0.0", default-features = false }
+frame-try-runtime = { version = "0.45.0", default-features = false }
+pallet-aura = { version = "38.1.0", default-features = false }
+pallet-authorship = { version = "39.0.0", default-features = false }
+pallet-balances = { version = "40.1.0", default-features = false }
+pallet-message-queue = { version = "42.0.0", default-features = false }
+pallet-multisig = { version = "39.1.1", default-features = false }
+pallet-proxy = { version = "39.1.0", default-features = false }
+pallet-session = { version = "39.0.0", default-features = false }
+pallet-sudo = { version = "39.0.0", default-features = false }
+pallet-timestamp = { version = "38.0.0", default-features = false }
+pallet-transaction-payment = { version = "39.1.0", default-features = false }
+pallet-transaction-payment-rpc = { version = "42.0.0", default-features = false }
+pallet-transaction-payment-rpc-runtime-api = { version = "39.0.0", default-features = false }
+pallet-utility = { version = "39.1.0", default-features = false }
+sc-basic-authorship = { version = "0.48.0", default-features = false }
+sc-chain-spec = { version = "41.0.0", default-features = false }
+sc-cli = { version = "0.50.1", default-features = false }
+sc-client-api = { version = "38.0.0", default-features = false }
+sc-consensus = { version = "0.47.0", default-features = false }
+sc-consensus-aura = { version = "0.48.0", default-features = false }
+sc-consensus-manual-seal = { version = "0.49.0", default-features = false }
+sc-executor = { version = "0.41.0", default-features = false }
+sc-network = { version = "0.48.3", default-features = false }
+sc-network-sync = { version = "0.47.0", default-features = false }
+sc-offchain = { version = "43.0.0", default-features = false }
+sc-rpc = { version = "43.0.0", default-features = false }
+sc-service = { version = "0.49.0", default-features = false }
+sc-sysinfo = { version = "41.0.0", default-features = false }
+sc-telemetry = { version = "28.0.0", default-features = false }
+sc-tracing = { version = "38.0.0", default-features = false }
+sc-transaction-pool = { version = "38.1.0", default-features = false }
+sc-transaction-pool-api = { version = "38.1.0", default-features = false }
+sp-api = { version = "35.0.0", default-features = false }
+sp-block-builder = { version = "35.0.0", default-features = false }
+sp-blockchain = { version = "38.0.0", default-features = false }
+sp-consensus-aura = { version = "0.41.0", default-features = false }
+sp-core = { version = "35.0.0", default-features = false }
+sp-crypto-hashing = { version = "0.1.0", default-features = false }
+sp-genesis-builder = { version = "0.16.0", default-features = false }
+sp-inherents = { version = "35.0.0", default-features = false }
+sp-io = { version = "39.0.1", default-features = false }
+sp-keystore = { version = "0.41.0", default-features = false }
+sp-offchain = { version = "35.0.0", default-features = false }
+sp-runtime = { version = "40.1.0", default-features = false, features = ["serde"] }
+sp-session = { version = "37.0.0", default-features = false }
+sp-state-machine = { version = "0.44.0", default-features = false }
+sp-std = { version = "14.0.0", default-features = false }
+sp-storage = { version = "22.0.0", default-features = false }
+sp-timestamp = { version = "35.0.0", default-features = false }
+sp-transaction-pool = { version = "35.0.0", default-features = false }
+sp-version = { version = "38.0.0", default-features = false }
+sp-weights = { version = "31.0.0", default-features = false }
+substrate-build-script-utils = { version = "11.0.0" }
+substrate-frame-rpc-system = { version = "42.0.0", default-features = false }
+substrate-prometheus-endpoint = { version = "0.17.1", default-features = false }
+substrate-wasm-builder = { version = "25.0.1" }
 
 # Polkadot
-pallet-xcm = {version = "17.0.1", default-features = false}
-polkadot-cli = {package = "zkv-cli", git = "https://github.com/zkVerify/zkVerify", tag = "0.9.1-0.13.0"}
-polkadot-primitives = {version = "16.0.0", default-features = false}
-polkadot-runtime-common = {version = "17.0.0", default-features = false}
-xcm = {version = "14.2.0", package = "staging-xcm", default-features = false}
-xcm-builder = {version = "17.0.4", package = "staging-xcm-builder", default-features = false}
-xcm-executor = {version = "17.0.1", package = "staging-xcm-executor", default-features = false}
+pallet-xcm = { version = "18.1.0", default-features = false }
+polkadot-cli = {package = "zkv-cli", git = "https://github.com/zkVerify/zkVerify", branch = "dr/stable2412"}
+polkadot-primitives = { version = "17.1.0", default-features = false }
+polkadot-runtime-common = { version = "18.1.0", default-features = false }
+xcm = { version = "15.0.3", package = "staging-xcm", default-features = false }
+xcm-builder = { version = "18.2.0", package = "staging-xcm-builder", default-features = false }
+xcm-executor = { version = "18.0.2", package = "staging-xcm-executor", default-features = false }
 
 # Cumulus
-cumulus-client-cli = {version = "0.18.0", default-features = false}
-cumulus-client-collator = {version = "0.18.0", default-features = false}
-cumulus-client-consensus-aura = {version = "0.18.1", default-features = false}
-cumulus-client-consensus-common = {version = "0.18.0", default-features = false}
-cumulus-client-consensus-proposer = {version = "0.16.0", default-features = false}
-cumulus-client-service = {version = "0.19.0", default-features = false}
-cumulus-pallet-aura-ext = {version = "0.17.0", default-features = false}
-cumulus-pallet-parachain-system = {version = "0.17.1", default-features = false}
-cumulus-pallet-session-benchmarking = {version = "19.0.0", default-features = false}
-cumulus-pallet-xcm = {version = "0.17.0", default-features = false}
-cumulus-pallet-xcmp-queue = {version = "=0.17.1", default-features = false}
-cumulus-primitives-aura = {version = "0.15.0", default-features = false}
-cumulus-primitives-core = {version = "0.16.0", default-features = false}
-cumulus-primitives-parachain-inherent = {version = "0.16.0", default-features = false}
-cumulus-primitives-storage-weight-reclaim = {version = "8.0.0", default-features = false}
-cumulus-primitives-utility = {version = "0.17.0", default-features = false}
-cumulus-relay-chain-interface = {version = "0.18.0", default-features = false}
-cumulus-test-relay-sproof-builder = {version = "0.16.0", default-features = false}
-pallet-collator-selection = {version = "19.0.0", default-features = false}
-parachain-info = {version = "0.17.0", package = "staging-parachain-info", default-features = false}
-parachains-common = {version = "18.0.0", default-features = false}
+cumulus-client-cli = { version = "0.21.1", default-features = false }
+cumulus-client-collator = { version = "0.21.0", default-features = false }
+cumulus-client-consensus-aura = { version = "0.21.0", default-features = false }
+cumulus-client-consensus-common = { version = "0.21.0", default-features = false }
+cumulus-client-consensus-proposer = { version = "0.17.0", default-features = false }
+cumulus-client-service = { version = "0.22.0", default-features = false }
+cumulus-pallet-aura-ext = { version = "0.18.0", default-features = false }
+cumulus-pallet-parachain-system = { version = "0.18.1", default-features = false }
+cumulus-pallet-session-benchmarking = { version = "20.0.0", default-features = false }
+cumulus-pallet-xcm = { version = "0.18.0", default-features = false }
+cumulus-pallet-xcmp-queue = { version = "0.18.2", default-features = false }
+cumulus-primitives-aura = { version = "0.16.0", default-features = false }
+cumulus-primitives-core = { version = "0.17.0", default-features = false }
+cumulus-primitives-parachain-inherent = { version = "0.17.0", default-features = false }
+cumulus-primitives-storage-weight-reclaim = { version = "9.1.0", default-features = false }
+cumulus-primitives-utility = { version = "0.18.1", default-features = false }
+cumulus-relay-chain-interface = { version = "0.21.0", default-features = false }
+cumulus-test-relay-sproof-builder = { version = "0.17.0", default-features = false }
+pallet-collator-selection = { version = "20.1.0", default-features = false }
+parachain-info = { version = "0.18.0", package = "staging-parachain-info", default-features = false }
+parachains-common = { version = "19.0.0", default-features = false }
 
 # EVM
-fc-api = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-fc-db = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-fc-mapping-sync = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-fc-rpc = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-fc-rpc-core = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-fc-storage = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-fp-account = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false, features = ["serde"]}
-fp-dynamic-fee = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-fp-evm = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-fp-rpc = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-fp-self-contained = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-pallet-base-fee = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-pallet-ethereum = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false, features = ["forbid-evm-reentrancy"]}
-pallet-evm = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false, features = ["forbid-evm-reentrancy"]}
-pallet-evm-chain-id = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-pallet-evm-precompile-modexp = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-pallet-evm-precompile-sha3fips = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
-pallet-evm-precompile-simple = {git = "https://github.com/HorizenLabs/frontier", branch = "stable2409", default-features = false}
+fc-api = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+fc-db = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+fc-mapping-sync = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+fc-rpc = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+fc-rpc-core = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+fc-storage = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+fp-account = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false, features = ["serde"]}
+fp-dynamic-fee = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+fp-evm = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+fp-rpc = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+fp-self-contained = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+pallet-base-fee = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+pallet-ethereum = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false, features = ["forbid-evm-reentrancy"]}
+pallet-evm = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false, features = ["forbid-evm-reentrancy"]}
+pallet-evm-chain-id = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+pallet-evm-precompile-modexp = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+pallet-evm-precompile-sha3fips = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
+pallet-evm-precompile-simple = {git = "https://github.com/polkadot-evm/frontier", rev = "84996e1", default-features = false}
 
 ethereum = {version = "0.15.0", default-features = false, features = ["with-codec"]}
 
@@ -160,9 +160,9 @@ ethereum = {version = "0.15.0", default-features = false, features = ["with-code
 tokio = {version = "1.13"}
 
 [patch.crates-io]
-cumulus-relay-chain-inprocess-interface = {git = "https://github.com/zkVerify/zkVerify.git", tag = "0.9.1-0.13.0"}
-cumulus-relay-chain-minimal-node = {git = "https://github.com/zkVerify/zkVerify.git", tag = "0.9.1-0.13.0"}
-polkadot-parachain-lib = {git = "https://github.com/zkVerify/zkVerify.git", tag = "0.9.1-0.13.0"}
+cumulus-relay-chain-inprocess-interface = {git = "https://github.com/zkVerify/zkVerify.git", branch = "dr/stable2412"}
+cumulus-relay-chain-minimal-node = {git = "https://github.com/zkVerify/zkVerify.git", branch = "dr/stable2412"}
+polkadot-omni-node-lib = {git = "https://github.com/zkVerify/zkVerify.git", branch = "dr/stable2412"}
 
 [workspace.lints.clippy]
 all = { level = "allow", priority = 0 }                              # Basically, we accept the _perf_ clippy concerns
