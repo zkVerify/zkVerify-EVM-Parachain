@@ -28,7 +28,9 @@ use crate::{
     Runtime, RuntimeCall, RuntimeEvent, RuntimeOrigin, RuntimeTask, XcmpQueue, VERSION,
 };
 use core::fmt::Debug;
-use cumulus_pallet_parachain_system::RelayNumberMonotonicallyIncreases;
+use cumulus_pallet_parachain_system::{
+    DefaultCoreSelector, ParachainSetCode, RelayNumberMonotonicallyIncreases,
+};
 use cumulus_primitives_core::AggregateMessageOrigin;
 use frame_support::{
     derive_impl,
@@ -124,7 +126,7 @@ impl frame_system::Config for Runtime {
     /// The index type for storing how many extrinsics an account has signed.
     type Nonce = Nonce;
     /// The action to take on a Runtime Upgrade
-    type OnSetCode = cumulus_pallet_parachain_system::ParachainSetCode<Self>;
+    type OnSetCode = ParachainSetCode<Self>;
     /// Converts a module to an index of this module in the runtime.
     type PalletInfo = PalletInfo;
     /// The aggregated dispatch type that is available for extrinsics.
@@ -159,6 +161,7 @@ impl cumulus_pallet_parachain_system::Config for Runtime {
     type CheckAssociatedRelayNumber = RelayNumberMonotonicallyIncreases;
     type WeightInfo = weights::cumulus_pallet_parachain_system::ZKVEvmWeight<Runtime>;
     type ConsensusHook = ConsensusHook;
+    type SelectCore = DefaultCoreSelector<Self>;
 }
 
 impl parachain_info::Config for Runtime {}

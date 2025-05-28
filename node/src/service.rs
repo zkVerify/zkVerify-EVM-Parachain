@@ -42,7 +42,7 @@ use parity_scale_codec::Encode;
 use sc_client_api::Backend;
 use sc_consensus::{ImportQueue, LongestChain};
 use sc_consensus_manual_seal::consensus::aura::AuraConsensusDataProvider;
-use sc_executor::WasmExecutor;
+use sc_executor::{HeapAllocStrategy, WasmExecutor, DEFAULT_HEAP_ALLOC_STRATEGY};
 use sc_network::{NetworkBackend, NetworkBlock};
 use sc_service::{Configuration, PartialComponents, TFullBackend, TFullClient, TaskManager};
 use sc_telemetry::{Telemetry, TelemetryHandle, TelemetryWorker, TelemetryWorkerHandle};
@@ -91,7 +91,7 @@ pub type Service = PartialComponents<
     ParachainBackend,
     (),
     sc_consensus::DefaultImportQueue<Block>,
-    sc_transaction_pool::FullPool<Block, ParachainClient>,
+    sc_transaction_pool::TransactionPoolHandle<Block, ParachainClient>,
     (
         ParachainBlockImport,
         Option<Telemetry>,
@@ -121,7 +121,20 @@ pub fn new_partial(
         })
         .transpose()?;
 
-    let executor = sc_service::new_wasm_executor(&config.executor);
+    let heap_pages = config
+        .executor
+        .default_heap_pages
+        .map_or(DEFAULT_HEAP_ALLOC_STRATEGY, |h| HeapAllocStrategy::Static {
+            extra_pages: h as _,
+        });
+
+    let executor = ParachainExecutor::builder()
+        .with_execution_method(config.executor.wasm_method)
+        .with_onchain_heap_alloc_strategy(heap_pages)
+        .with_offchain_heap_alloc_strategy(heap_pages)
+        .with_max_runtime_instances(config.executor.max_runtime_instances)
+        .with_runtime_cache_size(config.executor.runtime_cache_size)
+        .build();
 
     let (client, backend, keystore_container, task_manager) =
         sc_service::new_full_parts_record_import::<Block, RuntimeApi, _>(
@@ -141,12 +154,15 @@ pub fn new_partial(
         telemetry
     });
 
-    let transaction_pool = sc_transaction_pool::BasicPool::new_full(
-        config.transaction_pool.clone(),
-        config.role.is_authority().into(),
-        config.prometheus_registry(),
-        task_manager.spawn_essential_handle(),
-        client.clone(),
+    let transaction_pool = Arc::from(
+        sc_transaction_pool::Builder::new(
+            task_manager.spawn_essential_handle(),
+            client.clone(),
+            config.role.is_authority().into(),
+        )
+        .with_options(config.transaction_pool.clone())
+        .with_prometheus(config.prometheus_registry())
+        .build(),
     );
 
     let block_import = ParachainBlockImport::new(client.clone(), backend.clone());
@@ -306,7 +322,7 @@ where
                 is_validator: parachain_config.role.is_authority(),
                 enable_http_requests: false,
                 custom_extensions: move |_| vec![],
-            })
+            })?
             .run(client.clone(), task_manager.spawn_handle())
             .boxed(),
         );
@@ -319,7 +335,7 @@ where
 
     let rpc_builder = {
         let client = client.clone();
-        let transaction_pool = transaction_pool.clone();
+        let pool = transaction_pool.clone();
         let target_gas_price = eth_config.target_gas_price;
         let enable_dev_signer = eth_config.enable_dev_signer;
         let pending_create_inherent_data_providers = move |_, ()| async move {
@@ -353,8 +369,8 @@ where
         Box::new(move |subscription_task_executor| {
             let eth = crate::rpc::EthDeps {
                 client: client.clone(),
-                pool: transaction_pool.clone(),
-                graph: transaction_pool.pool().clone(),
+                pool: pool.clone(),
+                graph: pool.clone(),
                 converter: Some(TransactionConverter),
                 is_authority: validator,
                 enable_dev_signer,
@@ -376,7 +392,7 @@ where
             };
             let deps = crate::rpc::FullDeps {
                 client: client.clone(),
-                pool: transaction_pool.clone(),
+                pool: pool.clone(),
                 eth,
                 command_sink: None,
             };
@@ -536,7 +552,7 @@ fn start_consensus(
     telemetry: Option<TelemetryHandle>,
     task_manager: &TaskManager,
     relay_chain_interface: Arc<dyn RelayChainInterface>,
-    transaction_pool: Arc<sc_transaction_pool::FullPool<Block, ParachainClient>>,
+    transaction_pool: Arc<sc_transaction_pool::TransactionPoolHandle<Block, ParachainClient>>,
     keystore: KeystorePtr,
     relay_chain_slot_duration: Duration,
     para_id: ParaId,
@@ -768,10 +784,7 @@ pub fn start_manual_seal_node<N: NetworkBackend<Block, <Block as BlockT>::Hash>>
             let current = sp_timestamp::InherentDataProvider::from_system_time();
             let next_slot = current.timestamp().as_millis() + slot_duration.as_millis();
             let timestamp = sp_timestamp::InherentDataProvider::new(next_slot.into());
-            let slot = sp_consensus_aura::inherents::InherentDataProvider::from_timestamp_and_slot_duration(
-				*timestamp,
-				slot_duration,
-			);
+            let slot = sp_consensus_aura::inherents::InherentDataProvider::from_timestamp_and_slot_duration(*timestamp, slot_duration);
             let dynamic_fee = fp_dynamic_fee::InherentDataProvider(U256::from(target_gas_price));
             Ok((slot, timestamp, dynamic_fee))
         };
@@ -796,7 +809,7 @@ pub fn start_manual_seal_node<N: NetworkBackend<Block, <Block as BlockT>::Hash>>
             let eth = crate::rpc::EthDeps {
                 client: client.clone(),
                 pool: transaction_pool.clone(),
-                graph: transaction_pool.pool().clone(),
+                graph: transaction_pool.clone(),
                 converter: Some(TransactionConverter),
                 is_authority: true,
                 enable_dev_signer,
