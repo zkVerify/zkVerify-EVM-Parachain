@@ -26,6 +26,7 @@ mod constants_test;
 mod multiplier;
 mod storage;
 mod use_correct_weights;
+mod new_test;
 
 #[derive(Default)]
 pub struct ExtBuilder {
@@ -102,3 +103,4 @@ pub fn unchecked_eth_tx(raw_hex_tx: &str) -> UncheckedExtrinsic {
     let converter = TransactionConverter;
     converter.convert_transaction(ethereum_transaction(raw_hex_tx))
 }
+
