@@ -78,7 +78,7 @@ pub type LocationToAccountId = (
 pub struct LocationAccountId32ToAccountId;
 impl ConvertLocation<AccountId> for LocationAccountId32ToAccountId {
     fn convert_location(location: &Location) -> Option<AccountId> {
-        use xcm::opaque::lts::Junctions::X1;
+        use xcm::latest::Junctions::X1;
         //log::error!("Converting {:?}", location);
         match location.unpack() {
             (0, [AccountId32 { network, id }]) => {

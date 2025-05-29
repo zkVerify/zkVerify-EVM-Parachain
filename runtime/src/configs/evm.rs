@@ -77,7 +77,7 @@ impl pallet_evm::Config for Runtime {
     type PrecompilesValue = PrecompilesValue;
     type ChainId = EVMChainId;
     type BlockGasLimit = BlockGasLimit;
-    type Runner = PermissionedRunner<Self>;
+    type Runner = pallet_evm::runner::stack::Runner<Self>;
     type OnChargeTransaction = EVMCurrencyAdapter<Balances, ()>;
     type OnCreate = ();
     type FindAuthor = FindAuthorSession<pallet_session::FindAccountFromAuthorIndex<Self, Aura>>;
@@ -86,8 +86,8 @@ impl pallet_evm::Config for Runtime {
     //type SuicideQuickClearLimit = SuicideQuickClearLimit;
     type Timestamp = Timestamp;
     type WeightInfo = weights::pallet_evm::ZKVEvmWeight<Self>;
-    type CreateOriginFilter = ();
-    type CreateInnerOriginFilter = ();
+    //type CreateOriginFilter = ();
+    //type CreateInnerOriginFilter = ();
 }
 
 impl pallet_evm_chain_id::Config for Runtime {}
