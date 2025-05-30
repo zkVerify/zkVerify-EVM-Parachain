@@ -36,7 +36,10 @@ use parachains_common::{
     message_queue::{NarrowOriginToSibling, ParaIdToSibling},
     xcm_config::ConcreteAssetFromSystem,
 };
-use sp_runtime::{DispatchErrorWithPostInfo, traits::{TryConvert, PostDispatchInfoOf}};
+use sp_runtime::{
+    traits::{PostDispatchInfoOf, TryConvert},
+    DispatchErrorWithPostInfo,
+};
 use xcm::latest::prelude::*;
 use xcm_builder::{
     AccountKey20Aliases, AllowKnownQueryResponses, AllowSubscriptionsFrom,
@@ -47,7 +50,10 @@ use xcm_builder::{
     SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId, UsingComponents,
     WeightInfoBounds, WithComputedOrigin, WithUniqueTopic, XcmFeeManagerFromComponents,
 };
-use xcm_executor::{traits::{ConvertLocation, CallDispatcher}, XcmExecutor};
+use xcm_executor::{
+    traits::{CallDispatcher, ConvertLocation},
+    XcmExecutor,
+};
 
 use crate::weights::xcm::ZKVEvmWeight as XcmZKVEvmWeight;
 
@@ -89,13 +95,11 @@ impl ConvertLocation<AccountId> for LocationAccountId32ToAccountId {
                         key: id.as_slice()[0..20]
                             .try_into()
                             .expect("Cannot convert AccountId32 to AccountKey20"),
-                    }]))
-                    .into(),
+                    }])),
                 })
             }
-            _ => LocationToAccountId::convert_location(&location),
+            _ => LocationToAccountId::convert_location(location),
         }
-        .map(Into::into)
     }
 }
 
@@ -172,36 +176,35 @@ pub type TrustedTeleporters = ConcreteAssetFromSystem<RelayLocation>;
 
 pub type WaivedLocations = Equals<RelayLocation>;
 
-
-		pub struct MoonbeamCall;
-		impl CallDispatcher<RuntimeCall> for MoonbeamCall {
-			fn dispatch(
-				call: RuntimeCall,
-				origin: RuntimeOrigin,
-			) -> Result<
-					PostDispatchInfoOf<RuntimeCall>,
-					DispatchErrorWithPostInfo<PostDispatchInfoOf<RuntimeCall>>
-				> {
-				if let Ok(raw_origin) = TryInto::<frame_system::RawOrigin<AccountId>>::try_into(origin.clone().caller) {
-					match (call.clone(), raw_origin) {
-						(
-							RuntimeCall::EthereumXcm(pallet_ethereum_xcm::Call::transact { .. }) |
-							RuntimeCall::EthereumXcm(pallet_ethereum_xcm::Call::transact_through_proxy { .. }),
-							frame_system::RawOrigin::Signed(account_id)
-						) => {
-							return RuntimeCall::dispatch(
-								call,
-								pallet_ethereum_xcm::Origin::XcmEthereumTransaction(
-									account_id.into()
-								).into()
-							);
-						},
-						_ => {}
-					}
-				}
-				RuntimeCall::dispatch(call, origin)
-			}
-		}
+pub struct MoonbeamCall;
+impl CallDispatcher<RuntimeCall> for MoonbeamCall {
+    fn dispatch(
+        call: RuntimeCall,
+        origin: RuntimeOrigin,
+    ) -> Result<
+        PostDispatchInfoOf<RuntimeCall>,
+        DispatchErrorWithPostInfo<PostDispatchInfoOf<RuntimeCall>>,
+    > {
+        if let Ok(raw_origin) =
+            TryInto::<frame_system::RawOrigin<AccountId>>::try_into(origin.clone().caller)
+        {
+            if let (
+                RuntimeCall::EthereumXcm(pallet_ethereum_xcm::Call::transact { .. })
+                | RuntimeCall::EthereumXcm(pallet_ethereum_xcm::Call::transact_through_proxy {
+                    ..
+                }),
+                frame_system::RawOrigin::Signed(account_id),
+            ) = (call.clone(), raw_origin)
+            {
+                return RuntimeCall::dispatch(
+                    call,
+                    pallet_ethereum_xcm::Origin::XcmEthereumTransaction(account_id.into()).into(),
+                );
+            }
+        }
+        RuntimeCall::dispatch(call, origin)
+    }
+}
 
 pub struct XcmConfig;
 impl xcm_executor::Config for XcmConfig {
@@ -238,7 +241,7 @@ impl xcm_executor::Config for XcmConfig {
     >;
     type MessageExporter = ();
     type UniversalAliases = Nothing;
-    type CallDispatcher = MoonbeamCall;//RuntimeCall;
+    type CallDispatcher = MoonbeamCall; //RuntimeCall;
     type SafeCallFilter = Everything;
     type TransactionalProcessor = FrameTransactionalProcessor;
     type HrmpNewChannelOpenRequestHandler = ();

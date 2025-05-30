@@ -11,15 +11,16 @@ license = "GPL-3.0-only"
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
 
+[lints]
+workspace = true
+
 [dependencies]
 parity-scale-codec = {workspace = true, features = ["derive"]}
 scale-info = {workspace = true, features = ["derive"]}
 smallvec = {workspace = true}
 hex-literal = {workspace = true}
 
-sp-debug-derive = {version = "14.0.0", features = ["force-debug"]}
 # Substrate
-log = {workspace=true}
 frame-benchmarking = {workspace = true, optional = true}
 frame-executive = {workspace = true}
 frame-support = {workspace = true}
@@ -104,7 +105,6 @@ hex = {workspace = true, features = ["std"]}
 [features]
 default = [ "std" ]
 std = [
-  "log/std",
 	"cumulus-pallet-aura-ext/std",
 	"cumulus-pallet-parachain-system/std",
 	"cumulus-pallet-session-benchmarking/std",
@@ -131,6 +131,7 @@ std = [
 	"pallet-base-fee/std",
 	"pallet-collator-selection/std",
 	"pallet-deployment-permissions/std",
+	"pallet-ethereum-xcm/std",
 	"pallet-ethereum/std",
 	"pallet-evm-chain-id/std",
 	"pallet-evm-precompile-modexp/std",
@@ -146,8 +147,8 @@ std = [
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
 	"pallet-utility/std",
-	"pallet-xcm/std",
 	"pallet-xcm-benchmarks?/std",
+	"pallet-xcm/std",
 	"parachain-info/std",
 	"parachains-common/std",
 	"parity-scale-codec/std",
@@ -169,9 +170,8 @@ std = [
 	"sp-weights/std",
 	"xcm-builder/std",
 	"xcm-executor/std",
+	"xcm-primitives/std",
 	"xcm/std",
-  "pallet-ethereum-xcm/std",
-  "xcm-primitives/std",
 ]
 
 runtime-benchmarks = [
@@ -187,6 +187,7 @@ runtime-benchmarks = [
 	"pallet-balances/runtime-benchmarks",
 	"pallet-collator-selection/runtime-benchmarks",
 	"pallet-deployment-permissions/runtime-benchmarks",
+	"pallet-ethereum-xcm/runtime-benchmarks",
 	"pallet-ethereum/runtime-benchmarks",
 	"pallet-evm/runtime-benchmarks",
 	"pallet-message-queue/runtime-benchmarks",
@@ -194,14 +195,16 @@ runtime-benchmarks = [
 	"pallet-proxy/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
+	"pallet-transaction-payment/runtime-benchmarks",
 	"pallet-utility/runtime-benchmarks",
-	"pallet-xcm/runtime-benchmarks",
 	"pallet-xcm-benchmarks/runtime-benchmarks",
+	"pallet-xcm/runtime-benchmarks",
 	"parachains-common/runtime-benchmarks",
 	"polkadot-runtime-common/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
 	"xcm-builder/runtime-benchmarks",
 	"xcm-executor/runtime-benchmarks",
+	"xcm-primitives/runtime-benchmarks",
 ]
 
 try-runtime = [
@@ -220,6 +223,7 @@ try-runtime = [
 	"pallet-base-fee/try-runtime",
 	"pallet-collator-selection/try-runtime",
 	"pallet-deployment-permissions/try-runtime",
+	"pallet-ethereum-xcm/try-runtime",
 	"pallet-ethereum/try-runtime",
 	"pallet-evm-chain-id/try-runtime",
 	"pallet-evm/try-runtime",

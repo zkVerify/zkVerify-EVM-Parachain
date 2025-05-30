@@ -10,6 +10,9 @@ build = "build.rs"
 license = "GPL-3.0-only"
 publish = false
 
+[lints]
+workspace = true
+
 [dependencies]
 clap = {workspace = true}
 futures = {workspace = true}
@@ -101,6 +104,7 @@ runtime-benchmarks = [
 	"frame-benchmarking-cli/runtime-benchmarks",
 	"frame-benchmarking/runtime-benchmarks",
 	"frame-system/runtime-benchmarks",
+	"pallet-transaction-payment/runtime-benchmarks",
 	"polkadot-cli/runtime-benchmarks",
 	"polkadot-primitives/runtime-benchmarks",
 	"polkadot-runtime-common/runtime-benchmarks",
@@ -117,6 +121,3 @@ try-runtime = [
 	"zkv-para-evm-runtime/try-runtime",
 ]
 txpool = [ "fc-rpc/txpool" ]
-
-[lints]
-workspace = true

@@ -77,7 +77,7 @@ impl pallet_evm::Config for Runtime {
     type PrecompilesValue = PrecompilesValue;
     type ChainId = EVMChainId;
     type BlockGasLimit = BlockGasLimit;
-    type Runner = pallet_evm::runner::stack::Runner<Self>;
+    type Runner = PermissionedRunner<Self>;
     type OnChargeTransaction = EVMCurrencyAdapter<Balances, ()>;
     type OnCreate = ();
     type FindAuthor = FindAuthorSession<pallet_session::FindAccountFromAuthorIndex<Self, Aura>>;

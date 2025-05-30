@@ -21,9 +21,13 @@ use frame_support::weights::Weight;
 
 use crate::Runtime;
 use core::marker::PhantomData;
-use sp_std::prelude::Vec;
 use sp_runtime::BoundedVec;
-use xcm::{latest::prelude::*, latest::{AssetTransferFilter, Error}, DoubleEncoded};
+use sp_std::prelude::Vec;
+use xcm::{
+    latest::prelude::*,
+    latest::{AssetTransferFilter, Error},
+    DoubleEncoded,
+};
 
 use pallet_xcm_benchmarks_fungible::WeightInfo as XcmBalancesWeight;
 use pallet_xcm_benchmarks_generic::WeightInfo as XcmGenericWeight;

@@ -5,6 +5,9 @@ authors.workspace = true
 edition.workspace = true
 repository.workspace = true
 
+[lints]
+workspace = true
+
 [dependencies]
 frame-benchmarking = {workspace = true, optional = true}
 frame-support = {workspace = true}
@@ -28,9 +31,11 @@ sp-runtime = {workspace = true, default-features = true}
 [features]
 default = [ "std" ]
 std = [
+	"fp-evm/std",
 	"frame-benchmarking?/std",
 	"frame-support/std",
 	"frame-system/std",
+	"log/std",
 	"pallet-evm/std",
 	"parity-scale-codec/std",
 	"scale-info/std",

@@ -4,6 +4,7 @@ use crate::{
     tests::{ExtBuilder, ALICE, BOB},
     RuntimeOrigin,
 };
+use frame_support::traits::EnsureOrigin;
 use frame_support::{assert_err_ignore_postinfo, assert_ok};
 use sp_core::H256;
 use sp_runtime::DispatchError;

@@ -32,7 +32,7 @@ mod weights;
 
 extern crate alloc;
 
-use alloc::borrow::Cow;
+use alloc::{borrow::Cow, string::String};
 
 use frame_support::{
     construct_runtime,
@@ -691,7 +691,7 @@ impl_runtime_apis! {
 
         fn dispatch_benchmark(
             config: frame_benchmarking::BenchmarkConfig
-        ) -> Result<Vec<frame_benchmarking::BenchmarkBatch>, sp_runtime::RuntimeString> {
+        ) -> Result<Vec<frame_benchmarking::BenchmarkBatch>, String> {
             use frame_benchmarking::{Benchmarking, BenchmarkBatch};
             use frame_system_benchmarking::Pallet as SystemBench;
             use pallet_xcm::benchmarking::Pallet as PalletXcmExtrinsicsBenchmark;
@@ -700,7 +700,7 @@ impl_runtime_apis! {
                 use super::*;
                 use crate::{configs::monetary::*, configs::xcm::*, constants::currency::CENTS};
                 use frame_support::parameter_types;
-                use xcm::v4::{Asset, AssetId, Assets, Location, InteriorLocation, Junction, Junctions::Here, NetworkId, Response, Fungibility::Fungible, Parent};
+                use xcm::v5::{Asset, AssetId, Assets, Location, InteriorLocation, Junction, Junctions::Here, NetworkId, Response, Fungibility::Fungible, Parent};
                 use frame_benchmarking::BenchmarkError;
 
                 pub use pallet_xcm_benchmarks::fungible::Pallet as XcmPalletBenchFungible;
@@ -875,7 +875,7 @@ impl_runtime_apis! {
             let params = (&config, &whitelist);
             add_benchmarks!(params, batches);
 
-            if batches.is_empty() { return Err("Benchmark not found for this pallet.".into()) }
+            if batches.is_empty() { return Err("Benchmark not found for this pallet.".to_owned()) }
             Ok(batches)
         }
     }

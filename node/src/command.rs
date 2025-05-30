@@ -281,11 +281,12 @@ pub fn run() -> Result<()> {
                             .ok_or("Could not find parachain ID in chain-spec.")?,
                     );
                     cmd.run(
-                        config,
+                        config.chain_spec.name().into(),
                         partials.client.clone(),
                         create_inherent_data(partials.client.clone(), para_id),
                         Vec::new(),
                         &ext_builder,
+                        true, // It's a parachain -> should record the rpoof
                     )
                 }),
                 #[cfg(not(feature = "runtime-benchmarks"))]

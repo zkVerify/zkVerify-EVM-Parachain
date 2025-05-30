@@ -16,42 +16,13 @@
 //! In this module, we provide the configurations for the ethereum-xcm pallet.
 
 use crate::{
-    configs::system::{ProxyType, ReservedXcmpWeight, RuntimeBlockWeights},
-    constants::currency::CENTS,
+    configs::system::{ProxyType, ReservedXcmpWeight},
     types::AccountId,
-    weights, AllPalletsWithSystem, Balances, BlockNumber, MessageQueue, ParachainInfo,
-    ParachainSystem, Perbill, Runtime, RuntimeCall, RuntimeEvent, RuntimeOrigin, WeightToFee,
-    XcmpQueue, ZKVXcm,
+    BlockNumber, Runtime, RuntimeEvent,
 };
-use cumulus_primitives_core::{AggregateMessageOrigin, ParaId};
-use frame_support::{
-    ensure,
-    pallet_prelude::Get,
-    parameter_types,
-    traits::tokens::imbalance::ResolveTo,
-    traits::OriginTrait,
-    traits::TransformOrigin,
-    traits::{ConstU32, Contains, Equals, Everything, Nothing, PalletInfoAccess},
-    weights::Weight,
-};
+use frame_support::ensure;
 use frame_system::EnsureRoot;
-use pallet_xcm::XcmPassthrough;
-use parachains_common::{
-    message_queue::{NarrowOriginToSibling, ParaIdToSibling},
-    xcm_config::ConcreteAssetFromSystem,
-};
-use sp_runtime::traits::{TryConvert, Zero};
-use xcm::latest::prelude::*;
-use xcm_builder::{
-    AccountKey20Aliases, AllowKnownQueryResponses, AllowSubscriptionsFrom,
-    AllowTopLevelPaidExecutionFrom, DenyReserveTransferToRelayChain, DenyThenTry,
-    DescribeAllTerminal, DescribeFamily, EnsureXcmOrigin, FrameTransactionalProcessor,
-    FungibleAdapter, HashedDescription, IsConcrete, NativeAsset, ParentIsPreset,
-    RelayChainAsNative, SendXcmFeeToAccount, SiblingParachainAsNative, SignedAccountKey20AsNative,
-    SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId, UsingComponents,
-    WeightInfoBounds, WithComputedOrigin, WithUniqueTopic, XcmFeeManagerFromComponents,
-};
-use xcm_executor::{traits::ConvertLocation, XcmExecutor};
+use sp_runtime::traits::Zero;
 
 pub struct EthereumXcmEnsureProxy;
 impl xcm_primitives::EnsureProxy<AccountId> for EthereumXcmEnsureProxy {
