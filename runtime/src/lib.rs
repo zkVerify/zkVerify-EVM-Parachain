@@ -763,19 +763,14 @@ impl_runtime_apis! {
                     type XcmConfig = XcmConfig;
                     type AccountIdConverter = configs::xcm::LocationAccountId32ToAccountId;
                     type DeliveryHelper = ();
-                    //    cumulus_primitives_utility::ToParentDeliveryHelper<
-                    //    XcmConfig,
-                    //    ExistentialDepositAsset,
-                    //    PriceForParentDelivery,
-                    //>;
 
                     fn valid_destination() -> Result<Location, BenchmarkError> {
-                        Ok(Location::parent())//configs::xcm::RelayLocation::get())
+                        Ok(Location::parent())
                     }
                     fn worst_case_holding(_depositable_count: u32) -> Assets {
                         vec![Asset {
                             id: configs::xcm::FeeAssetId::get(),
-                            fun: Fungible(ExistentialDeposit::get() * 2),
+                            fun: Fungible(crate::constants::currency::VFY),
                         }].into()
                     }
                 }
@@ -844,7 +839,7 @@ impl_runtime_apis! {
                     fn fee_asset() -> Result<Asset, BenchmarkError> {
                         Ok(Asset {
                             id: configs::xcm::FeeAssetId::get(),
-                            fun: Fungible(ExistentialDeposit::get()),
+                            fun: Fungible(CENTS),
                         })
                     }
 
@@ -875,7 +870,6 @@ impl_runtime_apis! {
             let params = (&config, &whitelist);
             add_benchmarks!(params, batches);
 
-            if batches.is_empty() { return Err("Benchmark not found for this pallet.".to_owned()) }
             Ok(batches)
         }
     }
