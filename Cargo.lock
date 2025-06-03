@@ -180,7 +180,7 @@ dependencies = [
  "cfg-if",
  "const-hex",
  "derive_more 0.99.19",
- "hex-literal",
+ "hex-literal 0.4.1",
  "itoa",
  "proptest",
  "rand 0.8.5",
@@ -200,7 +200,7 @@ dependencies = [
  "cfg-if",
  "const-hex",
  "derive_more 0.99.19",
- "hex-literal",
+ "hex-literal 0.4.1",
  "itoa",
  "k256",
  "keccak-asm",
@@ -3804,7 +3804,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8d162beedaa69905488a8da94f5ac3edb4dd4788b732fadb7bd120b2625c1976"
 dependencies = [
  "data-encoding",
- "syn 1.0.109",
+ "syn 2.0.100",
 ]
 
 [[package]]
@@ -5962,6 +5962,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6fe2267d4ed49bc07b63801559be28c718ea06c4738b7a03c94df7386d2cde46"
 
 [[package]]
+name = "hex-literal"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bcaaec4551594c969335c98c903c1397853d4198408ea609190f420500f6be71"
+
+[[package]]
 name = "hkdf"
 version = "0.12.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6071,7 +6077,7 @@ name = "hp-verifiers"
 version = "0.1.0"
 source = "git+https://github.com/zkVerify/zkVerify.git?tag=0.9.1-0.13.0#44fed482a11e6185c67e193627863ec729e43b07"
 dependencies = [
- "hex-literal",
+ "hex-literal 0.4.1",
  "parity-scale-codec",
  "scale-info",
  "sp-core",
@@ -7689,7 +7695,7 @@ dependencies = [
  "ed25519-dalek",
  "futures",
  "futures-timer",
- "hex-literal",
+ "hex-literal 0.4.1",
  "indexmap 2.9.0",
  "libc",
  "mockall 0.12.1",
@@ -8828,7 +8834,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "hex-literal",
+ "hex-literal 0.4.1",
  "hp-dispatch",
  "hp-on-proof-verified",
  "ismp",
@@ -9162,6 +9168,21 @@ dependencies = [
  "sp-io",
  "sp-runtime",
  "sp-state-machine",
+]
+
+[[package]]
+name = "pallet-benchmark-dummy"
+version = "0.1.0"
+dependencies = [
+ "frame-benchmarking",
+ "frame-support",
+ "frame-system",
+ "hex-literal 1.0.0",
+ "pallet-balances",
+ "pallet-evm",
+ "parity-scale-codec",
+ "scale-info",
+ "sp-core",
 ]
 
 [[package]]
@@ -9645,7 +9666,7 @@ dependencies = [
  "frame-support",
  "frame-system",
  "hash-db",
- "hex-literal",
+ "hex-literal 0.4.1",
  "impl-trait-for-tuples",
  "log",
  "parity-scale-codec",
@@ -9799,7 +9820,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "hex-literal",
+ "hex-literal 0.4.1",
  "ismp",
  "log",
  "pallet-balances",
@@ -9907,7 +9928,7 @@ dependencies = [
  "anyhow",
  "hash-db",
  "hex",
- "hex-literal",
+ "hex-literal 0.4.1",
  "ismp",
  "jsonrpsee",
  "pallet-ismp",
@@ -10272,7 +10293,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "hex-literal",
+ "hex-literal 0.4.1",
  "hp-verifiers",
  "log",
  "pallet-verifiers",
@@ -10519,7 +10540,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "hex-literal",
+ "hex-literal 0.4.1",
  "hp-verifiers",
  "log",
  "native",
@@ -10969,7 +10990,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "hex-literal",
+ "hex-literal 0.4.1",
  "hp-verifiers",
  "log",
  "native",
@@ -12432,7 +12453,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b57bc055fa389372ec5fc0001b99aeffd50f3fd379280ce572d935189bb58dd8"
 dependencies = [
  "bitvec",
- "hex-literal",
+ "hex-literal 0.4.1",
  "log",
  "parity-scale-codec",
  "polkadot-core-primitives",
@@ -12459,7 +12480,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6bb20b75d33212150242d39890d7ededab55f1084160c337f15d0eb8ca8c3ad4"
 dependencies = [
  "bitvec",
- "hex-literal",
+ "hex-literal 0.4.1",
  "log",
  "parity-scale-codec",
  "polkadot-core-primitives",
@@ -14278,7 +14299,7 @@ dependencies = [
  "cfg-if",
  "digest 0.10.7",
  "hex",
- "hex-literal",
+ "hex-literal 0.4.1",
  "metal",
  "paste",
  "rand_core 0.6.4",
@@ -14347,7 +14368,7 @@ dependencies = [
  "frame-system-benchmarking",
  "frame-system-rpc-runtime-api",
  "frame-try-runtime",
- "hex-literal",
+ "hex-literal 0.4.1",
  "log",
  "pallet-asset-rate",
  "pallet-authority-discovery",
@@ -16876,7 +16897,7 @@ dependencies = [
  "ethabi-decode",
  "frame-support",
  "frame-system",
- "hex-literal",
+ "hex-literal 0.4.1",
  "parity-scale-codec",
  "polkadot-parachain-primitives",
  "scale-info",
@@ -16900,7 +16921,7 @@ dependencies = [
  "ethabi-decode",
  "ethbloom",
  "ethereum-types",
- "hex-literal",
+ "hex-literal 0.4.1",
  "parity-bytes",
  "parity-scale-codec",
  "rlp",
@@ -16962,7 +16983,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "hex-literal",
+ "hex-literal 0.4.1",
  "log",
  "pallet-timestamp",
  "parity-scale-codec",
@@ -16985,7 +17006,7 @@ version = "0.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3984b98465af1d862d4e87ba783e1731f2a3f851b148d6cb98d526cebd351185"
 dependencies = [
- "hex-literal",
+ "hex-literal 0.4.1",
  "snowbridge-beacon-primitives",
  "snowbridge-core",
  "sp-core",
@@ -17003,7 +17024,7 @@ dependencies = [
  "frame-benchmarking",
  "frame-support",
  "frame-system",
- "hex-literal",
+ "hex-literal 0.4.1",
  "log",
  "pallet-balances",
  "parity-scale-codec",
@@ -17027,7 +17048,7 @@ version = "0.18.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b1f251e579b3d3d93cf833c8e503122808742dee33e7ea53b0f292a76c024d66"
 dependencies = [
- "hex-literal",
+ "hex-literal 0.4.1",
  "snowbridge-beacon-primitives",
  "snowbridge-core",
  "sp-core",
@@ -17085,7 +17106,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "aefe74eafeac92e1d9e46b7bb76ec297f6182b4a023f7e7eb7eb8be193f93bef"
 dependencies = [
  "frame-support",
- "hex-literal",
+ "hex-literal 0.4.1",
  "log",
  "parity-scale-codec",
  "scale-info",
@@ -19446,7 +19467,7 @@ dependencies = [
  "ark-ff 0.5.0",
  "ark-models-ext 0.6.0",
  "ark-std 0.5.0",
- "hex-literal",
+ "hex-literal 0.4.1",
  "sha3",
  "snafu",
 ]
@@ -20191,7 +20212,7 @@ dependencies = [
  "frame-system-benchmarking",
  "frame-system-rpc-runtime-api",
  "frame-try-runtime",
- "hex-literal",
+ "hex-literal 0.4.1",
  "log",
  "pallet-asset-rate",
  "pallet-authority-discovery",
@@ -21058,7 +21079,7 @@ dependencies = [
  "frame-benchmarking-cli",
  "frame-system",
  "futures",
- "hex-literal",
+ "hex-literal 0.4.1",
  "jsonrpsee",
  "log",
  "pallet-transaction-payment",
@@ -21129,11 +21150,12 @@ dependencies = [
  "frame-system-rpc-runtime-api",
  "frame-try-runtime",
  "hex",
- "hex-literal",
+ "hex-literal 0.4.1",
  "pallet-aura",
  "pallet-authorship",
  "pallet-balances",
  "pallet-base-fee",
+ "pallet-benchmark-dummy",
  "pallet-collator-selection",
  "pallet-ethereum",
  "pallet-evm",
@@ -21194,7 +21216,7 @@ dependencies = [
  "frame-system-benchmarking",
  "frame-system-rpc-runtime-api",
  "frame-try-runtime",
- "hex-literal",
+ "hex-literal 0.4.1",
  "hp-dispatch",
  "hp-verifiers",
  "ismp",
@@ -21290,7 +21312,7 @@ dependencies = [
  "frame-system",
  "frame-system-rpc-runtime-api",
  "futures",
- "hex-literal",
+ "hex-literal 0.4.1",
  "is_executable",
  "jsonrpsee",
  "kvdb",
