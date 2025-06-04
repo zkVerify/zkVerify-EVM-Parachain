@@ -29,6 +29,7 @@ frame_benchmarking::define_benchmarks!(
     [pallet_proxy, Proxy]
     [pallet_utility, Utility]
     [pallet_multisig, Multisig]
+    [pallet_transaction_payment, TransactionPayment]
 
     [pallet_balances, Balances]
 
@@ -42,6 +43,7 @@ frame_benchmarking::define_benchmarks!(
     [pallet_message_queue, MessageQueue]
 
     [pallet_evm, EVM]
+    [pallet_deployment_permissions, DeploymentPermissions]
 
     [pallet_deployment_permissions, DeploymentPermissions]
     [pallet_xcm_benchmarks::generic, xcm::XcmPalletBenchGeneric::<Runtime>]

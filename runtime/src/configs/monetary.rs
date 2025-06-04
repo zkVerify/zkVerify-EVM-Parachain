@@ -63,6 +63,7 @@ impl pallet_transaction_payment::Config for Runtime {
     // All the fees go to the collators, passing through the Pot of the CollatorSelection pallet
     type OnChargeTransaction =
         pallet_transaction_payment::FungibleAdapter<Balances, ResolveTo<StakingPot, Balances>>;
+
     type WeightToFee = WeightToFee;
     type LengthToFee = ConstantMultiplier<Balance, TransactionByteFee>;
     type FeeMultiplierUpdate = SlowAdjustingFeeUpdate<Self>;

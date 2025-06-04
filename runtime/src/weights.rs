@@ -35,5 +35,5 @@ pub mod pallet_timestamp;
 pub mod pallet_transaction_payment;
 pub mod pallet_utility;
 pub mod pallet_xcm;
-pub mod xcm;
+pub mod pallet_xcm_benchmarks;
 pub use extrinsic_weights::ExtrinsicBaseWeight;

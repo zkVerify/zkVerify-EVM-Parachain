@@ -30,7 +30,7 @@ frame-system-rpc-runtime-api = {workspace = true}
 frame-try-runtime = {workspace = true, optional = true}
 pallet-aura = {workspace = true}
 pallet-authorship = {workspace = true}
-pallet-balances = {workspace = true, features = ["insecure_zero_ed"]}
+pallet-balances = {workspace = true}
 pallet-deployment-permissions = {workspace = true}
 pallet-message-queue = {workspace = true}
 pallet-multisig = {workspace = true}

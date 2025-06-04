@@ -14,8 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-pub mod pallet_xcm_benchmarks_fungible;
-pub mod pallet_xcm_benchmarks_generic;
+pub mod fungible;
+pub mod generic;
 
 use frame_support::weights::Weight;
 
@@ -29,8 +29,8 @@ use xcm::{
     DoubleEncoded,
 };
 
-use pallet_xcm_benchmarks_fungible::WeightInfo as XcmBalancesWeight;
-use pallet_xcm_benchmarks_generic::WeightInfo as XcmGenericWeight;
+use fungible::ZKVEvmWeight as XcmBalancesWeight;
+use generic::ZKVEvmWeight as XcmGenericWeight;
 
 /// Types of asset supported by the ZKV runtime.
 pub enum AssetTypes {

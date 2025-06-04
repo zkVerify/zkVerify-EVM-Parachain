@@ -23,6 +23,7 @@ use core::marker::PhantomData;
 /// Weights for `{{pallet}}` using the zkVerify node and recommended hardware.
 pub struct ZKVEvmWeight<T>(PhantomData<T>);
 
+#[allow(dead_code)]
 impl<T: frame_system::Config> ZKVEvmWeight<T> {
     {{#each benchmarks as |benchmark|}}
     {{#each benchmark.comments as |comment|}}
