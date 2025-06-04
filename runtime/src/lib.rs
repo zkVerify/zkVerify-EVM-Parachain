@@ -30,6 +30,13 @@ mod tests;
 pub mod types;
 mod weights;
 
+/// In this module, we're re-export all dependencies needed by special weight modules.
+pub(crate) mod weights_aliases {
+    pub mod frame_system_extensions {
+        pub use frame_system::ExtensionsWeightInfo as WeightInfo;
+    }
+}
+
 extern crate alloc;
 
 use alloc::{borrow::Cow, string::String};
@@ -672,6 +679,7 @@ impl_runtime_apis! {
             use frame_benchmarking::{Benchmarking, BenchmarkList};
             use frame_support::traits::StorageInfoTrait;
             use frame_system_benchmarking::Pallet as SystemBench;
+            use frame_system_benchmarking::extensions::Pallet as SystemExtensionsBench;
             use cumulus_pallet_session_benchmarking::Pallet as SessionBench;
 
             use pallet_xcm::benchmarking::Pallet as PalletXcmExtrinsicsBenchmark;
@@ -694,6 +702,7 @@ impl_runtime_apis! {
         ) -> Result<Vec<frame_benchmarking::BenchmarkBatch>, String> {
             use frame_benchmarking::{Benchmarking, BenchmarkBatch};
             use frame_system_benchmarking::Pallet as SystemBench;
+            use frame_system_benchmarking::extensions::Pallet as SystemExtensionsBench;
             use pallet_xcm::benchmarking::Pallet as PalletXcmExtrinsicsBenchmark;
 
             pub mod xcm {

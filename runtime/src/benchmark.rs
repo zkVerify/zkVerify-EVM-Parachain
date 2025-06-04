@@ -24,6 +24,7 @@ use crate::ParachainSystem;
 
 frame_benchmarking::define_benchmarks!(
     [frame_system, SystemBench::<Runtime>]
+    [frame_system_extensions, SystemExtensionsBench::<Runtime>]
     [cumulus_pallet_parachain_system, ParachainSystem]
     [pallet_timestamp, Timestamp]
     [pallet_proxy, Proxy]
