@@ -9180,9 +9180,13 @@ dependencies = [
  "hex-literal 1.0.0",
  "pallet-balances",
  "pallet-evm",
+ "pallet-timestamp",
  "parity-scale-codec",
  "scale-info",
  "sp-core",
+ "sp-io",
+ "sp-runtime",
+ "sp-std",
 ]
 
 [[package]]
