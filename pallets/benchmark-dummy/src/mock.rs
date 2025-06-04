@@ -10,8 +10,9 @@ pub type BalanceOf<T> = <<T as pallet_evm::Config>::Currency as Currency<Account
 frame_support::construct_runtime!(
     pub enum Test {
         System: frame_system = 0,
-        Balances: pallet_balances = 1,
-        Evm: pallet_evm = 2,
+        Timestamp: pallet_timestamp = 1
+        Balances: pallet_balances = 2,
+        Evm: pallet_evm = 3,
     }
 );
 
@@ -23,6 +24,9 @@ impl frame_system::Config for Test {
     type Lookup = sp_runtime::traits::IdentityLookup<sp_runtime::AccountId32>;
 }
 
+#[derive_impl(pallet_timestamp::config_preludes::TestDefaultConfig)]
+impl pallet_timestamp::Config for Test {}
+
 #[derive_impl(pallet_balances::config_preludes::TestDefaultConfig)]
 impl pallet_balances::Config for Test {
     type AccountStore = System;
@@ -31,6 +35,8 @@ impl pallet_balances::Config for Test {
 #[derive_impl(pallet_evm::config_preludes::TestDefaultConfig)]
 impl pallet_evm::Config for Test {
     type AccountProvider = pallet_evm::FrameSystemAccountProvider<Self>;
+    type BlockHashMapping = pallet_evm::SubstrateBlockHashMapping<Self>;
+    type Timestamp = Timestamp;
     type Currency = Balances;
     type Runner = pallet_evm::runner::stack::Runner<Self>;
 }
