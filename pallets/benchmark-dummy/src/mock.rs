@@ -1,18 +1,16 @@
-use frame_support::{construct_runtime, derive_impl, traits::Currency};
-use sp_core::{H160, U256};
+use crate::weights::SubstrateWeight;
+use frame_support::derive_impl;
 use sp_runtime::BuildStorage;
 
 pub type Block = frame_system::mocking::MockBlock<Test>;
-pub type AccountIdOf<T> =
-    <<T as pallet_evm::Config>::AccountProvider as pallet_evm::AccountProvider>::AccountId;
-pub type BalanceOf<T> = <<T as pallet_evm::Config>::Currency as Currency<AccountIdOf<T>>>::Balance;
 
 frame_support::construct_runtime!(
     pub enum Test {
         System: frame_system = 0,
-        Timestamp: pallet_timestamp = 1
+        Timestamp: pallet_timestamp = 1,
         Balances: pallet_balances = 2,
         Evm: pallet_evm = 3,
+        BenchmarkDummy: crate = 4,
     }
 );
 
@@ -39,6 +37,11 @@ impl pallet_evm::Config for Test {
     type Timestamp = Timestamp;
     type Currency = Balances;
     type Runner = pallet_evm::runner::stack::Runner<Self>;
+}
+
+// Implement the Config trait for our pallet
+impl crate::Config for Test {
+    type WeightInfo = SubstrateWeight<Self>;
 }
 
 // Test externalities initialization
