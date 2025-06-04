@@ -8,6 +8,7 @@ license = "GPL-3.0-only"
 [workspace]
 members = [
     "node",
+    "pallets/benchmark-dummy",
     "pallets/parachain-inherent",
     "runtime",
 ]
@@ -17,6 +18,7 @@ resolver = "2"
 
 # Local
 cumulus-client-parachain-inherent = {path = "pallets/parachain-inherent", default-features = false}
+pallet-benchmark-dummy = {path = "pallets/benchmark-dummy", default-features = false}
 zkv-para-evm-runtime = {path = "runtime"}
 
 # Common

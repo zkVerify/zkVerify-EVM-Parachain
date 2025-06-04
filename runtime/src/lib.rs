@@ -218,6 +218,11 @@ cumulus_pallet_parachain_system::register_validate_block! {
 #[cfg(feature = "runtime-benchmarks")]
 mod benchmark;
 
+// BenchmarkDummy pallet configuration
+impl pallet_benchmark_dummy::Config for Runtime {
+    type WeightInfo = weights::pallet_benchmark_dummy::ZKVEvmWeight<Runtime>;
+}
+
 // Create the runtime by composing the FRAME pallets that were previously
 // configured.
 construct_runtime!(
@@ -258,6 +263,9 @@ construct_runtime!(
         EVM: pallet_evm = 41,
         BaseFee: pallet_base_fee = 42, // No weight
         EVMChainId: pallet_evm_chain_id = 43, // No weight
+
+        // Benchmarking
+        BenchmarkDummy: pallet_benchmark_dummy = 50,
     }
 );
 
