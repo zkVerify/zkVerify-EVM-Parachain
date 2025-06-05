@@ -32,7 +32,7 @@ mod constant_tests {
         #[cfg(not(feature = "runtime-benchmarks"))]
         let expected_existential_deposit = 0;
         #[cfg(feature = "runtime-benchmarks")]
-        let expected_existential_deposit = MILLICENTS;
+        let expected_existential_deposit = 100;
 
         assert_eq!(EXISTENTIAL_DEPOSIT, expected_existential_deposit);
 

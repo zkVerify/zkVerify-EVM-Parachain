@@ -35,7 +35,7 @@ pub mod currency {
     // fall or not in some cases that you want to benchmark. You're not testing the runtime
     // correctness here, so you can set any value that makes the benchmarks happy without
     // compromising the results.
-    pub const EXISTENTIAL_DEPOSIT: Balance = MILLICENTS;
+    pub const EXISTENTIAL_DEPOSIT: Balance = 100;
 
     pub const fn deposit(items: u32, bytes: u32) -> Balance {
         items as Balance * 15 * CENTS + (bytes as Balance) * 6 * CENTS
