@@ -23,6 +23,8 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
 pub mod configs;
 pub mod constants;
+mod genesis_config_presets;
+
 mod precompiles;
 pub use precompiles::Precompiles;
 #[cfg(test)]
@@ -37,6 +39,7 @@ pub(crate) mod weights_aliases {
     }
 }
 
+#[macro_use]
 extern crate alloc;
 
 use alloc::{borrow::Cow, string::String};
@@ -889,11 +892,11 @@ impl_runtime_apis! {
         }
 
         fn get_preset(id: &Option<sp_genesis_builder::PresetId>) -> Option<Vec<u8>> {
-            get_preset::<RuntimeGenesisConfig>(id, |_| None)
+            get_preset::<RuntimeGenesisConfig>(id, &genesis_config_presets::get_preset)
         }
 
         fn preset_names() -> Vec<sp_genesis_builder::PresetId> {
-            vec![]
+           genesis_config_presets::preset_names()
         }
     }
 }

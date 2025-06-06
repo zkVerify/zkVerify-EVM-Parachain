@@ -35,9 +35,6 @@ pub enum Subcommand {
     #[command(subcommand)]
     Key(sc_cli::KeySubcommand),
 
-    // Utility command to display all the keys we need in a more friendly way
-    ZkvEvmParaKeysFromSeed(KeysFromSeedCmd),
-
     /// Build a chain specification.
     BuildSpec(sc_cli::BuildSpecCmd),
 
@@ -72,11 +69,6 @@ pub enum Subcommand {
     /// The pallet benchmarking moved to the `pallet` sub-command.
     #[command(subcommand)]
     Benchmark(frame_benchmarking_cli::BenchmarkCmd),
-    // /// Try-runtime has migrated to a standalone
-    // /// [CLI](<https://github.com/paritytech/try-runtime-cli>). The subcommand exists as a stub and
-    // /// deprecation notice. It will be removed entirely some time after Janurary
-    // /// 2024.
-    // TryRuntime,
 }
 
 #[derive(Debug, Clone, clap::Parser)]
