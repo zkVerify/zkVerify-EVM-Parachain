@@ -1,1 +1,0 @@
-Folder used for staging files for docker compose
