@@ -100,7 +100,8 @@ if [ "${ENABLE_PALLETS:-}" = "true" ]; then
     # get all
     mapfile -t SELECTED_PALLETS < <(${NODE} benchmark pallet \
       --list \
-      --genesis-builder=spec | \
+      --runtime "${WASM}" \
+      --genesis-builder=runtime | \
       cut -d',' -f1 | \
       sort | \
       uniq \
@@ -178,7 +179,8 @@ if [ "${ENABLE_OVERHEAD:-}" = "true" ]; then
   # shellcheck disable=SC2086
   OUTPUT="$(
     ${NODE} benchmark overhead \
-    --chain=dev \
+    --runtime "${WASM}" \
+    --genesis-builder=runtime \
     --weight-path="${WEIGHTS_FOLDER}" \
     --header="${CODE_HEADER}" \
     --warmup=10 \

@@ -100,7 +100,8 @@ fi
 
 ${NODE_EXE} \
     benchmark pallet \
-    --genesis-builder=spec \
+    --runtime "${RUNTIME}" \
+    --genesis-builder=runtime \
     --pallet "${PALLET}" \
     --extrinsic "*" \
     --steps "${BM_STEPS}" \
