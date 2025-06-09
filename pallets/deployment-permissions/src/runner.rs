@@ -209,6 +209,25 @@ where
             weight: err.weight,
         })
     }
+
+    fn create_force_address(
+        _source: H160,
+        _init: Vec<u8>,
+        _value: U256,
+        _gas_limit: u64,
+        _max_fee_per_gas: Option<U256>,
+        _max_priority_fee_per_gas: Option<U256>,
+        _nonce: Option<U256>,
+        _access_list: Vec<(H160, Vec<H256>)>,
+        _is_transactional: bool,
+        _validate: bool,
+        _weight_limit: Option<Weight>,
+        _transaction_len: Option<u64>,
+        _config: &fp_evm::Config,
+        _force_address: H160,
+    ) -> Result<fp_evm::CreateInfo, RunnerError<Self::Error>> {
+        unimplemented!()
+    }
 }
 #[cfg(test)]
 mod mock {
@@ -919,25 +938,5 @@ mod permissioned_runner {
             );
             assert_eq!(weight, DUMMY_RUNNER_ERROR.weight);
         }
-=======
-
-    fn create_force_address(
-        _source: H160,
-        _init: Vec<u8>,
-        _value: U256,
-        _gas_limit: u64,
-        _max_fee_per_gas: Option<U256>,
-        _max_priority_fee_per_gas: Option<U256>,
-        _nonce: Option<U256>,
-        _access_list: Vec<(H160, Vec<H256>)>,
-        _is_transactional: bool,
-        _validate: bool,
-        _weight_limit: Option<Weight>,
-        _transaction_len: Option<u64>,
-        _config: &fp_evm::Config,
-        _force_address: H160,
-    ) -> Result<fp_evm::CreateInfo, RunnerError<Self::Error>> {
-        unimplemented!()
->>>>>>> 925eb5d (Import deployment_permissions)
     }
 }
