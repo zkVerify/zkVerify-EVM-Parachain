@@ -55,15 +55,27 @@ const DEFAULT_ENDOWED_SEEDS: &[AccountEntry<'static>] = &[
 ];
 
 /// Generate a crypto pair from seed.
-pub fn try_get_from_seed<TPublic: Public>(
+pub fn try_get_from_seed_url<TPublic: Public>(
     seed: &str,
 ) -> Result<<TPublic::Pair as Pair>::Public, SecretStringError> {
-    TPublic::Pair::from_string(&format!("//{}", seed), None).map(|pair| pair.public())
+    TPublic::Pair::from_string(seed, None).map(|pair| pair.public())
 }
 
 /// Generate a crypto pair from seed.
-pub fn get_from_seed<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>::Public {
-    try_get_from_seed::<TPublic>(seed).expect("static values are valid; qed")
+pub fn get_from_seed_url<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>::Public {
+    try_get_from_seed_url::<TPublic>(seed).expect("static values are valid; qed")
+}
+
+pub fn get_ethereum_pub_from_seed_url(seed: &str) -> sp_core::ecdsa::Public {
+    get_from_seed_url::<sp_core::ecdsa::Public>(seed)
+}
+
+/// Generate a crypto pair from seed.
+pub fn get_from_substrate_account<TPublic: Public>(
+    account: &str,
+) -> <TPublic::Pair as Pair>::Public {
+    try_get_from_seed_url::<TPublic>(&format!("//{}", account))
+        .expect("static values are valid; qed")
 }
 
 type Ids = (AccountId, AuraId);
@@ -76,6 +88,15 @@ fn genesis(
     root_key: AccountId,
     endowed_accounts: Vec<(AccountId, Balance)>,
 ) -> serde_json::Value {
+    #[cfg(feature = "runtime-benchmarks")]
+    let endowed_accounts = endowed_accounts
+        .into_iter()
+        .chain(Some((
+            get_ethereum_pub_from_seed_url("//Bob").into(),
+            ENDOWMENT,
+        )))
+        .collect::<Vec<_>>();
+
     let precompiles = Precompiles::<Runtime>::used_addresses()
         .map(|addr| {
             (
@@ -163,7 +184,12 @@ pub fn development_config_genesis() -> serde_json::Value {
     let initial_authorities = DEFAULT_ENDOWED_SEEDS
         .iter()
         .take(authorities_num)
-        .map(|entry| (entry.eth_addr.into(), get_from_seed::<AuraId>(entry.seed)))
+        .map(|entry| {
+            (
+                entry.eth_addr.into(),
+                get_from_substrate_account::<AuraId>(entry.seed),
+            )
+        })
         .collect::<Vec<_>>();
 
     genesis(
@@ -190,7 +216,12 @@ pub fn local_config_genesis() -> serde_json::Value {
     let initial_authorities = DEFAULT_ENDOWED_SEEDS
         .iter()
         .take(authorities_num)
-        .map(|entry| (entry.eth_addr.into(), get_from_seed::<AuraId>(entry.seed)))
+        .map(|entry| {
+            (
+                entry.eth_addr.into(),
+                get_from_substrate_account::<AuraId>(entry.seed),
+            )
+        })
         .collect::<Vec<_>>();
 
     genesis(
