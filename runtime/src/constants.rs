@@ -31,6 +31,10 @@ pub mod currency {
     pub const EXISTENTIAL_DEPOSIT: Balance = 0;
 
     #[cfg(feature = "runtime-benchmarks")]
+    // The meaning of `EXISTENTIAL_DEPOSIT` for runtime benchmarks is just a way to
+    // fall or not in some cases that you want to benchmark. You're not testing the runtime
+    // correctness here, so you can set any value that makes the benchmarks happy without
+    // compromising the results.
     pub const EXISTENTIAL_DEPOSIT: Balance = 100;
 
     pub const fn deposit(items: u32, bytes: u32) -> Balance {

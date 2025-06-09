@@ -30,6 +30,13 @@ mod tests;
 pub mod types;
 mod weights;
 
+/// In this module, we're re-export all dependencies needed by special weight modules.
+pub(crate) mod weights_aliases {
+    pub mod frame_system_extensions {
+        pub use frame_system::ExtensionsWeightInfo as WeightInfo;
+    }
+}
+
 extern crate alloc;
 
 use alloc::{borrow::Cow, string::String};
@@ -672,6 +679,7 @@ impl_runtime_apis! {
             use frame_benchmarking::{Benchmarking, BenchmarkList};
             use frame_support::traits::StorageInfoTrait;
             use frame_system_benchmarking::Pallet as SystemBench;
+            use frame_system_benchmarking::extensions::Pallet as SystemExtensionsBench;
             use cumulus_pallet_session_benchmarking::Pallet as SessionBench;
 
             use pallet_xcm::benchmarking::Pallet as PalletXcmExtrinsicsBenchmark;
@@ -694,6 +702,7 @@ impl_runtime_apis! {
         ) -> Result<Vec<frame_benchmarking::BenchmarkBatch>, String> {
             use frame_benchmarking::{Benchmarking, BenchmarkBatch};
             use frame_system_benchmarking::Pallet as SystemBench;
+            use frame_system_benchmarking::extensions::Pallet as SystemExtensionsBench;
             use pallet_xcm::benchmarking::Pallet as PalletXcmExtrinsicsBenchmark;
 
             pub mod xcm {
@@ -763,19 +772,14 @@ impl_runtime_apis! {
                     type XcmConfig = XcmConfig;
                     type AccountIdConverter = configs::xcm::LocationAccountId32ToAccountId;
                     type DeliveryHelper = ();
-                    //    cumulus_primitives_utility::ToParentDeliveryHelper<
-                    //    XcmConfig,
-                    //    ExistentialDepositAsset,
-                    //    PriceForParentDelivery,
-                    //>;
 
                     fn valid_destination() -> Result<Location, BenchmarkError> {
-                        Ok(Location::parent())//configs::xcm::RelayLocation::get())
+                        Ok(Location::parent())
                     }
                     fn worst_case_holding(_depositable_count: u32) -> Assets {
                         vec![Asset {
                             id: configs::xcm::FeeAssetId::get(),
-                            fun: Fungible(ExistentialDeposit::get() * 2),
+                            fun: Fungible(crate::constants::currency::VFY),
                         }].into()
                     }
                 }
@@ -844,7 +848,7 @@ impl_runtime_apis! {
                     fn fee_asset() -> Result<Asset, BenchmarkError> {
                         Ok(Asset {
                             id: configs::xcm::FeeAssetId::get(),
-                            fun: Fungible(ExistentialDeposit::get()),
+                            fun: Fungible(CENTS),
                         })
                     }
 
@@ -875,7 +879,6 @@ impl_runtime_apis! {
             let params = (&config, &whitelist);
             add_benchmarks!(params, batches);
 
-            if batches.is_empty() { return Err("Benchmark not found for this pallet.".to_owned()) }
             Ok(batches)
         }
     }

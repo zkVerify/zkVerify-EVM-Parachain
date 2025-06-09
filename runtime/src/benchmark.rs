@@ -24,11 +24,13 @@ use crate::ParachainSystem;
 
 frame_benchmarking::define_benchmarks!(
     [frame_system, SystemBench::<Runtime>]
+    [frame_system_extensions, SystemExtensionsBench::<Runtime>]
     [cumulus_pallet_parachain_system, ParachainSystem]
     [pallet_timestamp, Timestamp]
     [pallet_proxy, Proxy]
     [pallet_utility, Utility]
     [pallet_multisig, Multisig]
+    [pallet_transaction_payment, TransactionPayment]
 
     [pallet_balances, Balances]
 
@@ -42,6 +44,7 @@ frame_benchmarking::define_benchmarks!(
     [pallet_message_queue, MessageQueue]
 
     [pallet_evm, EVM]
+    [pallet_deployment_permissions, DeploymentPermissions]
 
     [pallet_deployment_permissions, DeploymentPermissions]
     [pallet_xcm_benchmarks::generic, xcm::XcmPalletBenchGeneric::<Runtime>]

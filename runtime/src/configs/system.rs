@@ -141,6 +141,8 @@ impl frame_system::Config for Runtime {
     type Version = Version;
     /// Weights
     type SystemWeightInfo = weights::frame_system::ZKVEvmWeight<Runtime>;
+    /// Extensions Weights
+    type ExtensionsWeightInfo = weights::frame_system_extensions::ZKVEvmWeight<Runtime>;
 }
 
 parameter_types! {

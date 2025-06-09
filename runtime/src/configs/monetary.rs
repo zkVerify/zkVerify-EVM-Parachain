@@ -58,11 +58,99 @@ parameter_types! {
     pub StakingPot: AccountId = CollatorSelection::account_id();
 }
 
+#[cfg(feature = "runtime-benchmarks")]
+mod runtime_benchmarks {
+    use crate::constants::currency::CENTS;
+    use crate::Runtime;
+    use core::marker::PhantomData;
+    use sp_runtime::traits::{DispatchInfoOf, PostDispatchInfoOf};
+    use sp_runtime::transaction_validity::TransactionValidityError;
+
+    type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
+    type RuntimeCallOf<T> = <T as frame_system::Config>::RuntimeCall;
+
+    /// This decorator will just forward all calls to the original `OnChargeTransaction` and
+    /// override the `minimum_balance` method to return a fixed value of 1 cent instead the
+    /// original implementation that return the `EXISTENTIAL_DEPOSIT`: not enough to perform a real
+    /// transaction with a valid `WeightToFee` configuration.
+    pub struct OnChargeTransactionRuntimeBenchmarks<T>(PhantomData<T>);
+
+    impl<T: pallet_transaction_payment::OnChargeTransaction<Runtime>>
+        pallet_transaction_payment::OnChargeTransaction<Runtime>
+        for OnChargeTransactionRuntimeBenchmarks<T>
+    where
+        T::Balance: From<u128>,
+    {
+        type Balance = T::Balance;
+        type LiquidityInfo = T::LiquidityInfo;
+
+        fn withdraw_fee(
+            who: &AccountIdOf<Runtime>,
+            call: &RuntimeCallOf<Runtime>,
+            dispatch_info: &DispatchInfoOf<RuntimeCallOf<Runtime>>,
+            fee: Self::Balance,
+            tip: Self::Balance,
+        ) -> Result<Self::LiquidityInfo, TransactionValidityError> {
+            T::withdraw_fee(who, call, dispatch_info, fee, tip)
+        }
+
+        fn can_withdraw_fee(
+            who: &AccountIdOf<Runtime>,
+            call: &RuntimeCallOf<Runtime>,
+            dispatch_info: &DispatchInfoOf<RuntimeCallOf<Runtime>>,
+            fee: Self::Balance,
+            tip: Self::Balance,
+        ) -> Result<(), TransactionValidityError> {
+            T::can_withdraw_fee(who, call, dispatch_info, fee, tip)
+        }
+
+        fn correct_and_deposit_fee(
+            who: &AccountIdOf<Runtime>,
+            dispatch_info: &DispatchInfoOf<RuntimeCallOf<Runtime>>,
+            post_info: &PostDispatchInfoOf<RuntimeCallOf<Runtime>>,
+            corrected_fee: Self::Balance,
+            tip: Self::Balance,
+            already_withdrawn: Self::LiquidityInfo,
+        ) -> Result<(), TransactionValidityError> {
+            T::correct_and_deposit_fee(
+                who,
+                dispatch_info,
+                post_info,
+                corrected_fee,
+                tip,
+                already_withdrawn,
+            )
+        }
+
+        fn endow_account(who: &AccountIdOf<Runtime>, amount: Self::Balance) {
+            T::endow_account(who, amount)
+        }
+
+        fn minimum_balance() -> Self::Balance
+        where
+            <T as pallet_transaction_payment::OnChargeTransaction<Runtime>>::Balance: From<u128>,
+        {
+            CENTS.into()
+        }
+    }
+}
+
+type OnChargeTransaction =
+    pallet_transaction_payment::FungibleAdapter<Balances, ResolveTo<StakingPot, Balances>>;
+
 impl pallet_transaction_payment::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     // All the fees go to the collators, passing through the Pot of the CollatorSelection pallet
+
+    #[cfg(not(feature = "runtime-benchmarks"))]
+    type OnChargeTransaction = OnChargeTransaction;
+    #[cfg(feature = "runtime-benchmarks")]
+    // We are wrapping the original `OnChargeTransaction` with the decorator provided in
+    // `runtime_benchmarks`. This decorator will provide the corrected `runtime-benchmarks`
+    // behavior to test the benchmarked cases.
     type OnChargeTransaction =
-        pallet_transaction_payment::FungibleAdapter<Balances, ResolveTo<StakingPot, Balances>>;
+        runtime_benchmarks::OnChargeTransactionRuntimeBenchmarks<OnChargeTransaction>;
+
     type WeightToFee = WeightToFee;
     type LengthToFee = ConstantMultiplier<Balance, TransactionByteFee>;
     type FeeMultiplierUpdate = SlowAdjustingFeeUpdate<Self>;

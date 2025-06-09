@@ -20,7 +20,12 @@ args = ["check", "--all-features"]
 command = "cargo"
 args = ["build", "--release"]
 
+[tasks.test-base]
+command = "cargo"
+args = ["test", "--release"]
+
 [tasks.test]
+dependencies = ["test-base"]
 command = "cargo"
 args = ["test", "--release", "--all-features"]
 

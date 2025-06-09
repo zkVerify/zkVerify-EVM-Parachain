@@ -367,7 +367,25 @@ mod mock {
                 proof_size_base_cost: Option<u64>,
                 config: &pallet_evm::EvmConfig,
             ) -> Result<pallet_evm::CreateInfo, RunnerError<sp_runtime::DispatchError>>;
+
+            fn create_force_address(
+                source: H160,
+                init: Vec<u8>,
+                value: U256,
+                gas_limit: u64,
+                max_fee_per_gas: Option<U256>,
+                max_priority_fee_per_gas: Option<U256>,
+                nonce: Option<U256>,
+                access_list: Vec<(H160, Vec<H256>)>,
+                is_transactional: bool,
+                validate: bool,
+                weight_limit: Option<Weight>,
+                proof_size_base_cost: Option<u64>,
+                config: &pallet_evm::EvmConfig,
+                contract_address: H160,
+            ) -> Result<pallet_evm::CreateInfo, RunnerError<sp_runtime::DispatchError>>;
         }
+
     }
 
     #[derive(Educe)]
