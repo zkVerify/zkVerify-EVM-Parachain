@@ -69,6 +69,10 @@ mod runtime_benchmarks {
     type AccountIdOf<T> = <T as frame_system::Config>::AccountId;
     type RuntimeCallOf<T> = <T as frame_system::Config>::RuntimeCall;
 
+    /// This decorator will just forward all calls to the original `OnChargeTransaction` and
+    /// override the `minimum_balance` method to return a fixed value of 1 cent instead the
+    /// original implementation that return the `EXISTENTIAL_DEPOSIT`: not enough to perform a real
+    /// transaction with a valid `WeightToFee` configuration.
     pub struct OnChargeTransactionRuntimeBenchmarks<T>(PhantomData<T>);
 
     impl<T: pallet_transaction_payment::OnChargeTransaction<Runtime>>
@@ -141,6 +145,9 @@ impl pallet_transaction_payment::Config for Runtime {
     #[cfg(not(feature = "runtime-benchmarks"))]
     type OnChargeTransaction = OnChargeTransaction;
     #[cfg(feature = "runtime-benchmarks")]
+    // We are wrapping the original `OnChargeTransaction` with the decorator provided in
+    // `runtime_benchmarks`. This decorator will provide the corrected `runtime-benchmarks`
+    // behavior to test the benchmarked cases.
     type OnChargeTransaction =
         runtime_benchmarks::OnChargeTransactionRuntimeBenchmarks<OnChargeTransaction>;
 
