@@ -24,6 +24,7 @@ use frame_support::weights::Weight;
 
 mod constants_test;
 mod multiplier;
+mod permissioned_deploy;
 mod storage;
 mod use_correct_weights;
 
