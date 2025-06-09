@@ -30,6 +30,10 @@ mod tests;
 pub mod types;
 mod weights;
 
+extern crate alloc;
+
+use alloc::borrow::Cow;
+
 use frame_support::{
     construct_runtime,
     genesis_builder_helper::{build_state, get_preset},
@@ -48,7 +52,7 @@ use sp_core::{crypto::KeyTypeId, OpaqueMetadata, H160, H256, U256};
 #[cfg(any(feature = "std", test))]
 pub use sp_runtime::BuildStorage;
 use sp_runtime::{
-    create_runtime_str, impl_opaque_keys,
+    impl_opaque_keys,
     traits::{
         Block as BlockT, DispatchInfoOf, Dispatchable, Get, PostDispatchInfoOf, UniqueSaturatedInto,
     },
@@ -191,14 +195,14 @@ impl_opaque_keys! {
 // Version of the runtime.
 #[sp_version::runtime_version]
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-    spec_name: create_runtime_str!("frontier-template"),
-    impl_name: create_runtime_str!("frontier-template"),
+    spec_name: Cow::Borrowed("frontier-template"),
+    impl_name: Cow::Borrowed("frontier-template"),
     authoring_version: 1,
     spec_version: 1,
     impl_version: 0,
     apis: RUNTIME_API_VERSIONS,
     transaction_version: 1,
-    state_version: 1,
+    system_version: 1,
 };
 
 /// The version information used to identify this runtime when compiled natively.
@@ -434,8 +438,7 @@ impl_runtime_apis! {
 
         /// For a given account address and index, returns pallet_evm::AccountStorages.
         fn storage_at(address: H160, index: U256) -> H256 {
-            let mut tmp = [0u8; 32];
-            index.to_big_endian(&mut tmp);
+            let tmp = index.to_big_endian();
             pallet_evm::AccountStorages::<Runtime>::get(address, H256::from_slice(&tmp[..]))
         }
 
@@ -615,7 +618,7 @@ impl_runtime_apis! {
     impl fp_rpc::ConvertTransactionRuntimeApi<Block> for Runtime {
         /// Converts an ethereum transaction into a transaction suitable for the runtime.
         fn convert_transaction(transaction: EthereumTransaction) -> <Block as BlockT>::Extrinsic {
-            UncheckedExtrinsic::new_unsigned(
+            UncheckedExtrinsic::new_bare(
                 pallet_ethereum::Call::<Runtime>::transact { transaction }.into(),
             )
         }

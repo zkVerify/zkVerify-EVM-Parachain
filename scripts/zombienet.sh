@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ZOMBIENET_V=v1.3.106
+ZOMBIENET_V=v1.3.128
 ZKV_REV=a099848
 ZKV_V=v0.1.0
 BIN_DIR=relay-bin

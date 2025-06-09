@@ -30,12 +30,12 @@ use sc_consensus_manual_seal::{
     EngineCommand,
 };
 use sc_rpc::SubscriptionTaskExecutor;
-use sc_transaction_pool::ChainApi;
 use sc_transaction_pool_api::TransactionPool;
 use sp_api::{CallApiAt, ProvideRuntimeApi};
 use sp_block_builder::BlockBuilder;
 use sp_blockchain::{Error as BlockChainError, HeaderBackend, HeaderMetadata};
 use sp_consensus_aura::sr25519::AuthorityId as AuraId;
+use sp_core::H256;
 use sp_inherents::CreateInherentDataProviders;
 use sp_runtime::traits::Block as BlockT;
 use zkv_para_evm_runtime::{opaque::Block, AccountId, Balance, Nonce};
@@ -47,13 +47,13 @@ use crate::rpc::eth::create_eth;
 pub type RpcExtension = jsonrpsee::RpcModule<()>;
 
 /// Full client dependencies
-pub struct FullDeps<C, P, A: ChainApi, CT, CIDP> {
+pub struct FullDeps<C, P, CT, CIDP> {
     /// The client instance to use.
     pub client: Arc<C>,
     /// Transaction pool instance.
     pub pool: Arc<P>,
     /// Ethereum-compatibility specific dependencies.
-    pub eth: EthDeps<Block, C, P, A, CT, CIDP>,
+    pub eth: EthDeps<Block, C, P, CT, CIDP>,
     /// Manual seal command sink
     pub command_sink: Option<futures::channel::mpsc::Sender<EngineCommand<Hash>>>,
 }
@@ -71,8 +71,8 @@ where
 }
 
 /// Instantiate all RPC extensions.
-pub fn create_full<C, P, A, CT, CIDP, BE>(
-    deps: FullDeps<C, P, A, CT, CIDP>,
+pub fn create_full<C, P, CT, CIDP, BE>(
+    deps: FullDeps<C, P, CT, CIDP>,
     subscription_task_executor: SubscriptionTaskExecutor,
     pubsub_notification_sinks: Arc<
         fc_mapping_sync::EthereumBlockNotificationSinks<
@@ -98,8 +98,7 @@ where
     C::Api: BlockBuilder<Block>,
     C::Api: fp_rpc::ConvertTransactionRuntimeApi<Block>,
     C::Api: fp_rpc::EthereumRuntimeRPCApi<Block>,
-    P: TransactionPool<Block = Block> + Sync + Send + 'static,
-    A: ChainApi<Block = Block> + 'static,
+    P: TransactionPool<Block = Block, Hash = H256> + Sync + Send + 'static,
     CIDP: CreateInherentDataProviders<Block, ()> + Send + 'static,
     CT: fp_rpc::ConvertTransaction<<Block as BlockT>::Extrinsic> + Send + Sync + 'static,
     BE: Backend<Block> + 'static,
@@ -118,7 +117,7 @@ where
     module.merge(System::new(client.clone(), pool).into_rpc())?;
     module.merge(TransactionPayment::new(client).into_rpc())?;
 
-    let mut module = create_eth::<_, _, _, _, _, _, _, DefaultEthConfig<C, BE>>(
+    let mut module = create_eth::<_, _, _, _, _, _, DefaultEthConfig<C, BE>>(
         module,
         eth,
         subscription_task_executor,

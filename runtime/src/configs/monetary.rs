@@ -48,6 +48,7 @@ impl pallet_balances::Config for Runtime {
     type MaxLocks = MaxLocks;
     type MaxReserves = MaxReserves;
     type MaxFreezes = MaxFreezes;
+    type DoneSlashHandler = ();
 }
 
 parameter_types! {
@@ -66,4 +67,5 @@ impl pallet_transaction_payment::Config for Runtime {
     type LengthToFee = ConstantMultiplier<Balance, TransactionByteFee>;
     type FeeMultiplierUpdate = SlowAdjustingFeeUpdate<Self>;
     type OperationalFeeMultiplier = OperationalFeeMultiplier;
+    type WeightInfo = weights::pallet_transaction_payment::ZKVEvmWeight<Runtime>;
 }
