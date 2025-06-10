@@ -66,16 +66,11 @@ pub fn get_from_seed_url<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>
     try_get_from_seed_url::<TPublic>(seed).expect("static values are valid; qed")
 }
 
-pub fn get_ethereum_pub_from_seed_url(seed: &str) -> sp_core::ecdsa::Public {
-    get_from_seed_url::<sp_core::ecdsa::Public>(seed)
-}
-
 /// Generate a crypto pair from seed.
 pub fn get_from_substrate_account<TPublic: Public>(
     account: &str,
 ) -> <TPublic::Pair as Pair>::Public {
-    try_get_from_seed_url::<TPublic>(&format!("//{}", account))
-        .expect("static values are valid; qed")
+    get_from_seed_url::<TPublic>(&format!("//{}", account))
 }
 
 type Ids = (AccountId, AuraId);
@@ -92,7 +87,7 @@ fn genesis(
     let endowed_accounts = endowed_accounts
         .into_iter()
         .chain(Some((
-            get_ethereum_pub_from_seed_url("//Bob").into(),
+            get_from_seed_url::<sp_core::ecdsa::Public>("//Bob").into(),
             ENDOWMENT,
         )))
         .collect::<Vec<_>>();
