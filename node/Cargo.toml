@@ -16,12 +16,11 @@ workspace = true
 [dependencies]
 clap = {workspace = true}
 futures = {workspace = true}
-hex-literal = {workspace = true}
 jsonrpsee = {workspace = true, features = ["server"]}
 log = {workspace = true}
 parity-scale-codec = {workspace = true}
 serde = {workspace = true, features = ["derive"]}
-serde_json = {workspace = true}
+serde_json = {workspace = true, features = ["std"]}
 
 # Local
 zkv-para-evm-runtime = {workspace = true}
@@ -67,7 +66,6 @@ substrate-prometheus-endpoint = {workspace = true}
 polkadot-cli = {workspace = true}
 polkadot-primitives = {workspace = true}
 polkadot-runtime-common = {workspace = true}
-xcm = {workspace = true}
 
 # Cumulus
 color-print = {workspace = true}
@@ -90,7 +88,6 @@ fc-rpc = {workspace = true, features = ["aura"]}
 fc-rpc-core = {workspace = true}
 fc-storage = {workspace = true}
 fp-dynamic-fee = {workspace = true, features = ["std"]}
-fp-evm = {workspace = true}
 fp-rpc = {workspace = true}
 async-trait = "0.1.81"
 
