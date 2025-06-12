@@ -14,6 +14,7 @@ args = ["add", "target", "wasm32-unknown-unknown"]
 
 [tasks.check]
 command = "cargo"
+env = { "SKIP_WASM_BUILD" = "1" }
 args = ["check", "--all-features"]
 
 [tasks.build]
@@ -22,11 +23,13 @@ args = ["build", "--release"]
 
 [tasks.test-base]
 command = "cargo"
+env = { "SKIP_WASM_BUILD" = "1" }
 args = ["test", "--release"]
 
 [tasks.test]
 dependencies = ["test-base"]
 command = "cargo"
+env = { "SKIP_WASM_BUILD" = "1" }
 args = ["test", "--release", "--all-features"]
 
 [tasks.format_inst]
@@ -38,18 +41,14 @@ dependencies = ["format-inst"]
 command = "cargo"
 args = ["fmt"]
 
-[tasks.format-check]
-dependencies = ["format-inst"]
-command = "cargo"
-args = ["fmt", "--check"]
-
 [tasks.clippy-inst]
 install_crate = {crate_name = "clippy", rustup_component_name = "clippy", binary = "clippy", test_arg = "--help"}
 
 [tasks.clippy]
 dependencies = ["clippy-inst"]
 command = "cargo"
-args = ["clippy", "--", "--deny", "warnings"]
+env = { "SKIP_WASM_BUILD" = "1" }
+args = ["clippy", "--all-targets", "--", "--deny", "warnings"]
 
 [tasks.audit-inst]
 command = "cargo"
@@ -68,16 +67,6 @@ args = ["llvm-cov", "--workspace", "--lcov", "--output-path", "lcov.info"]
 command = "cargo"
 args = ["install", "zepter", "--locked"]
 
-[tasks.zepter-check]
-dependencies = ["zepter-inst"]
-command = "zepter"
-args = ["run", "check"]
-
-[tasks.zepter-format]
-dependencies = ["zepter-inst"]
-command = "zepter"
-args = ["run", "format"]
-
 [tasks.zepter-fix-check]
 dependencies = ["zepter-inst"]
 command = "zepter"
@@ -88,39 +77,21 @@ dependencies = ["zepter-inst"]
 command = "zepter"
 args = ["run", "format-fix"]
 
+[tasks.zepter-fix]
+dependencies = ["zepter-inst"]
+command = "zepter"
+args = ["run", "fix"]
+
 [tasks.zepter]
 dependencies = ["zepter-fix-check", "zepter-fix-format"]
-
-[tasks.udeps-inst]
-toolchain = "nightly"
-command = "cargo"
-args = ["install", "cargo-udeps", "--locked"]
-
-[tasks.udeps]
-dependencies = ["udeps-inst"]
-toolchain = "nightly"
-command = "cargo"
-args = ["udeps", "--all-targets"]
 
 [tasks.machete]
 command = "cargo"
 args = ["machete"]
 
 
-[tasks.quick-check]
-dependencies = ["format-check", "zepter-format", "zepter-check"]
-
-[tasks.quick-fix]
-dependencies = ["format", "zepter"]
-
 [tasks.dependencies-check]
 dependencies = ["audit", "machete"]
 
-[tasks.ci-common]
-dependencies = ["check", "build", "test", "clippy", "dependencies-check"]
-
 [tasks.ci]
-dependencies = ["quick-fix", "ci-common"]
-
-[tasks.ci-remote]
-dependencies = ["quick-check", "ci-common"]
+dependencies = ["format", "zepter", "check", "build", "test", "clippy", "dependencies-check"]
