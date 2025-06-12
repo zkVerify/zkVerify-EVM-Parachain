@@ -27,7 +27,7 @@ FROM ubuntu:24.04 AS node
 
 SHELL ["/bin/bash", "-c"]
 
-ARG BINARY="zkverify-evm-para-node"
+ARG BINARY="zkv-para-evm-node"
 ARG DESCRIPTION="zkVerify EVM Parachain"
 ARG AUTHORS="infrastructure@zkverify.io"
 ARG VENDOR="zkVerify"
@@ -46,8 +46,8 @@ LABEL io.image.authors="${AUTHORS}" \
 USER root
 WORKDIR /app
 
-COPY --from=builder "/usr/src/node/target/${PROFILE}/zkv-para-evm-node" "/usr/local/bin/"
-COPY --from=builder "/usr/src/node/target/${PROFILE}/wbuild/zkv-para-evm-runtime/zkv_para_evm_runtime.compact.wasm" "./zkv_para_evm_runtime.compact.wasm"
+COPY --from=builder "/usr/src/node/target/${PROFILE}/${BINARY}" "/usr/local/bin/"
+COPY --from=builder "/usr/src/node/target/${PROFILE}/wbuild/zkv-para-evm-runtime/zkv_para_evm_runtime.compact.compressed.wasm" "./zkv_para_evm_runtime.compact.compressed.wasm"
 RUN chmod -R a+rx "/usr/local/bin"
 
 RUN apt-get update \

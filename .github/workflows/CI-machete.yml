@@ -1,0 +1,25 @@
+name: Look for unused dependencies
+
+run-name: "Workflow CI/CD Step: cargo machete"
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  udeps:
+    runs-on: warp-ubuntu-latest-x64-8x
+    name: Machete
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run cargo machete
+        uses: ./.github/actions/cmd-in-docker
+        with:
+          image_tag: "noble_rust-nightly_latest"
+          command: "cargo machete"
+          use_cache: "yes"
+          cache_key: "machete"
+          cargo_binaries_install: "cargo-machete"
+          lld_install: "yes"

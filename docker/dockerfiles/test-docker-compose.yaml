@@ -1,14 +1,14 @@
 version: '3'
 services:
   relay_alice:
-    image: horizenlabs/zkverify:0.7.0-0.9.0-relay
+    image: horizenlabs/zkverify:local-relay
     volumes:
       - ./staging/relay-spec-raw.json:/data/chain_spec.json
       - ../resources/envs/relaychain/alice_secret_phrase.dat:/data/alice_secret_phrase.dat
     env_file:
       - ../resources/envs/relaychain/.env.alice
   relay_bob:
-    image: horizenlabs/zkverify:0.7.0-0.9.0-relay
+    image: horizenlabs/zkverify:local-relay
     volumes:
       - ./staging/relay-spec-raw.json:/data/chain_spec.json
       - ../resources/envs/relaychain/bob_secret_phrase.dat:/data/bob_secret_phrase.dat
