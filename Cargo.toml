@@ -174,6 +174,9 @@ xcm-primitives = {git = "https://github.com/moonbeam-foundation/moonbeam/", tag 
 # Other
 tokio = {version = "1.13"}
 
+[workspace.metadata.cargo-machete]
+ignored = ["num_enum"]
+
 [patch.crates-io]
 cumulus-relay-chain-inprocess-interface = {git = "https://github.com/zkVerify/zkVerify.git", branch = "dr/stable2412"}
 cumulus-relay-chain-minimal-node = {git = "https://github.com/zkVerify/zkVerify.git", branch = "dr/stable2412"}

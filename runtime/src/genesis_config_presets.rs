@@ -92,21 +92,19 @@ fn genesis(
         )))
         .collect::<Vec<_>>();
 
-    let precompiles = Precompiles::<Runtime>::used_addresses()
-        .map(|addr| {
-            (
-                addr.into(),
-                fp_evm::GenesisAccount {
-                    nonce: Default::default(),
-                    balance: Default::default(),
-                    storage: Default::default(),
-                    // bytecode to revert without returning data
-                    // (PUSH1 0x00 PUSH1 0x00 REVERT)
-                    code: vec![0x60, 0x00, 0x60, 0x00, 0xFD],
-                },
-            )
-        })
-        .into_iter();
+    let precompiles = Precompiles::<Runtime>::used_addresses().map(|addr| {
+        (
+            addr.into(),
+            fp_evm::GenesisAccount {
+                nonce: Default::default(),
+                balance: Default::default(),
+                storage: Default::default(),
+                // bytecode to revert without returning data
+                // (PUSH1 0x00 PUSH1 0x00 REVERT)
+                code: vec![0x60, 0x00, 0x60, 0x00, 0xFD],
+            },
+        )
+    });
     let accounts: BTreeMap<H160, fp_evm::GenesisAccount> = precompiles.collect();
 
     serde_json::json!({
