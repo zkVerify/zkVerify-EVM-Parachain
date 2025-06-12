@@ -85,14 +85,13 @@ pub struct LocationAccountId32ToAccountId;
 impl ConvertLocation<AccountId> for LocationAccountId32ToAccountId {
     fn convert_location(location: &Location) -> Option<AccountId> {
         use xcm::latest::Junctions::X1;
-        //log::error!("Converting {:?}", location);
         match location.unpack() {
             (0, [AccountId32 { network, id }]) => {
                 LocationToAccountId::convert_location(&Location {
                     parents: 0,
                     interior: X1(sp_std::sync::Arc::new([AccountKey20 {
                         network: *network,
-                        key: id.as_slice()[0..20]
+                        key: id.as_slice()[id.len() - 20..] // take the last 20 bytes
                             .try_into()
                             .expect("Cannot convert AccountId32 to AccountKey20"),
                     }])),
