@@ -176,8 +176,8 @@ pub type TrustedTeleporters = ConcreteAssetFromSystem<RelayLocation>;
 
 pub type WaivedLocations = Equals<RelayLocation>;
 
-pub struct MoonbeamCall;
-impl CallDispatcher<RuntimeCall> for MoonbeamCall {
+pub struct RemoteEVMCall;
+impl CallDispatcher<RuntimeCall> for RemoteEVMCall {
     fn dispatch(
         call: RuntimeCall,
         origin: RuntimeOrigin,
@@ -241,7 +241,7 @@ impl xcm_executor::Config for XcmConfig {
     >;
     type MessageExporter = ();
     type UniversalAliases = Nothing;
-    type CallDispatcher = MoonbeamCall; //RuntimeCall;
+    type CallDispatcher = RemoteEVMCall;
     type SafeCallFilter = Everything;
     type TransactionalProcessor = FrameTransactionalProcessor;
     type HrmpNewChannelOpenRequestHandler = ();

@@ -21,11 +21,12 @@ use crate::types::BlockNumber;
 pub mod currency {
     use crate::types::Balance;
 
-    pub const VFY: Balance = 1_000_000_000_000_000_000; // we have 18 decimals, so 1 VFY is 1*10^18
-    pub const CENTS: Balance = VFY / 100;
+    #[allow(non_upper_case_globals)]
+    pub const tVFY: Balance = 1_000_000_000_000_000_000; // we have 18 decimals, so 1 tVFY is 1*10^18
+    pub const CENTS: Balance = tVFY / 100;
     pub const MILLICENTS: Balance = CENTS / 1_000;
     pub const MICROCENTS: Balance = MILLICENTS / 1_000;
-    pub const GRAND: Balance = 1_000 * VFY;
+    pub const GRAND: Balance = 1_000 * tVFY;
 
     #[cfg(not(feature = "runtime-benchmarks"))]
     pub const EXISTENTIAL_DEPOSIT: Balance = 0;

@@ -782,7 +782,7 @@ impl_runtime_apis! {
                     fn worst_case_holding(_depositable_count: u32) -> Assets {
                         vec![Asset {
                             id: configs::xcm::FeeAssetId::get(),
-                            fun: Fungible(crate::constants::currency::VFY),
+                            fun: Fungible(crate::constants::currency::tVFY),
                         }].into()
                     }
                 }
@@ -841,9 +841,9 @@ impl_runtime_apis! {
 
                     fn claimable_asset() -> Result<(Location, Location, Assets), BenchmarkError> {
                         // an asset that can be trapped and claimed
-                        use crate::constants::currency::VFY;
+                        use crate::constants::currency::tVFY;
                         let origin = configs::xcm::RelayLocation::get();
-                        let assets: Assets = (AssetId(configs::xcm::RelayLocation::get()), VFY).into();
+                        let assets: Assets = (AssetId(configs::xcm::RelayLocation::get()), tVFY).into();
                         let ticket = Location { parents: 0, interior: Here };
                         Ok((origin, ticket, assets))
                     }

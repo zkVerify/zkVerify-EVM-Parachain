@@ -27,7 +27,7 @@ mod constant_tests {
 
         assert_eq!(CENTS, 1_000 * MILLICENTS);
 
-        assert_eq!(VFY, 100 * CENTS);
+        assert_eq!(tVFY, 100 * CENTS);
 
         #[cfg(not(feature = "runtime-benchmarks"))]
         let expected_existential_deposit = 0;
@@ -239,10 +239,6 @@ mod xcm_tests {
 
     #[test]
     fn xcm_executor_constants() {
-        //assert_eq!(
-        //    UnitWeightCost::get(),
-        //    Weight::from_parts(1_000_000_000, 64 * 1024)
-        //);
         assert_eq!(MaxInstructions::get(), 100);
         assert_eq!(MaxAssetsIntoHolding::get(), 64);
     }

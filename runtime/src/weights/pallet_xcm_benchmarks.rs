@@ -135,7 +135,8 @@ impl<T> xcm::latest::XcmWeightInfo<T> for ZKVEvmWeight<T> {
         _require_weight_at_most: &Option<Weight>,
         _call: &DoubleEncoded<T>,
     ) -> sp_weights::Weight {
-        XcmGenericWeight::<Runtime>::transact()
+        Weight::default()
+        //XcmGenericWeight::<Runtime>::transact()
     }
     fn hrmp_new_channel_open_request(_: &u32, _: &u32, _: &u32) -> sp_weights::Weight {
         // XCM Executor does not currently support HRMP channel operations
@@ -284,8 +285,7 @@ impl<T> xcm::latest::XcmWeightInfo<T> for ZKVEvmWeight<T> {
         XcmGenericWeight::<Runtime>::unpaid_execution()
     }
     fn pay_fees(_asset: &Asset) -> Weight {
-        unimplemented!("This should probably be implemented!")
-        //XcmGenericWeight::<Runtime>::pay_fees()
+        XcmGenericWeight::<Runtime>::pay_fees()
     }
     fn initiate_transfer(
         _dest: &Location,

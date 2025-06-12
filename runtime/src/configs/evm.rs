@@ -83,11 +83,8 @@ impl pallet_evm::Config for Runtime {
     type FindAuthor = FindAuthorSession<pallet_session::FindAccountFromAuthorIndex<Self, Aura>>;
     type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
     type GasLimitStorageGrowthRatio = GasLimitStorageGrowthRatio;
-    //type SuicideQuickClearLimit = SuicideQuickClearLimit;
     type Timestamp = Timestamp;
     type WeightInfo = weights::pallet_evm::ZKVEvmWeight<Self>;
-    //type CreateOriginFilter = ();
-    //type CreateInnerOriginFilter = ();
 }
 
 impl pallet_evm_chain_id::Config for Runtime {}
