@@ -95,7 +95,7 @@ fn genesis(
     let precompiles = Precompiles::<Runtime>::used_addresses()
         .map(|addr| {
             (
-                addr,
+                addr.into(),
                 fp_evm::GenesisAccount {
                     nonce: Default::default(),
                     balance: Default::default(),

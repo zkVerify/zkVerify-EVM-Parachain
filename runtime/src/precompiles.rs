@@ -13,71 +13,80 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
-use core::marker::PhantomData;
-
-use pallet_evm::{
-    IsPrecompileResult, Precompile, PrecompileHandle, PrecompileResult, PrecompileSet,
-};
+use pallet_evm_precompile_balances_erc20::{Erc20BalancesPrecompile, Erc20Metadata};
+use pallet_evm_precompile_batch::BatchPrecompile;
+use pallet_evm_precompile_blake2::Blake2F;
+use pallet_evm_precompile_bn128::{Bn128Add, Bn128Mul, Bn128Pairing};
 use pallet_evm_precompile_modexp::Modexp;
 use pallet_evm_precompile_sha3fips::Sha3FIPS256;
 use pallet_evm_precompile_simple::{ECRecover, ECRecoverPublicKey, Identity, Ripemd160, Sha256};
-use sp_core::H160;
+use precompile_utils::precompile_set::*;
 
-#[derive(Default)]
-pub struct Precompiles<R>(PhantomData<R>);
+pub struct NativeErc20Metadata;
 
-impl<R> Precompiles<R>
-where
-    R: pallet_evm::Config,
-{
-    pub fn new() -> Self {
-        Self(Default::default())
+/// ERC20 metadata for the native token.
+impl Erc20Metadata for NativeErc20Metadata {
+    /// Returns the name of the token.
+    fn name() -> &'static str {
+        "tVFY token"
     }
 
-    pub fn used_addresses() -> [H160; 9] {
-        [
-            hash(1),
-            hash(2),
-            hash(3),
-            hash(4),
-            hash(5),
-            hash(1024),
-            hash(1025),
-            hash(1033),
-            hash(2048),
-        ]
-    }
-}
-impl<R> PrecompileSet for Precompiles<R>
-where
-    R: pallet_evm::Config + pallet_balances::Config,
-    R::Balance: From<u128>,
-{
-    fn execute(&self, handle: &mut impl PrecompileHandle) -> Option<PrecompileResult> {
-        match handle.code_address() {
-            // Ethereum precompiles :
-            a if a == hash(1) => Some(ECRecover::execute(handle)),
-            a if a == hash(2) => Some(Sha256::execute(handle)),
-            a if a == hash(3) => Some(Ripemd160::execute(handle)),
-            a if a == hash(4) => Some(Identity::execute(handle)),
-            a if a == hash(5) => Some(Modexp::execute(handle)),
-            // Non-Frontier specific nor Ethereum precompiles :
-            a if a == hash(1024) => Some(Sha3FIPS256::execute(handle)),
-            //    [AS] Note that moonbeam has (Dispatch=1025, ECRecoverPublicKey=1026)
-            a if a == hash(1025) => Some(ECRecoverPublicKey::execute(handle)),
-            // Custom precompile address (0x0000000000000000000000000000000000000409)
-            _ => None,
-        }
+    /// Returns the symbol of the token.
+    fn symbol() -> &'static str {
+        "tVFY"
     }
 
-    fn is_precompile(&self, address: H160, _gas: u64) -> IsPrecompileResult {
-        IsPrecompileResult::Answer {
-            is_precompile: Self::used_addresses().contains(&address),
-            extra_cost: 0,
-        }
+    /// Returns the decimals places of the token.
+    fn decimals() -> u8 {
+        18
+    }
+
+    /// Must return `true` only if it represents the main native currency of
+    /// the network. It must be the currency used in `pallet_evm`.
+    fn is_native_currency() -> bool {
+        true
     }
 }
 
-fn hash(a: u64) -> H160 {
-    H160::from_low_u64_be(a)
-}
+type EthereumPrecompilesChecks = (AcceptDelegateCall, CallableByContract, CallableByPrecompile);
+
+#[precompile_utils::precompile_name_from_address]
+type PrecompilesAt<R> = (
+    // Ethereum precompiles:
+    // We allow DELEGATECALL to stay compliant with Ethereum behavior.
+    PrecompileAt<AddressU64<1>, ECRecover, EthereumPrecompilesChecks>,
+    PrecompileAt<AddressU64<2>, Sha256, EthereumPrecompilesChecks>,
+    PrecompileAt<AddressU64<3>, Ripemd160, EthereumPrecompilesChecks>,
+    PrecompileAt<AddressU64<4>, Identity, EthereumPrecompilesChecks>,
+    PrecompileAt<AddressU64<5>, Modexp, EthereumPrecompilesChecks>,
+    PrecompileAt<AddressU64<6>, Bn128Add, EthereumPrecompilesChecks>,
+    PrecompileAt<AddressU64<7>, Bn128Mul, EthereumPrecompilesChecks>,
+    PrecompileAt<AddressU64<8>, Bn128Pairing, EthereumPrecompilesChecks>,
+    PrecompileAt<AddressU64<9>, Blake2F, EthereumPrecompilesChecks>,
+    // Non-Moonbeam specific nor Ethereum precompiles :
+    PrecompileAt<AddressU64<1024>, Sha3FIPS256, (CallableByContract, CallableByPrecompile)>,
+    PrecompileAt<AddressU64<1025>, ECRecoverPublicKey, (CallableByContract, CallableByPrecompile)>,
+    // Moonbeam specific precompiles:
+    PrecompileAt<
+        AddressU64<2050>,
+        Erc20BalancesPrecompile<R, NativeErc20Metadata>,
+        (CallableByContract, CallableByPrecompile),
+    >,
+    PrecompileAt<
+        AddressU64<2056>,
+        BatchPrecompile<R>,
+        (
+            SubcallWithMaxNesting<2>,
+            // Batch is the only precompile allowed to call Batch.
+            CallableByPrecompile<OnlyFrom<AddressU64<2056>>>,
+        ),
+    >,
+);
+
+pub type Precompiles<R> = PrecompileSetBuilder<
+    R,
+    (
+        // Skip precompiles if out of range.
+        PrecompilesInRangeInclusive<(AddressU64<1>, AddressU64<2056>), PrecompilesAt<R>>,
+    ),
+>;
