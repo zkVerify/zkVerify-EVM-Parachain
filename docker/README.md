@@ -6,7 +6,7 @@ To generate a node image without bothering about local resources, local Rust ins
 
 (from the project root folder)
 
-```bash 
+```bash
 docker build -t zkverify/para-evm-node:local -f docker/dockerfiles/zkvparaevm-node.Dockerfile .
 ```
 
