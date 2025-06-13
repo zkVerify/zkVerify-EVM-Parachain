@@ -141,8 +141,8 @@ else
   #  - pass the ENV BINARY with a single binary
   IFS=',' read -r -a BINARIES <<< "${BINARY}"
   EVM_NODE_BIN="${BINARIES[0]}"
-  command -v "${EVM_PARA_NODE_BIN}" &>/dev/null || fn_die "ERROR: '${EVM_PARA_NODE_BIN}' binary can not be found on the run user's 'PATH'=${PATH}"
-  log_bold_green "🔧 zkVerify parachain node binary: ${EVM_PARA_NODE_BIN}"
+  command -v "${EVM_NODE_BIN}" &>/dev/null || fn_die "ERROR: '${EVM_NODE_BIN}' binary can not be found on the run user's 'PATH'=${PATH}"
+  log_bold_green "🔧 zkVerify parachain node binary: ${EVM_NODE_BIN}"
 fi
 
 ####

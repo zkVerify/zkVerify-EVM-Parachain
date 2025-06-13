@@ -32,19 +32,19 @@ Here the full steps:<br>
 1- Generate **relaychain** spec:
 
 ```bash
-docker run --entrypoint zkv-relay --rm horizenlabs/zkverify:latest-relay  build-spec --disable-default-bootnode --chain local  > ../../staging/relay-spec.json
+docker run --entrypoint zkv-relay --rm horizenlabs/zkverify:latest-relay  build-spec --disable-default-bootnode --chain local  > ./staging/relay-spec.json
 ```
 
 2- Generate **relaychain** raw spec:
 
 ```bash
-docker run --entrypoint zkv-relay --rm -v ../../staging/relay-spec.json:/tmp/relay-spec.json horizenlabs/zkverify:latest-relay build-spec --chain local --disable-default-bootnode --raw > ../../staging/relay-spec-raw.json
+docker run --entrypoint zkv-relay --rm -v ./staging/relay-spec.json:/tmp/relay-spec.json horizenlabs/zkverify:latest-relay build-spec --chain local --disable-default-bootnode --raw > ./staging/relay-spec-raw.json
 ```
 
 3- Generate **parachain** spec:
 
 ```bash
-docker run --rm --entrypoint zkv-para-evm-node zkverify/parachain-node:local build-spec --chain local --disable-default-bootnode > ../../staging/para-spec.json
+docker run --rm --entrypoint zkv-para-evm-node zkverify/parachain-node:local build-spec --chain local --disable-default-bootnode > ./staging/para-spec.json
 ```
 Before the next step, you can modify it if you want to change any parameter or add preminted account.<br>
 The generated one is already configured to use the as initial collators the ones defined in docker/resources/envs/parachain. (Alith and Baltathar)<br>
@@ -52,19 +52,19 @@ The generated one is already configured to use the as initial collators the ones
 4- Generate **parachain** raw spec:
 
 ```bash
-docker run --rm -v ../../staging/para-spec.json:/tmp/para-spec.json --entrypoint zkv-para-evm-node zkverify/parachain-node:local build-spec --chain /tmp/para-spec.json  --disable-default-bootnode --raw > ../../staging/para-spec-raw.json
+docker run --rm -v ./staging/para-spec.json:/tmp/para-spec.json --entrypoint zkv-para-evm-node zkverify/parachain-node:local build-spec --chain /tmp/para-spec.json  --disable-default-bootnode --raw > ./staging/para-spec-raw.json
 ```
 
 5- Generate **parachain** wasm
 
 ```bash
-docker run --rm -v ../../staging/para-spec-raw.json:/tmp/para-spec-raw.json --entrypoint zkv-para-evm-node zkverify/parachain-node:local export-genesis-wasm --chain /tmp/para-spec-raw.json > ../../staging/para-genesis.wasm
+docker run --rm -v ./staging/para-spec-raw.json:/tmp/para-spec-raw.json --entrypoint zkv-para-evm-node zkverify/parachain-node:local export-genesis-wasm --chain /tmp/para-spec-raw.json > ./staging/para-genesis.wasm
 ```
 
 6- Generate **parachain** geneis state
 
 ```bash
-docker run --rm -v ../../staging/para-spec-raw.json:/tmp/para-spec-raw.json --entrypoint zkv-para-evm-node zkverify/parachain-node:local export-genesis-state --chain /tmp/para-spec-raw.json > ../../staging/para-genesis-state
+docker run --rm -v ./staging/para-spec-raw.json:/tmp/para-spec-raw.json --entrypoint zkv-para-evm-node zkverify/parachain-node:local export-genesis-state --chain /tmp/para-spec-raw.json > ./staging/para-genesis-state
 ```
 
 7- Start the nodes with
