@@ -13,22 +13,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! THIS FILE WAS AUTO-GENERATED USING THE SUBSTRATE BENCHMARK CLI VERSION 43.0.0
-//! DATE: 2025-04-14 (Y/M/D)
-//! HOSTNAME: `miklap`, CPU: `11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz`
+//! THIS FILE WAS AUTO-GENERATED USING THE SUBSTRATE BENCHMARK CLI VERSION 46.2.0
+//! DATE: 2025-06-03 (Y/M/D)
+//! HOSTNAME: `e159ab5d5015`, CPU: `11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz`
 //!
 //! SHORT-NAME: `block`, LONG-NAME: `BlockExecution`, RUNTIME: `Development`
 //! WARMUPS: `10`, REPEAT: `100`
-//! WEIGHT-PATH: `/home/mdamico/devel/zkVerify-EVM-Parachain/runtime/src/weights`
+//! WEIGHT-PATH: `/data/benchmark/runtime/src/weights`
 //! WEIGHT-METRIC: `Average`, WEIGHT-MUL: `1.0`, WEIGHT-ADD: `0`
 
 // Executed Command:
-//   /home/mdamico/devel/zkVerify-EVM-Parachain/target/release/zkv-evm-para-node
+//   /usr/local/bin/zkv-para-evm-node
 //   benchmark
 //   overhead
 //   --chain=dev
-//   --weight-path=/home/mdamico/devel/zkVerify-EVM-Parachain/runtime/src/weights
-//   --header=/home/mdamico/devel/zkVerify-EVM-Parachain/HEADER-APACHE2
+//   --weight-path=/data/benchmark/runtime/src/weights
+//   --header=/data/benchmark/HEADER-APACHE2
 //   --warmup=10
 //   --repeat=100
 
@@ -36,21 +36,21 @@ use sp_core::parameter_types;
 use sp_weights::{constants::WEIGHT_REF_TIME_PER_NANOS, Weight};
 
 parameter_types! {
-    /// Time to execute an empty block.
+    /// Weight of executing an empty block.
     /// Calculated by multiplying the *Average* with `1.0` and adding `0`.
     ///
     /// Stats nanoseconds:
-    ///   Min, Max: 675_778, 795_266
-    ///   Average:  693_476
-    ///   Median:   685_356
-    ///   Std-Dev:  19477.86
+    ///   Min, Max: 587_011, 884_745
+    ///   Average:  656_631
+    ///   Median:   627_453
+    ///   Std-Dev:  67752.03
     ///
     /// Percentiles nanoseconds:
-    ///   99th: 778_949
-    ///   95th: 721_034
-    ///   75th: 700_715
+    ///   99th: 845_009
+    ///   95th: 798_360
+    ///   75th: 687_637
     pub const BlockExecutionWeight: Weight =
-        Weight::from_parts(WEIGHT_REF_TIME_PER_NANOS.saturating_mul(693_476), 0);
+        Weight::from_parts(WEIGHT_REF_TIME_PER_NANOS.saturating_mul(656_631), 3_883);
 }
 
 #[cfg(test)]

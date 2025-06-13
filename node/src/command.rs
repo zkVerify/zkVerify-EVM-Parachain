@@ -22,11 +22,7 @@ use sc_cli::{
     ChainSpec, CliConfiguration, DefaultConfigurationValues, ImportParams, KeystoreParams,
     NetworkParams, Result, RpcEndpoint, SharedParams, SubstrateCli,
 };
-use sc_service::{
-    config::{BasePath, PrometheusConfig},
-    ChainType,
-};
-use sp_core::{ecdsa, hexdisplay::HexDisplay};
+use sc_service::config::{BasePath, PrometheusConfig};
 use sp_runtime::traits::AccountIdConversion;
 use zkv_para_evm_runtime::Block;
 
@@ -38,17 +34,8 @@ use crate::{
 
 fn load_spec(id: &str) -> std::result::Result<Box<dyn ChainSpec>, String> {
     Ok(match id {
-        "dev" => Box::new(chain_spec::development_config()),
-        "" | "local" => Box::new(chain_spec::local_testnet_config(
-            ChainType::Local,
-            "Local Testnet",
-            "local_testnet",
-        )),
-        "pretestnet" => Box::new(chain_spec::local_testnet_config(
-            ChainType::Live,
-            "Pretestnet",
-            "pretestnet",
-        )),
+        "dev" => Box::new(chain_spec::development_config()?),
+        "" | "local" => Box::new(chain_spec::local_testnet_config()?),
         path => Box::new(GenericChainSpec::from_json_file(std::path::PathBuf::from(
             path,
         ))?),
@@ -144,31 +131,6 @@ pub fn run() -> Result<()> {
 
     match &cli.subcommand {
         Some(Subcommand::Key(cmd)) => cmd.run(&cli),
-        Some(Subcommand::ZkvEvmParaKeysFromSeed(cmd)) => {
-            let ethereum_key = chain_spec::get_ethereum_keys_from_seed(&cmd.uri);
-            println!(
-                "Ethereum public key (ecdsa) - hex format:            0x{}",
-                HexDisplay::from(&ethereum_key.as_ref())
-            );
-            println!(
-                "Ethereum public key (ecdsa) - SS58 format:           {}",
-                ethereum_key
-            );
-            println!(
-                "AccountID / Ethereum address:                        {}",
-                chain_spec::get_account_id_from_seed::<ecdsa::Public>(&cmd.uri)
-            );
-            let aura_key = chain_spec::get_collator_keys_from_seed(&cmd.uri);
-            println!(
-                "Collator Session public key (sr25519) - hex format:  0x{}",
-                HexDisplay::from(&aura_key.as_ref())
-            );
-            println!(
-                "Collator Session public key (sr25519) - SS58 format: {} ",
-                aura_key
-            );
-            Ok(())
-        }
         Some(Subcommand::BuildSpec(cmd)) => {
             let runner = cli.create_runner(cmd)?;
             runner.sync_run(|config| cmd.run(config.chain_spec, config.network))
@@ -281,11 +243,12 @@ pub fn run() -> Result<()> {
                             .ok_or("Could not find parachain ID in chain-spec.")?,
                     );
                     cmd.run(
-                        config,
+                        config.chain_spec.name().into(),
                         partials.client.clone(),
                         create_inherent_data(partials.client.clone(), para_id),
                         Vec::new(),
                         &ext_builder,
+                        true, // It's a parachain -> should record the rpoof
                     )
                 }),
                 #[cfg(not(feature = "runtime-benchmarks"))]

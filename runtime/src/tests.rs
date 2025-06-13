@@ -27,6 +27,7 @@ mod multiplier;
 mod permissioned_deploy;
 mod storage;
 mod use_correct_weights;
+mod xcm_eth;
 
 #[derive(Default)]
 pub struct ExtBuilder {

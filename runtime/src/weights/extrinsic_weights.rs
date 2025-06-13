@@ -13,22 +13,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! THIS FILE WAS AUTO-GENERATED USING THE SUBSTRATE BENCHMARK CLI VERSION 43.0.0
-//! DATE: 2025-04-14 (Y/M/D)
-//! HOSTNAME: `miklap`, CPU: `11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz`
+//! THIS FILE WAS AUTO-GENERATED USING THE SUBSTRATE BENCHMARK CLI VERSION 46.2.0
+//! DATE: 2025-06-03 (Y/M/D)
+//! HOSTNAME: `e159ab5d5015`, CPU: `11th Gen Intel(R) Core(TM) i7-11850H @ 2.50GHz`
 //!
 //! SHORT-NAME: `extrinsic`, LONG-NAME: `ExtrinsicBase`, RUNTIME: `Development`
 //! WARMUPS: `10`, REPEAT: `100`
-//! WEIGHT-PATH: `/home/mdamico/devel/zkVerify-EVM-Parachain/runtime/src/weights`
+//! WEIGHT-PATH: `/data/benchmark/runtime/src/weights`
 //! WEIGHT-METRIC: `Average`, WEIGHT-MUL: `1.0`, WEIGHT-ADD: `0`
 
 // Executed Command:
-//   /home/mdamico/devel/zkVerify-EVM-Parachain/target/release/zkv-evm-para-node
+//   /usr/local/bin/zkv-para-evm-node
 //   benchmark
 //   overhead
 //   --chain=dev
-//   --weight-path=/home/mdamico/devel/zkVerify-EVM-Parachain/runtime/src/weights
-//   --header=/home/mdamico/devel/zkVerify-EVM-Parachain/HEADER-APACHE2
+//   --weight-path=/data/benchmark/runtime/src/weights
+//   --header=/data/benchmark/HEADER-APACHE2
 //   --warmup=10
 //   --repeat=100
 
@@ -36,21 +36,21 @@ use sp_core::parameter_types;
 use sp_weights::{constants::WEIGHT_REF_TIME_PER_NANOS, Weight};
 
 parameter_types! {
-    /// Time to execute a NO-OP extrinsic, for example `System::remark`.
+    /// Weight of executing a NO-OP extrinsic, for example `System::remark`.
     /// Calculated by multiplying the *Average* with `1.0` and adding `0`.
     ///
     /// Stats nanoseconds:
-    ///   Min, Max: 110_840, 126_740
-    ///   Average:  111_748
-    ///   Median:   111_400
-    ///   Std-Dev:  1705.41
+    ///   Min, Max: 102_240, 177_789
+    ///   Average:  109_837
+    ///   Median:   107_015
+    ///   Std-Dev:  9615.53
     ///
     /// Percentiles nanoseconds:
-    ///   99th: 116_672
-    ///   95th: 113_304
-    ///   75th: 111_686
+    ///   99th: 142_189
+    ///   95th: 124_797
+    ///   75th: 110_433
     pub const ExtrinsicBaseWeight: Weight =
-        Weight::from_parts(WEIGHT_REF_TIME_PER_NANOS.saturating_mul(111_748), 0);
+        Weight::from_parts(WEIGHT_REF_TIME_PER_NANOS.saturating_mul(109_837), 334);
 }
 
 #[cfg(test)]

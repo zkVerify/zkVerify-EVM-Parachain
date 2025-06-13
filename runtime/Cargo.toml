@@ -11,11 +11,16 @@ license = "GPL-3.0-only"
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
 
+[lints]
+workspace = true
+
 [dependencies]
 parity-scale-codec = {workspace = true, features = ["derive"]}
 scale-info = {workspace = true, features = ["derive"]}
 smallvec = {workspace = true}
 hex-literal = {workspace = true}
+serde_json = { workspace = true, features = ["alloc"] }
+num_enum = { workspace = true }
 
 # Substrate
 frame-benchmarking = {workspace = true, optional = true}
@@ -56,6 +61,7 @@ sp-weights = {workspace = true}
 
 # Polkadot
 pallet-xcm = {workspace = true}
+pallet-xcm-benchmarks = {workspace = true,optional=true}
 polkadot-runtime-common = {workspace = true}
 xcm = {workspace = true}
 xcm-builder = {workspace = true}
@@ -78,14 +84,24 @@ parachains-common = {workspace = true}
 fp-account = {workspace = true}
 fp-rpc = {workspace = true}
 fp-self-contained = {workspace = true, features = ["serde"]}
+fp-evm = {workspace = true}
 
 pallet-base-fee = {workspace = true}
 pallet-ethereum = {workspace = true}
 pallet-evm = {workspace = true}
 pallet-evm-chain-id = {workspace = true}
+precompile-utils = {workspace = true}
 pallet-evm-precompile-modexp = {workspace = true}
 pallet-evm-precompile-sha3fips = {workspace = true}
 pallet-evm-precompile-simple = {workspace = true}
+pallet-evm-precompile-bn128 = {workspace = true}
+pallet-evm-precompile-blake2 = {workspace = true}
+pallet-evm-precompile-batch = {workspace = true}
+pallet-evm-precompile-balances-erc20 = {workspace = true}
+
+# Moonbeam
+pallet-ethereum-xcm = {workspace = true}
+xcm-primitives = {workspace = true}
 
 [build-dependencies]
 substrate-wasm-builder = {workspace = true}
@@ -108,6 +124,7 @@ std = [
 	"cumulus-primitives-utility/std",
 	"ethereum/std",
 	"fp-account/std",
+	"fp-evm/std",
 	"fp-rpc/std",
 	"fp-self-contained/std",
 	"frame-benchmarking?/std",
@@ -117,14 +134,20 @@ std = [
 	"frame-system-rpc-runtime-api/std",
 	"frame-system/std",
 	"frame-try-runtime?/std",
+	"num_enum/std",
 	"pallet-aura/std",
 	"pallet-authorship/std",
 	"pallet-balances/std",
 	"pallet-base-fee/std",
 	"pallet-collator-selection/std",
 	"pallet-deployment-permissions/std",
+	"pallet-ethereum-xcm/std",
 	"pallet-ethereum/std",
 	"pallet-evm-chain-id/std",
+	"pallet-evm-precompile-balances-erc20/std",
+	"pallet-evm-precompile-batch/std",
+	"pallet-evm-precompile-blake2/std",
+	"pallet-evm-precompile-bn128/std",
 	"pallet-evm-precompile-modexp/std",
 	"pallet-evm-precompile-sha3fips/std",
 	"pallet-evm-precompile-simple/std",
@@ -138,12 +161,15 @@ std = [
 	"pallet-transaction-payment-rpc-runtime-api/std",
 	"pallet-transaction-payment/std",
 	"pallet-utility/std",
+	"pallet-xcm-benchmarks?/std",
 	"pallet-xcm/std",
 	"parachain-info/std",
 	"parachains-common/std",
 	"parity-scale-codec/std",
 	"polkadot-runtime-common/std",
+	"precompile-utils/std",
 	"scale-info/std",
+	"serde_json/std",
 	"sp-api/std",
 	"sp-block-builder/std",
 	"sp-consensus-aura/std",
@@ -160,6 +186,7 @@ std = [
 	"sp-weights/std",
 	"xcm-builder/std",
 	"xcm-executor/std",
+	"xcm-primitives/std",
 	"xcm/std",
 ]
 
@@ -176,6 +203,7 @@ runtime-benchmarks = [
 	"pallet-balances/runtime-benchmarks",
 	"pallet-collator-selection/runtime-benchmarks",
 	"pallet-deployment-permissions/runtime-benchmarks",
+	"pallet-ethereum-xcm/runtime-benchmarks",
 	"pallet-ethereum/runtime-benchmarks",
 	"pallet-evm/runtime-benchmarks",
 	"pallet-message-queue/runtime-benchmarks",
@@ -183,13 +211,16 @@ runtime-benchmarks = [
 	"pallet-proxy/runtime-benchmarks",
 	"pallet-sudo/runtime-benchmarks",
 	"pallet-timestamp/runtime-benchmarks",
+	"pallet-transaction-payment/runtime-benchmarks",
 	"pallet-utility/runtime-benchmarks",
+	"pallet-xcm-benchmarks/runtime-benchmarks",
 	"pallet-xcm/runtime-benchmarks",
 	"parachains-common/runtime-benchmarks",
 	"polkadot-runtime-common/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
 	"xcm-builder/runtime-benchmarks",
 	"xcm-executor/runtime-benchmarks",
+	"xcm-primitives/runtime-benchmarks",
 ]
 
 try-runtime = [
@@ -208,6 +239,7 @@ try-runtime = [
 	"pallet-base-fee/try-runtime",
 	"pallet-collator-selection/try-runtime",
 	"pallet-deployment-permissions/try-runtime",
+	"pallet-ethereum-xcm/try-runtime",
 	"pallet-ethereum/try-runtime",
 	"pallet-evm-chain-id/try-runtime",
 	"pallet-evm/try-runtime",

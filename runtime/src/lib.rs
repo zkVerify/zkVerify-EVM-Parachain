@@ -23,6 +23,8 @@ include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
 pub mod configs;
 pub mod constants;
+mod genesis_config_presets;
+
 mod precompiles;
 pub use precompiles::Precompiles;
 #[cfg(test)]
@@ -30,9 +32,17 @@ mod tests;
 pub mod types;
 mod weights;
 
+/// In this module, we're re-export all dependencies needed by special weight modules.
+pub(crate) mod weights_aliases {
+    pub mod frame_system_extensions {
+        pub use frame_system::ExtensionsWeightInfo as WeightInfo;
+    }
+}
+
+#[macro_use]
 extern crate alloc;
 
-use alloc::borrow::Cow;
+use alloc::{borrow::Cow, string::String};
 
 use frame_support::{
     construct_runtime,
@@ -262,6 +272,7 @@ construct_runtime!(
         EVM: pallet_evm = 41,
         BaseFee: pallet_base_fee = 42, // No weight
         EVMChainId: pallet_evm_chain_id = 43, // No weight
+        EthereumXcm: pallet_ethereum_xcm = 44,
 
         // zkVerify Custom Pallets
         DeploymentPermissions: pallet_deployment_permissions = 100,
@@ -671,30 +682,41 @@ impl_runtime_apis! {
             use frame_benchmarking::{Benchmarking, BenchmarkList};
             use frame_support::traits::StorageInfoTrait;
             use frame_system_benchmarking::Pallet as SystemBench;
+            use frame_system_benchmarking::extensions::Pallet as SystemExtensionsBench;
             use cumulus_pallet_session_benchmarking::Pallet as SessionBench;
 
             use pallet_xcm::benchmarking::Pallet as PalletXcmExtrinsicsBenchmark;
 
+            pub mod xcm {
+                pub use pallet_xcm_benchmarks::fungible::Pallet as XcmPalletBenchFungible;
+                pub use pallet_xcm_benchmarks::generic::Pallet as XcmPalletBenchGeneric;
+            }
 
             let mut list = Vec::<BenchmarkList>::new();
             list_benchmarks!(list, extra);
 
             let storage_info = AllPalletsWithSystem::storage_info();
+
             (list, storage_info)
         }
 
         fn dispatch_benchmark(
             config: frame_benchmarking::BenchmarkConfig
-        ) -> Result<Vec<frame_benchmarking::BenchmarkBatch>, sp_runtime::RuntimeString> {
+        ) -> Result<Vec<frame_benchmarking::BenchmarkBatch>, String> {
             use frame_benchmarking::{Benchmarking, BenchmarkBatch};
             use frame_system_benchmarking::Pallet as SystemBench;
+            use frame_system_benchmarking::extensions::Pallet as SystemExtensionsBench;
             use pallet_xcm::benchmarking::Pallet as PalletXcmExtrinsicsBenchmark;
 
             pub mod xcm {
                 use super::*;
                 use crate::{configs::monetary::*, configs::xcm::*, constants::currency::CENTS};
                 use frame_support::parameter_types;
+                use xcm::v5::{Asset, AssetId, Assets, Location, InteriorLocation, Junction, Junctions::Here, NetworkId, Response, Fungibility::Fungible, Parent};
+                use frame_benchmarking::BenchmarkError;
 
+                pub use pallet_xcm_benchmarks::fungible::Pallet as XcmPalletBenchFungible;
+                pub use pallet_xcm_benchmarks::generic::Pallet as XcmPalletBenchGeneric;
 
                 parameter_types! {
                     pub ExistentialDepositAsset: Option<Asset> = Some((
@@ -712,8 +734,6 @@ impl_runtime_apis! {
                     ParachainSystem,
                 >;
 
-                use xcm::latest::prelude::{Asset, AssetId, Assets as AssetList, Fungible, Location};
-
                 impl pallet_xcm::benchmarking::Config for Runtime {
                     type DeliveryHelper = cumulus_primitives_utility::ToParentDeliveryHelper<
                         XcmConfig,
@@ -722,14 +742,14 @@ impl_runtime_apis! {
                     >;
 
                     fn reachable_dest() -> Option<Location> {
-                        Some(RelayLocation::get())
+                        Some(Parent.into())
                     }
 
                     fn teleportable_asset_and_dest() -> Option<(Asset, Location)> {
                         // Relay/native token can be teleported between EVM and Relay.
                         Some((
                             ExistentialDepositAsset::get()?,
-                            RelayLocation::get(),
+                            Parent.into(),
                         ))
                     }
 
@@ -739,7 +759,7 @@ impl_runtime_apis! {
                     }
 
                     fn set_up_complex_asset_transfer(
-                    ) -> Option<(AssetList, u32, Location, Box<dyn FnOnce()>)> {
+                    ) -> Option<(Assets, u32, Location, Box<dyn FnOnce()>)> {
                         None
                     }
 
@@ -748,6 +768,107 @@ impl_runtime_apis! {
                             id: AssetId(RelayLocation::get()),
                             fun: Fungible(ExistentialDeposit::get()),
                         }
+                    }
+                }
+
+                impl pallet_xcm_benchmarks::Config for Runtime {
+                    type XcmConfig = XcmConfig;
+                    type AccountIdConverter = configs::xcm::LocationAccountId32ToAccountId;
+                    type DeliveryHelper = ();
+
+                    fn valid_destination() -> Result<Location, BenchmarkError> {
+                        Ok(Location::parent())
+                    }
+                    fn worst_case_holding(_depositable_count: u32) -> Assets {
+                        vec![Asset {
+                            id: configs::xcm::FeeAssetId::get(),
+                            fun: Fungible(crate::constants::currency::tVFY),
+                        }].into()
+                    }
+                }
+
+                parameter_types! {
+                    pub TrustedTeleporter: Option<(Location, Asset)> = Some((
+                        configs::xcm::RelayLocation::get(),
+                        Asset {
+                            id: AssetId(configs::xcm::RelayLocation::get()),
+                            fun: Fungible(ExistentialDeposit::get()),
+                        },
+                    ));
+                    pub const TrustedReserve: Option<(Location, Asset)> = None;
+                    pub const CheckedAccount: Option<(AccountId, xcm_builder::MintLocation)> = None;
+                }
+
+                impl pallet_xcm_benchmarks::fungible::Config for Runtime {
+                    type TransactAsset = Balances;
+                    type CheckedAccount = CheckedAccount;
+                    type TrustedTeleporter = TrustedTeleporter;
+                    type TrustedReserve = TrustedReserve;
+
+                    fn get_asset() -> Asset {
+                        Asset {
+                            id: AssetId(configs::xcm::RelayLocation::get()),
+                            fun: Fungible(ExistentialDeposit::get()),
+                        }
+                    }
+                }
+
+                impl pallet_xcm_benchmarks::generic::Config for Runtime {
+                    type TransactAsset = Balances;
+                    type RuntimeCall = RuntimeCall;
+
+                    fn worst_case_response() -> (u64, Response) {
+                        (0u64, Response::Version(Default::default()))
+                    }
+
+                    fn worst_case_asset_exchange() -> Result<(Assets, Assets), BenchmarkError> {
+                        // ZKV doesn't support asset exchanges
+                        Err(BenchmarkError::Skip)
+                    }
+
+                    fn universal_alias() -> Result<(Location, Junction), BenchmarkError> {
+                        // The XCM executor of ZKV doesn't have a configured `UniversalAliases`
+                        Err(BenchmarkError::Skip)
+                    }
+
+                    fn transact_origin_and_runtime_call() -> Result<(Location, RuntimeCall), BenchmarkError> {
+                        Ok((configs::xcm::RelayLocation::get(), frame_system::Call::remark_with_event { remark: vec![] }.into()))
+                    }
+
+                    fn subscribe_origin() -> Result<Location, BenchmarkError> {
+                        Ok(configs::xcm::RelayLocation::get())
+                    }
+
+                    fn claimable_asset() -> Result<(Location, Location, Assets), BenchmarkError> {
+                        // an asset that can be trapped and claimed
+                        use crate::constants::currency::tVFY;
+                        let origin = configs::xcm::RelayLocation::get();
+                        let assets: Assets = (AssetId(configs::xcm::RelayLocation::get()), tVFY).into();
+                        let ticket = Location { parents: 0, interior: Here };
+                        Ok((origin, ticket, assets))
+                    }
+
+                    fn fee_asset() -> Result<Asset, BenchmarkError> {
+                        Ok(Asset {
+                            id: configs::xcm::FeeAssetId::get(),
+                            fun: Fungible(CENTS),
+                        })
+                    }
+
+                    fn unlockable_asset() -> Result<(Location, Location, Asset), BenchmarkError> {
+                        // ZKV doesn't support asset locking
+                        Err(BenchmarkError::Skip)
+                    }
+
+                    fn export_message_origin_and_destination(
+                    ) -> Result<(Location, NetworkId, InteriorLocation), BenchmarkError> {
+                        // ZKV doesn't support exporting messages
+                        Err(BenchmarkError::Skip)
+                    }
+
+                    fn alias_origin() -> Result<(Location, Location), BenchmarkError> {
+                        // The XCM executor of ZKV doesn't have a configured `Aliasers`
+                        Err(BenchmarkError::Skip)
                     }
                 }
             }
@@ -761,7 +882,6 @@ impl_runtime_apis! {
             let params = (&config, &whitelist);
             add_benchmarks!(params, batches);
 
-            if batches.is_empty() { return Err("Benchmark not found for this pallet.".into()) }
             Ok(batches)
         }
     }
@@ -772,11 +892,11 @@ impl_runtime_apis! {
         }
 
         fn get_preset(id: &Option<sp_genesis_builder::PresetId>) -> Option<Vec<u8>> {
-            get_preset::<RuntimeGenesisConfig>(id, |_| None)
+            get_preset::<RuntimeGenesisConfig>(id, &genesis_config_presets::get_preset)
         }
 
         fn preset_names() -> Vec<sp_genesis_builder::PresetId> {
-            vec![]
+           genesis_config_presets::preset_names()
         }
     }
 }

@@ -209,6 +209,44 @@ where
             weight: err.weight,
         })
     }
+
+    fn create_force_address(
+        source: H160,
+        init: Vec<u8>,
+        value: U256,
+        gas_limit: u64,
+        max_fee_per_gas: Option<U256>,
+        max_priority_fee_per_gas: Option<U256>,
+        nonce: Option<U256>,
+        access_list: Vec<(H160, Vec<H256>)>,
+        is_transactional: bool,
+        validate: bool,
+        weight_limit: Option<Weight>,
+        proof_size_base_cost: Option<u64>,
+        config: &fp_evm::Config,
+        force_address: H160,
+    ) -> Result<fp_evm::CreateInfo, RunnerError<Self::Error>> {
+        R::create_force_address(
+            source,
+            init,
+            value,
+            gas_limit,
+            max_fee_per_gas,
+            max_priority_fee_per_gas,
+            nonce,
+            access_list,
+            is_transactional,
+            validate,
+            weight_limit,
+            proof_size_base_cost,
+            config,
+            force_address,
+        )
+        .map_err(|err| RunnerError {
+            error: PermissionedDeployError::Runner(err.error),
+            weight: err.weight,
+        })
+    }
 }
 #[cfg(test)]
 mod mock {
@@ -348,7 +386,25 @@ mod mock {
                 proof_size_base_cost: Option<u64>,
                 config: &pallet_evm::EvmConfig,
             ) -> Result<pallet_evm::CreateInfo, RunnerError<sp_runtime::DispatchError>>;
+
+            fn create_force_address(
+                source: H160,
+                init: Vec<u8>,
+                value: U256,
+                gas_limit: u64,
+                max_fee_per_gas: Option<U256>,
+                max_priority_fee_per_gas: Option<U256>,
+                nonce: Option<U256>,
+                access_list: Vec<(H160, Vec<H256>)>,
+                is_transactional: bool,
+                validate: bool,
+                weight_limit: Option<Weight>,
+                proof_size_base_cost: Option<u64>,
+                config: &pallet_evm::EvmConfig,
+                contract_address: H160,
+            ) -> Result<pallet_evm::CreateInfo, RunnerError<sp_runtime::DispatchError>>;
         }
+
     }
 
     #[derive(Educe)]

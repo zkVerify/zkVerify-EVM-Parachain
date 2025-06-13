@@ -36,17 +36,26 @@ use parachains_common::{
     message_queue::{NarrowOriginToSibling, ParaIdToSibling},
     xcm_config::ConcreteAssetFromSystem,
 };
-use sp_runtime::traits::TryConvert;
+use sp_runtime::{
+    traits::{PostDispatchInfoOf, TryConvert},
+    DispatchErrorWithPostInfo,
+};
 use xcm::latest::prelude::*;
 use xcm_builder::{
     AccountKey20Aliases, AllowKnownQueryResponses, AllowSubscriptionsFrom,
-    AllowTopLevelPaidExecutionFrom, DenyReserveTransferToRelayChain, DenyThenTry, EnsureXcmOrigin,
-    FixedWeightBounds, FrameTransactionalProcessor, FungibleAdapter, IsConcrete, NativeAsset,
-    ParentIsPreset, RelayChainAsNative, SendXcmFeeToAccount, SiblingParachainAsNative,
-    SignedAccountKey20AsNative, SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId,
-    UsingComponents, WithComputedOrigin, WithUniqueTopic, XcmFeeManagerFromComponents,
+    AllowTopLevelPaidExecutionFrom, DenyReserveTransferToRelayChain, DenyThenTry,
+    DescribeAllTerminal, DescribeFamily, EnsureXcmOrigin, FrameTransactionalProcessor,
+    FungibleAdapter, HashedDescription, IsConcrete, NativeAsset, ParentIsPreset,
+    RelayChainAsNative, SendXcmFeeToAccount, SiblingParachainAsNative, SignedAccountKey20AsNative,
+    SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId, UsingComponents,
+    WeightInfoBounds, WithComputedOrigin, WithUniqueTopic, XcmFeeManagerFromComponents,
 };
-use xcm_executor::XcmExecutor;
+use xcm_executor::{
+    traits::{CallDispatcher, ConvertLocation},
+    XcmExecutor,
+};
+
+use crate::weights::pallet_xcm_benchmarks::ZKVEvmWeight as XcmZKVEvmWeight;
 
 const ZKV_GENESIS_HASH: [u8; 32] =
     hex_literal::hex!("ff7fe5a610f15fe7a0c52f94f86313fb7db7d3786e7f8acf2b66c11d5be7c242");
@@ -68,7 +77,30 @@ pub type LocationToAccountId = (
     ParentIsPreset<AccountId>,
     // If we receive a Location of type AccountKey20, just generate a native account
     AccountKey20Aliases<RelayNetwork, AccountId>,
+    // Generate remote accounts according to polkadot standards
+    HashedDescription<AccountId, DescribeFamily<DescribeAllTerminal>>,
 );
+
+pub struct LocationAccountId32ToAccountId;
+impl ConvertLocation<AccountId> for LocationAccountId32ToAccountId {
+    fn convert_location(location: &Location) -> Option<AccountId> {
+        use xcm::latest::Junctions::X1;
+        match location.unpack() {
+            (0, [AccountId32 { network, id }]) => {
+                LocationToAccountId::convert_location(&Location {
+                    parents: 0,
+                    interior: X1(sp_std::sync::Arc::new([AccountKey20 {
+                        network: *network,
+                        key: id.as_slice()[id.len() - 20..] // take the last 20 bytes
+                            .try_into()
+                            .expect("Cannot convert AccountId32 to AccountKey20"),
+                    }])),
+                })
+            }
+            _ => LocationToAccountId::convert_location(location),
+        }
+    }
+}
 
 /// Means for transacting the native currency on this chain.
 pub type FungibleTransactor = FungibleAdapter<
@@ -77,7 +109,7 @@ pub type FungibleTransactor = FungibleAdapter<
     // Use this currency when it is a fungible asset matching the given location or name:
     IsConcrete<RelayLocation>,
     // Convert an XCM `Location` into a local account ID:
-    LocationToAccountId,
+    LocationAccountId32ToAccountId,
     // Our chain's account ID type (we can't get away without mentioning it explicitly):
     AccountId,
     // We don't track any teleports of `Balances`.
@@ -110,8 +142,6 @@ pub type XcmOriginToTransactDispatchOrigin = (
 );
 
 parameter_types! {
-    // One XCM operation is 1_000_000_000 weight - almost certainly a conservative estimate.
-    pub const UnitWeightCost: Weight = Weight::from_parts(1_000_000_000, 64 * 1024);
     pub const MaxInstructions: u32 = 100;
     pub const MaxAssetsIntoHolding: u32 = 64;
     pub StakingPot: AccountId = crate::CollatorSelection::account_id();
@@ -120,7 +150,8 @@ parameter_types! {
 pub struct ParentRelayChain;
 impl Contains<Location> for ParentRelayChain {
     fn contains(location: &Location) -> bool {
-        matches!(location.unpack(), (1, []))
+        // match the relay chain and any account on it
+        matches!(location.unpack(), (1, [..]))
     }
 }
 
@@ -144,6 +175,36 @@ pub type TrustedTeleporters = ConcreteAssetFromSystem<RelayLocation>;
 
 pub type WaivedLocations = Equals<RelayLocation>;
 
+pub struct RemoteEVMCall;
+impl CallDispatcher<RuntimeCall> for RemoteEVMCall {
+    fn dispatch(
+        call: RuntimeCall,
+        origin: RuntimeOrigin,
+    ) -> Result<
+        PostDispatchInfoOf<RuntimeCall>,
+        DispatchErrorWithPostInfo<PostDispatchInfoOf<RuntimeCall>>,
+    > {
+        if let Ok(raw_origin) =
+            TryInto::<frame_system::RawOrigin<AccountId>>::try_into(origin.clone().caller)
+        {
+            if let (
+                RuntimeCall::EthereumXcm(pallet_ethereum_xcm::Call::transact { .. })
+                | RuntimeCall::EthereumXcm(pallet_ethereum_xcm::Call::transact_through_proxy {
+                    ..
+                }),
+                frame_system::RawOrigin::Signed(account_id),
+            ) = (call.clone(), raw_origin)
+            {
+                return RuntimeCall::dispatch(
+                    call,
+                    pallet_ethereum_xcm::Origin::XcmEthereumTransaction(account_id.into()).into(),
+                );
+            }
+        }
+        RuntimeCall::dispatch(call, origin)
+    }
+}
+
 pub struct XcmConfig;
 impl xcm_executor::Config for XcmConfig {
     type RuntimeCall = RuntimeCall;
@@ -156,7 +217,7 @@ impl xcm_executor::Config for XcmConfig {
     type Aliasers = Nothing;
     type UniversalLocation = UniversalLocation;
     type Barrier = Barrier;
-    type Weigher = FixedWeightBounds<UnitWeightCost, RuntimeCall, MaxInstructions>;
+    type Weigher = WeightInfoBounds<XcmZKVEvmWeight<RuntimeCall>, RuntimeCall, MaxInstructions>;
     // Can only buy weight with the native token
     type Trader = UsingComponents<
         WeightToFee,
@@ -179,7 +240,7 @@ impl xcm_executor::Config for XcmConfig {
     >;
     type MessageExporter = ();
     type UniversalAliases = Nothing;
-    type CallDispatcher = RuntimeCall;
+    type CallDispatcher = RemoteEVMCall;
     type SafeCallFilter = Everything;
     type TransactionalProcessor = FrameTransactionalProcessor;
     type HrmpNewChannelOpenRequestHandler = ();
@@ -235,13 +296,13 @@ impl pallet_xcm::Config for Runtime {
     type SendXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, LocalOriginToLocation>;
     type XcmRouter = XcmRouter;
     type ExecuteXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, LocalOriginToLocation>;
-    type XcmExecuteFilter = Nothing;
-    // ^ Disable dispatchable execute on the XCM pallet.
-    // Needs to be `Everything` for local testing.
+    type XcmExecuteFilter = Everything; // TODO!!!! Check this
+                                        // ^ Disable dispatchable execute on the XCM pallet.
+                                        // Needs to be `Everything` for local testing.
     type XcmExecutor = XcmExecutor<XcmConfig>;
     type XcmTeleportFilter = Everything;
     type XcmReserveTransferFilter = Nothing;
-    type Weigher = FixedWeightBounds<UnitWeightCost, RuntimeCall, MaxInstructions>;
+    type Weigher = WeightInfoBounds<XcmZKVEvmWeight<RuntimeCall>, RuntimeCall, MaxInstructions>;
     type UniversalLocation = UniversalLocation;
     type RuntimeOrigin = RuntimeOrigin;
     type RuntimeCall = RuntimeCall;

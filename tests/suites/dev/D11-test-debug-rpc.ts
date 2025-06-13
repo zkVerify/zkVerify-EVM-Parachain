@@ -2,7 +2,7 @@ import { describeSuite, expect, beforeAll, customDevRpcRequest } from "@moonwall
 import { BALTATHAR_ADDRESS } from "@moonwall/util";
 import {parseEther, Wallet} from "ethers";
 import { ApiPromise } from "@polkadot/api";
-export const VFY = 1_000_000_000_000_000_000n;
+export const tVFY = 1_000_000_000_000_000_000n;
 
 
 describeSuite({
@@ -18,7 +18,7 @@ describeSuite({
             randomWeb3Account = context.web3().eth.accounts.create();
             privateKey = randomWeb3Account.privateKey;
             const { result, block } = await context.createBlock(
-                context.polkadotJs().tx.balances.transferAllowDeath(randomWeb3Account.address, VFY)
+                context.polkadotJs().tx.balances.transferAllowDeath(randomWeb3Account.address, tVFY)
             );
             expect(result!.successful, result!.error?.name).to.be.true;
 

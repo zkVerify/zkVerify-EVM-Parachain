@@ -8,6 +8,9 @@ homepage.workspace = true
 repository.workspace = true
 license = "GPL-3.0-only"
 
+[lints]
+workspace = true
+
 [dependencies]
 async-trait = {workspace = true}
 parity-scale-codec = {features = ["derive"], workspace = true, default-features = true}

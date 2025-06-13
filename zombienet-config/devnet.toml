@@ -33,7 +33,7 @@ command = "./target/release/zkv-para-evm-node"
 ws_port = 9933
 rpc_port = 8833
 #args = ["--rpc-max-connections 10000 -ltrace"]
-args = ["--rpc-max-connections 10000"]
+args = ["-lxcm=trace", "--rpc-max-connections 10000"]
 
 [[parachains.collators]]
 name = "zkv-para-evm-parachain-collator02"
