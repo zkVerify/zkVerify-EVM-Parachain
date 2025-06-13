@@ -58,7 +58,7 @@ fn xcm_can_do_direct_eth_transfer() {
         .with_balances(vec![(ALICE.into(), tVFY), (BOB.into(), tVFY)])
         .build()
         .execute_with(|| {
-            let balances_before = Balances::free_balance(&BOB.into());
+            let balances_before = Balances::free_balance(AccountId::from(BOB));
             let tx_value = tVFY / 2;
             assert_ok!(pallet_ethereum_xcm::Pallet::<Runtime>::transact(
                 RawOrigin::XcmEthereumTransaction(ALICE.into()).into(),
@@ -66,7 +66,7 @@ fn xcm_can_do_direct_eth_transfer() {
             ));
 
             assert_eq!(
-                Balances::free_balance(&BOB.into()),
+                Balances::free_balance(AccountId::from(BOB)),
                 balances_before + tx_value
             );
         });
@@ -95,7 +95,7 @@ fn can_call_eth_from_xcm() {
         .with_balances(vec![(ALICE.into(), tVFY), (BOB.into(), tVFY)])
         .build()
         .execute_with(|| {
-            let balances_before = Balances::free_balance(&BOB.into());
+            let balances_before = Balances::free_balance(AccountId::from(BOB));
             let tx_value = tVFY / 10;
             let xcm_cost = tVFY / 2;
             let eth_call_bytes =
@@ -127,7 +127,7 @@ fn can_call_eth_from_xcm() {
                 Weight::from_parts(1000000000, 10000),
             ));
             assert_eq!(
-                Balances::free_balance(&BOB.into()),
+                Balances::free_balance(AccountId::from(BOB)),
                 balances_before + tx_value
             );
         })
