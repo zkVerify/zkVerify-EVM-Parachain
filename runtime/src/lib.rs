@@ -205,8 +205,8 @@ impl_opaque_keys! {
 // Version of the runtime.
 #[sp_version::runtime_version]
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-    spec_name: Cow::Borrowed("frontier-template"),
-    impl_name: Cow::Borrowed("frontier-template"),
+    spec_name: Cow::Borrowed("zkv-evm-runtime"),
+    impl_name: Cow::Borrowed("zkv-evm-node"),
     authoring_version: 1,
     spec_version: 1,
     impl_version: 0,

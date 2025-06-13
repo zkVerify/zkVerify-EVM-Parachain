@@ -82,6 +82,8 @@ fn genesis(
     initial_collators: Vec<Ids>,
     root_key: AccountId,
     endowed_accounts: Vec<(AccountId, Balance)>,
+    chain_id: u64,
+    allowed_deployers: Vec<H160>,
 ) -> serde_json::Value {
     #[cfg(feature = "runtime-benchmarks")]
     let endowed_accounts = endowed_accounts
@@ -124,12 +126,16 @@ fn genesis(
         "collatorSelection": {
             "invulnerables": initial_collators.into_iter().map(|(acc, _)| acc).collect::<Vec<_>>(),
             "candidacyBond": 100,
+            "desiredCandidates": 0,
         },
         "evmChainId": {
-            "chainId": 9999
+            "chainId": chain_id
         },
         "evm": {
             "accounts": accounts
+        },
+        "deploymentPermissions": {
+            "deployers": allowed_deployers,
         },
         "zkvXcm": {
             "safeXcmVersion": Some(SAFE_XCM_VERSION),
@@ -186,6 +192,7 @@ pub fn development_config_genesis() -> serde_json::Value {
         .collect::<Vec<_>>();
 
     genesis(
+        // Para id
         2000.into(),
         // Initial PoA authorities
         initial_authorities,
@@ -196,6 +203,10 @@ pub fn development_config_genesis() -> serde_json::Value {
             .iter()
             .map(FundedAccount::json_data)
             .collect::<Vec<_>>(),
+        // EVM chain id
+        9999,
+        // Account allowed to deploy contracts
+        Vec::new(),
     )
 }
 
@@ -230,6 +241,10 @@ pub fn local_config_genesis() -> serde_json::Value {
             .map(FundedAccount::json_data)
             .collect::<Vec<_>>(),
     )
+}
+
+pub fn testnet_config_genesis() -> serde_json::Value {
+
 }
 
 pub fn get_preset(id: &sp_genesis_builder::PresetId) -> Option<Vec<u8>> {

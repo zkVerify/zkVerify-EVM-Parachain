@@ -16,13 +16,11 @@
 //! In this module, we provide the configurations about evm.
 
 use crate::{
-    constants::{MAXIMUM_BLOCK_WEIGHT, NORMAL_DISPATCH_RATIO, WEIGHT_PER_GAS},
-    opaque, weights, AccountId, Aura, Balances, BaseFee, DeploymentPermissions, EVMChainId,
-    Permill, Precompiles, Runtime, RuntimeEvent, Timestamp, UncheckedExtrinsic,
+    constants::{MAXIMUM_BLOCK_WEIGHT, NORMAL_DISPATCH_RATIO, WEIGHT_PER_GAS}, opaque, weights, AccountId, Aura, Balances, BaseFee, CollatorSelection, DeploymentPermissions, EVMChainId, Permill, Precompiles, Runtime, RuntimeEvent, Timestamp, UncheckedExtrinsic
 };
-use frame_support::{pallet_prelude::ConstU32, parameter_types, traits::FindAuthor};
+use frame_support::{pallet_prelude::ConstU32, parameter_types, traits::{tokens::imbalance::ResolveTo, FindAuthor}};
 use pallet_ethereum::PostLogContent;
-use pallet_evm::{EVMCurrencyAdapter, EnsureAccountId20, IdentityAddressMapping};
+use pallet_evm::{EVMFungibleAdapter, EnsureAccountId20, EnsureAddressRoot, IdentityAddressMapping};
 use parity_scale_codec::{Decode, Encode};
 use sp_core::{H160, U256};
 use sp_runtime::ConsensusEngineId;
@@ -48,6 +46,7 @@ parameter_types! {
     pub GasLimitStorageGrowthRatio: u64 = BlockGasLimit::get().as_u64().saturating_div(MAX_STORAGE_GROWTH);
     pub PrecompilesValue: Precompiles<Runtime> = Precompiles::<_>::new();
     pub WeightPerGas: Weight = Weight::from_parts(WEIGHT_PER_GAS, 0);
+    pub StakingPot: AccountId = CollatorSelection::account_id();
 }
 
 impl pallet_deployment_permissions::Config for Runtime {
@@ -68,7 +67,7 @@ impl pallet_evm::Config for Runtime {
     type GasWeightMapping = pallet_evm::FixedGasWeightMapping<Self>;
     type WeightPerGas = WeightPerGas;
     type BlockHashMapping = pallet_ethereum::EthereumBlockHashMapping<Self>;
-    type CallOrigin = EnsureAccountId20;
+    type CallOrigin = EnsureAddressRoot<AccountId>;
     type WithdrawOrigin = EnsureAccountId20;
     type AddressMapping = IdentityAddressMapping;
     type Currency = Balances;
@@ -78,7 +77,7 @@ impl pallet_evm::Config for Runtime {
     type ChainId = EVMChainId;
     type BlockGasLimit = BlockGasLimit;
     type Runner = PermissionedRunner<Self>;
-    type OnChargeTransaction = EVMCurrencyAdapter<Balances, ()>;
+    type OnChargeTransaction = EVMFungibleAdapter<Balances, ResolveTo<StakingPot, Balances>>;
     type OnCreate = ();
     type FindAuthor = FindAuthorSession<pallet_session::FindAccountFromAuthorIndex<Self, Aura>>;
     type GasLimitPovSizeRatio = GasLimitPovSizeRatio;

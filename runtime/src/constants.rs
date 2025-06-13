@@ -74,7 +74,7 @@ pub const NORMAL_DISPATCH_RATIO: Perbill = Perbill::from_percent(75);
 
 pub const WEIGHT_MILLISECS_PER_BLOCK: u64 = 2000;
 
-/// We allow for 0.5 of a second of compute with a 12 second average block time.
+/// We allow for 2 of a second of compute with a 6 second average block time.
 pub const MAXIMUM_BLOCK_WEIGHT: Weight = Weight::from_parts(
     WEIGHT_REF_TIME_PER_SECOND.saturating_mul(2),
     cumulus_primitives_core::relay_chain::MAX_POV_SIZE as u64,
@@ -92,11 +92,11 @@ pub const RELAY_CHAIN_SLOT_DURATION_MILLIS: u32 = 6000;
 pub const MAX_BLOCK_LENGTH: u32 = 5 * 1024 * 1024;
 
 /// Current approximation of the gas/s consumption considering
-/// EVM execution over compiled WASM (on 4.4Ghz CPU).
-/// Given the 500ms Weight, from which 75% only are used for transactions,
-/// the total EVM execution gas limit is: GAS_PER_SECOND * 0.500 * 0.75 ~= 15_000_000.
+/// EVM execution over compiled WASM (on a linode.g6-standard-8 machine).
+/// Given the 2s Weight, from which 75% only are used for transactions,
+/// the total EVM execution gas limit is: GAS_PER_SECOND * 2 * 0.75 ~= 22_500_000.
 /// With the async backing enabled the gas limit will rise 4 times because of execution time.
-pub const GAS_PER_SECOND: u64 = 40_000_000;
+pub const GAS_PER_SECOND: u64 = 15_000_000;
 
 /// Approximate ratio of the amount of Weight per Gas.
 /// u64 works for approximations because Weight is a very small unit compared to gas.

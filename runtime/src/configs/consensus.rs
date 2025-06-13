@@ -73,7 +73,7 @@ impl pallet_session::Config for Runtime {
 }
 
 parameter_types! {
-    pub const AllowMultipleBlocksPerSlot: bool = true;
+    pub const AllowMultipleBlocksPerSlot: bool = false;
     pub const MaxAuthorities: u32 = 100_000;
 }
 
