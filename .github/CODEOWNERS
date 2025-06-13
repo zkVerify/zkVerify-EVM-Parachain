@@ -1,0 +1,4 @@
+# DevOps team ownership
+/.github/                        @zkVerify/devops
+/docker/dockerfiles/             @zkVerify/devops
+/docker/scripts/entrypoint.sh    @zkVerify/devops
