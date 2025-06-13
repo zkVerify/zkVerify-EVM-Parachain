@@ -1,0 +1,32 @@
+name: Feature Propagation
+
+run-name: "Workflow CI/CD Steps: feature propagation"
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  feature-propagation:
+    runs-on: warp-ubuntu-latest-x64-2x
+    name: Feature propagation
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v4
+
+      - name: Features
+        uses: ./.github/actions/cmd-in-docker
+        with:
+          command: "zepter run check | tee features_output.txt"
+          use_cache: 'no'
+          cargo_binaries_install: zepter
+
+      - name: Upload feature propagation output
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: feature-propagation-output
+          path: features_output.txt
+          retention-days: 1
+          compression-level: 0
+          overwrite: true

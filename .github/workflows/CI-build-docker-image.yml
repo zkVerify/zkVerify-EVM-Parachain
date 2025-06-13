@@ -1,0 +1,28 @@
+name: Build Docker Image
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+env:
+  DOCKER_HUB_ORG: horizenlabs
+  DOCKER_IMAGE_BUILD_NAME: ${{ vars.DOCKER_IMAGE_BUILD_NAME }}
+
+jobs:
+  build-docker:
+    runs-on: warp-ubuntu-latest-x64-8x
+    name: Build Docker image
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Docker build
+        id: build-docker-image
+        uses: ./.github/actions/build-docker-image
+        with:
+          ref: ${{ github.ref }}
+          docker_hub_org: ${{ env.DOCKER_HUB_ORG }}
+          docker_image_name: ${{ env.DOCKER_IMAGE_BUILD_NAME }}
+
+    outputs:
+      artifact_name: ${{ steps.build-docker-image.outputs.artifact_name }}

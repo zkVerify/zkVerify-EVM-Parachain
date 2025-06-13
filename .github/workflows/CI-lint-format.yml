@@ -1,0 +1,69 @@
+name: Lint-and-Format
+
+run-name: "Workflow CI/CD Steps: lint and format"
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  lint-format:
+    runs-on: warp-ubuntu-latest-x64-8x
+    name: Lint and format
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cargo lint
+        uses: ./.github/actions/cmd-in-docker
+        with:
+          command: "cargo clippy --release --all-targets -- --deny warnings 2>&1 | tee linting_output.txt"
+          use_cache: "yes"
+          cache_key: "lint-format"
+          lld_install: "yes"
+          skip_wasm_build: "yes"
+
+      - name: Upload lint artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-output
+          path: linting_output.txt
+          retention-days: 1
+          compression-level: 0
+          overwrite: true
+
+      - name: Cargo format
+        uses: ./.github/actions/cmd-in-docker
+        with:
+          command: "cargo fmt --check 2>&1 | tee formatting_output.txt"
+          use_cache: "yes"
+          cache_key: "lint-format"
+          lld_install: "yes"
+
+      - name: Upload format artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: format-output
+          path: formatting_output.txt
+          retention-days: 1
+          compression-level: 0
+          overwrite: true
+
+      - name: Format Cargo.toml files
+        uses: ./.github/actions/cmd-in-docker
+        with:
+          command: "zepter run format | tee formatting_tomls.txt"
+          use_cache: 'no'
+          cargo_binaries_install: zepter
+
+      - name: Upload format Cargo.toml artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: format-toml-output
+          path: formatting_tomls.txt
+          retention-days: 1
+          compression-level: 0
+          overwrite: true

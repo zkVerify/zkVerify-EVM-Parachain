@@ -18,10 +18,16 @@ fn main() {
     // this crate for wasm to speed up the compilation.
     #[cfg(feature = "std")]
     {
-        substrate_wasm_builder::WasmBuilder::new()
-            .with_current_project()
-            .export_heap_base()
-            .import_memory()
-            .build()
+        let builder = substrate_wasm_builder::WasmBuilder::init_with_defaults();
+        // We cannot enable it as default because this option require to build the WASM runtime two
+        // time, one to get the metadata and te recompile it with the metadata hash in an environment
+        // variable.
+        #[cfg(feature = "metadata-hash")]
+        let builder = if std::env::var_os("ZKV_FORCE_DISABLE_METADATA_HASH").is_none() {
+            builder.enable_metadata_hash("tVFY", 18)
+        } else {
+            builder
+        };
+        builder.build()
     }
 }
