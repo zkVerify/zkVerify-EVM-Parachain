@@ -30,6 +30,7 @@ hex = "0.4.3"
 hex-literal = "0.4.1"
 jsonrpsee = {version = "0.24.9", default-features = false}
 log = {version = "0.4.20", default-features = false}
+num_enum = { version = "0.5.3", default-features = false }
 parity-scale-codec = {version = "3.0.0", default-features = false, features = ["derive", "max-encoded-len"]}
 scale-info = {version = "2.10.0", default-features = false}
 serde = {version = "1.0.188", default-features = false}
@@ -153,9 +154,15 @@ pallet-base-fee = {git = "https://github.com/moonbeam-foundation/frontier", bran
 pallet-ethereum = {git = "https://github.com/moonbeam-foundation/frontier", branch = "moonbeam-polkadot-stable2412", default-features = false, features = ["forbid-evm-reentrancy"]}
 pallet-evm = {git = "https://github.com/moonbeam-foundation/frontier", branch = "moonbeam-polkadot-stable2412", default-features = false, features = ["forbid-evm-reentrancy"]}
 pallet-evm-chain-id = {git = "https://github.com/moonbeam-foundation/frontier", branch = "moonbeam-polkadot-stable2412", default-features = false}
+precompile-utils = { git = "https://github.com/moonbeam-foundation/frontier", branch = "moonbeam-polkadot-stable2412", default-features = false }
+precompile-utils-macro = { git = "https://github.com/moonbeam-foundation/frontier", branch = "moonbeam-polkadot-stable2412", default-features = false }
 pallet-evm-precompile-modexp = {git = "https://github.com/moonbeam-foundation/frontier", branch = "moonbeam-polkadot-stable2412", default-features = false}
 pallet-evm-precompile-sha3fips = {git = "https://github.com/moonbeam-foundation/frontier", branch = "moonbeam-polkadot-stable2412", default-features = false}
 pallet-evm-precompile-simple = {git = "https://github.com/moonbeam-foundation/frontier", branch = "moonbeam-polkadot-stable2412", default-features = false}
+pallet-evm-precompile-bn128 = {git = "https://github.com/moonbeam-foundation/frontier", branch = "moonbeam-polkadot-stable2412", default-features = false}
+pallet-evm-precompile-blake2 = {git = "https://github.com/moonbeam-foundation/frontier", branch = "moonbeam-polkadot-stable2412", default-features = false}
+pallet-evm-precompile-batch = {git = "https://github.com/moonbeam-foundation/moonbeam", tag = "runtime-3701", default-features = false}
+pallet-evm-precompile-balances-erc20 = {git = "https://github.com/moonbeam-foundation/moonbeam", tag = "runtime-3701", default-features = false}
 
 #ethereum = {version = "0.15.0", default-features = false, features = ["with-codec"]}
 ethereum = {git = "https://github.com/rust-ethereum/ethereum", rev = "3be0d8fd4c2ad1ba216b69ef65b9382612efc8ba"}
@@ -166,6 +173,9 @@ xcm-primitives = {git = "https://github.com/moonbeam-foundation/moonbeam/", tag 
 
 # Other
 tokio = {version = "1.13"}
+
+[workspace.metadata.cargo-machete]
+ignored = ["num_enum"]
 
 [patch.crates-io]
 cumulus-relay-chain-inprocess-interface = {git = "https://github.com/zkVerify/zkVerify.git", branch = "dr/stable2412"}
