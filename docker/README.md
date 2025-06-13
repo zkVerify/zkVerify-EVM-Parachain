@@ -70,7 +70,7 @@ docker run --rm -v ./staging/para-spec-raw.json:/tmp/para-spec-raw.json --entryp
 7- Start the nodes with
 
 ```bash
-docker compose -f ./compose/test-docker-compose.yaml up
+docker compose -f ./docker/compose/test-docker-compose.yaml up
 ```
 
 All the nodes should be up and running now! <br>
