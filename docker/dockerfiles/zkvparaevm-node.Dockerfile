@@ -27,7 +27,7 @@ FROM ubuntu:24.04 AS node
 
 SHELL ["/bin/bash", "-c"]
 
-ARG BINARY="zkverify-evm-para-node"
+ARG BINARY="zkv-para-evm-node"
 ARG DESCRIPTION="zkVerify EVM Parachain"
 ARG AUTHORS="infrastructure@zkverify.io"
 ARG VENDOR="zkVerify"
@@ -46,16 +46,13 @@ LABEL io.image.authors="${AUTHORS}" \
 USER root
 WORKDIR /app
 
-COPY --from=builder "/usr/src/node/target/${PROFILE}/zkv-para-evm-node" "/usr/local/bin/"
-COPY --from=builder "/usr/src/node/target/${PROFILE}/wbuild/zkv-para-evm-runtime/zkv_para_evm_runtime.compact.wasm" "./zkv_para_evm_runtime.compact.wasm"
-RUN chmod -R a+rx "/usr/local/bin"
-
-RUN apt-get update \
+RUN apt-get update -qq \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       aria2 \
       ca-certificates \
       curl \
       jq \
+      gosu \
     && useradd -m -U -s /bin/bash -d "/${RUN_USER}" "${RUN_USER}" \
     && mkdir -p /data "/${RUN_USER}/.local/share" \
     && chown -R "${RUN_USER}:${RUN_USER}" /data "/${RUN_USER}" \
@@ -65,9 +62,12 @@ RUN apt-get update \
     && apt-get -y autoremove \
     && rm -rf /var/{lib/apt/lists/*,cache/apt/archives/*.deb} /tmp/*
 
+COPY --from=builder "/usr/src/node/target/${PROFILE}/${BINARY}" "/usr/local/bin/"
+COPY --from=builder "/usr/src/node/target/${PROFILE}/wbuild/zkv-para-evm-runtime/zkv_para_evm_runtime.compact.wasm" "./zkv_para_evm_runtime.compact.wasm"
+RUN chmod -R a+rx "/usr/local/bin"
+
 COPY docker/scripts/entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
-USER "${RUN_USER}"
-
+# ENTRYPOINT
 ENTRYPOINT ["/app/entrypoint.sh"]
