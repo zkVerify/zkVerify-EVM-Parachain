@@ -22,11 +22,11 @@ use xcm::{
 };
 use xcm_primitives::{EthereumXcmTransaction, EthereumXcmTransactionV2};
 
-const CONTRACT_BYTECODE: &str = "6080604052348015600e575f5ffd5b506101298061001c5f395ff3fe6080604052348015600e575f5ffd5b50600436106030575f3560e01c80632e64cec11460345780636057361d14604e575b5f5ffd5b603a6066565b60405160459190608d565b60405180910390f35b606460048036038101906060919060cd565b606e565b005b5f5f54905090565b805f8190555050565b5f819050919050565b6087816077565b82525050565b5f602082019050609e5f8301846080565b92915050565b5f5ffd5b60af816077565b811460b8575f5ffd5b50565b5f8135905060c78160a8565b92915050565b5f6020828403121560df5760de60a4565b5b5f60ea8482850160bb565b9150509291505056fea264697066735822122063f96a57b86a37af1ac0fbf522233470beb0ae3e330dcafa317cb897259fa87364736f6c634300081e0033";
+const CONTRACT_BYTECODE: &[u8] = &hex_literal::hex!("6080604052348015600e575f5ffd5b506101298061001c5f395ff3fe6080604052348015600e575f5ffd5b50600436106030575f3560e01c80632e64cec11460345780636057361d14604e575b5f5ffd5b603a6066565b60405160459190608d565b60405180910390f35b606460048036038101906060919060cd565b606e565b005b5f5f54905090565b805f8190555050565b5f819050919050565b6087816077565b82525050565b5f602082019050609e5f8301846080565b92915050565b5f5ffd5b60af816077565b811460b8575f5ffd5b50565b5f8135905060c78160a8565b92915050565b5f6020828403121560df5760de60a4565b5b5f60ea8482850160bb565b9150509291505056fea264697066735822122063f96a57b86a37af1ac0fbf522233470beb0ae3e330dcafa317cb897259fa87364736f6c634300081e0033");
 
 fn xcm_evm_transfer_eip_1559_transaction(destination: H160, value: U256) -> EthereumXcmTransaction {
     EthereumXcmTransaction::V2(EthereumXcmTransactionV2 {
-        gas_limit: U256::from(0x5208),
+        gas_limit: U256::from(21000),
         action: ethereum::TransactionAction::Call(destination),
         value,
         input:
@@ -38,14 +38,14 @@ fn xcm_evm_transfer_eip_1559_transaction(destination: H160, value: U256) -> Ethe
     })
 }
 
-fn xcm_evm_create_eip_1559_transaction(bytecode: &str) -> EthereumXcmTransaction {
+fn xcm_evm_create_eip_1559_transaction(bytecode: &[u8]) -> EthereumXcmTransaction {
     EthereumXcmTransaction::V2(EthereumXcmTransactionV2 {
-        gas_limit: U256::from(0x100000),
+        gas_limit: U256::from(300000),
         action: ethereum::TransactionAction::Create,
         value: U256::zero(),
         input:
             BoundedVec::<u8, ConstU32<{ xcm_primitives::MAX_ETHEREUM_XCM_INPUT_SIZE }>>::try_from(
-                hex::decode(bytecode).expect("Cannot decode contract bytecode"),
+                bytecode.to_vec(),
             )
             .unwrap(),
         access_list: None,
@@ -124,7 +124,7 @@ fn can_call_eth_from_xcm() {
             assert_ok!(pallet_xcm::Pallet::<Runtime>::execute(
                 RuntimeOrigin::signed(ALICE.into()),
                 base_xcm,
-                Weight::from_parts(612874000, 5490),
+                Weight::from_parts(1000000000, 10000),
             ));
             assert_eq!(
                 Balances::free_balance(&BOB.into()),
@@ -147,7 +147,10 @@ fn cannot_create_eth_from_xcm() {
                 ),
                 DispatchErrorWithPostInfo {
                     post_info: PostDispatchInfo {
-                        actual_weight: Some(Weight::from_parts(7492000, 0)),
+                        // as per pallet_ethereum_xcm implementation
+                        actual_weight: Some(
+                            <Runtime as frame_system::Config>::DbWeight::get().reads(1)
+                        ),
                         pays_fee: Pays::Yes,
                     },
                     error: DispatchError::Other("Cannot convert xcm payload to known type"),
