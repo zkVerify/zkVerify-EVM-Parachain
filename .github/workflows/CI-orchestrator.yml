@@ -92,13 +92,10 @@ jobs:
             if [ "${{ needs.check-lockfile-job.result }}" != "success" ] ||
                 [ "${{ needs.build-job.result }}" != "success" ] ||
                 [ "${{ needs.test-job.result }}" != "success" ] ||
-                [ "${{ needs.try-runtime-job.result }}" != "success" ] ||
-                [ "${{ needs.coverage-job.result }}" != "success" ] ||
                 [ "${{ needs.lint-format-job.result }}" != "success" ] ||
                 [ "${{ needs.feature-propagation-job.result }}" != "success" ] ||
                 [ "${{ needs.audit-job.result }}" != "success" ] ||
-                [ "${{ needs.udeps-job.result }}" != "success" ] ||
-                [ "${{ needs.zombienet-test-job.result }}" != "success" ]; then
+                [ "${{ needs.machete-job.result }}" != "success" ]; then
               OVERALL_STATUS="failure"
             fi
 

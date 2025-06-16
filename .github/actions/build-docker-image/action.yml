@@ -14,7 +14,7 @@ inputs:
   docker_hub_org:
     description: "Docker hub organization"
     type: string
-    default: 'horizenlabs'
+    default: 'zkverify'
 
 outputs:
   artifact_name:

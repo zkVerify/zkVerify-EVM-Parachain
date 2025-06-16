@@ -18,13 +18,13 @@ on:
         required: true
 
 env:
-  DOCKER_HUB_ORG: horizenlabs
+  DOCKER_HUB_ORG: zkverify
   DOCKER_IMAGE_BUILD_NAME: ${{ vars.DOCKER_IMAGE_BUILD_NAME }}
 
 jobs:
   build-docker:
     runs-on: warp-ubuntu-latest-x64-8x
-    name: Build Docker Image evm-paranode
+    name: Build Docker Image para-evm-node
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
 
   publish-docker-image:
     runs-on: warp-ubuntu-latest-x64-2x
-    name: Publish Docker Image Evm Paranode
+    name: Publish Docker Image Evm Parachain Node
     needs: [build-docker]
     steps:
       - name: Git checkout
@@ -51,7 +51,7 @@ jobs:
           ref: ${{ github.ref }}
           fetch-depth: 0
 
-      - name: Download zkv evm paranode Docker image artifact
+      - name: Download zkv evm parachain node Docker image artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-docker.outputs.artifact_name }}

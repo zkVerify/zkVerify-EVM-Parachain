@@ -4,8 +4,8 @@
 set -eEuo pipefail
 
 workdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )"
-docker_image_build_name="${DOCKER_IMAGE_BUILD_NAME:-zkv-para-evm-node}"
-docker_hub_org="${DOCKER_HUB_ORG:-horizenlabs}"
+docker_image_build_name="${DOCKER_IMAGE_BUILD_NAME:-para-evm-node}"
+docker_hub_org="${DOCKER_HUB_ORG:-zkverify}"
 docker_hub_username="${DOCKER_HUB_USERNAME:-}"
 docker_hub_token="${DOCKER_HUB_TOKEN:-}"
 is_a_release="${IS_A_RELEASE:-false}"

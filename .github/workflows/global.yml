@@ -18,9 +18,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cleanup space
-        run:  bash ${GITHUB_WORKSPACE}/.github/scripts/clean_ci.sh
-
       - name: Rust Setup
         uses: actions-rs/toolchain@v1
         with:
