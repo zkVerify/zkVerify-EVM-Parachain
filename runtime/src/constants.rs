@@ -39,13 +39,9 @@ pub mod currency {
     pub const EXISTENTIAL_DEPOSIT: Balance = 100;
 
     pub const fn deposit(items: u32, bytes: u32) -> Balance {
-        items as Balance * 15 * CENTS + (bytes as Balance) * 6 * CENTS
+        items as Balance * 200 * CENTS + (bytes as Balance) * 100 * MILLICENTS
     }
 }
-
-pub const P_FACTOR: u128 = 10;
-pub const Q_FACTOR: u128 = 100;
-pub const POLY_DEGREE: u8 = 1;
 
 /// This determines the average expected block time that we are targeting.
 /// Blocks will be produced at a minimum duration defined by `SLOT_DURATION`.

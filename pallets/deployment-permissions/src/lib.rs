@@ -13,6 +13,7 @@ mod tests;
 pub mod weights;
 
 pub use crate::weights::WeightInfo;
+use alloc::vec::Vec;
 use frame_support::sp_runtime::DispatchError;
 pub use pallet::*;
 use sp_core::H160;

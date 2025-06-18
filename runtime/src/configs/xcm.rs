@@ -18,7 +18,7 @@
 use crate::{
     configs::system::RuntimeBlockWeights, constants::currency::CENTS, types::AccountId, weights,
     AllPalletsWithSystem, Balances, MessageQueue, ParachainInfo, ParachainSystem, Perbill, Runtime,
-    RuntimeCall, RuntimeEvent, RuntimeOrigin, WeightToFee, XcmpQueue, ZKVXcm,
+    RuntimeCall, RuntimeEvent, RuntimeOrigin, XcmpQueue, ZKVXcm,
 };
 use cumulus_primitives_core::{AggregateMessageOrigin, ParaId};
 use frame_support::{
@@ -61,6 +61,7 @@ const ZKV_GENESIS_HASH: [u8; 32] =
     hex_literal::hex!("ff7fe5a610f15fe7a0c52f94f86313fb7db7d3786e7f8acf2b66c11d5be7c242");
 
 parameter_types! {
+    pub const RootLocation: Location = Here.into_location();
     pub const RelayLocation: Location = Location::parent();
     pub const RelayNetwork: Option<NetworkId> = Some(NetworkId::ByGenesis(ZKV_GENESIS_HASH));
     pub BalancesPalletLocation: Location = PalletInstance(<Balances as PalletInfoAccess>::index() as u8).into();
@@ -142,7 +143,7 @@ pub type XcmOriginToTransactDispatchOrigin = (
 );
 
 parameter_types! {
-    pub const MaxInstructions: u32 = 100;
+    pub const MaxInstructions: u32 = 30;
     pub const MaxAssetsIntoHolding: u32 = 64;
     pub StakingPot: AccountId = crate::CollatorSelection::account_id();
 }
@@ -173,7 +174,7 @@ pub type Barrier = TrailingSetTopicAsId<
 
 pub type TrustedTeleporters = ConcreteAssetFromSystem<RelayLocation>;
 
-pub type WaivedLocations = Equals<RelayLocation>;
+pub type WaivedLocations = (Equals<RelayLocation>, Equals<RootLocation>);
 
 pub struct RemoteEVMCall;
 impl CallDispatcher<RuntimeCall> for RemoteEVMCall {
@@ -220,7 +221,7 @@ impl xcm_executor::Config for XcmConfig {
     type Weigher = WeightInfoBounds<XcmZKVEvmWeight<RuntimeCall>, RuntimeCall, MaxInstructions>;
     // Can only buy weight with the native token
     type Trader = UsingComponents<
-        WeightToFee,
+        <Runtime as pallet_transaction_payment::Config>::WeightToFee,
         RelayLocation,
         AccountId,
         Balances,
@@ -325,8 +326,8 @@ impl cumulus_pallet_xcm::Config for Runtime {
 }
 
 parameter_types! {
-    pub MessageQueueServiceWeight: Weight = Perbill::from_percent(35) * RuntimeBlockWeights::get().max_block;
-    pub const HeapSize: u32 = 64 * 1024;
+    pub MessageQueueServiceWeight: Weight = Perbill::from_percent(25) * RuntimeBlockWeights::get().max_block;
+    pub const HeapSize: u32 = 103 * 1024;
     pub const MaxStale: u32 = 8;
 }
 

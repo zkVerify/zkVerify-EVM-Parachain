@@ -1,8 +1,6 @@
 use super::*;
 use crate::{
-    constants::currency::{CENTS, MICROCENTS},
-    tests::{ExtBuilder, ALICE, BOB},
-    RuntimeOrigin,
+    constants::currency::{CENTS, MICROCENTS}, tests::{ExtBuilder, ALICE, BOB}, RuntimeOrigin
 };
 use frame_support::{assert_err_ignore_postinfo, assert_ok};
 use sp_core::H256;
@@ -11,7 +9,7 @@ use sp_runtime::DispatchError;
 #[test]
 fn create_with_whitelisted_account_succeeds() {
     ExtBuilder::default()
-        .with_balances(vec![(ALICE.into(), 1_000 * CENTS)])
+        .with_balances(vec![(ALICE.into(), 11 * CENTS)])
         .build()
         .execute_with(|| {
             pallet_deployment_permissions::Pallet::<Runtime>::grant_deploy_permission(
@@ -21,12 +19,12 @@ fn create_with_whitelisted_account_succeeds() {
             .unwrap();
 
             assert_ok!(pallet_evm::Pallet::<Runtime>::create(
-                RuntimeOrigin::signed(ALICE.into()),
+                RuntimeOrigin::root(),
                 ALICE.into(),
                 contract_bytecode(),
                 0.into(),
-                1_000_000,
-                MICROCENTS.into(),
+                100_000,
+                (100 * MICROCENTS).into(),
                 None,
                 None,
                 Vec::new(),
@@ -37,7 +35,7 @@ fn create_with_whitelisted_account_succeeds() {
 #[test]
 fn create2_with_whitelisted_account_succeeds() {
     ExtBuilder::default()
-        .with_balances(vec![(ALICE.into(), 1_000 * CENTS)])
+        .with_balances(vec![(ALICE.into(), 11 * CENTS)])
         .build()
         .execute_with(|| {
             pallet_deployment_permissions::Pallet::<Runtime>::grant_deploy_permission(
@@ -47,13 +45,13 @@ fn create2_with_whitelisted_account_succeeds() {
             .unwrap();
 
             assert_ok!(pallet_evm::Pallet::<Runtime>::create2(
-                RuntimeOrigin::signed(ALICE.into()),
+                RuntimeOrigin::root(),
                 ALICE.into(),
                 contract_bytecode(),
                 H256::default(),
                 0.into(),
-                1_000_000,
-                MICROCENTS.into(),
+                100_000,
+                (100 * MICROCENTS).into(),
                 None,
                 None,
                 Vec::new(),
@@ -75,7 +73,7 @@ fn create_with_non_whitelisted_account_fails() {
 
             assert_err_ignore_postinfo!(
                 pallet_evm::Pallet::<Runtime>::create(
-                    RuntimeOrigin::signed(ALICE.into()),
+                    RuntimeOrigin::root(),
                     ALICE.into(),
                     contract_bytecode(),
                     0.into(),
@@ -104,7 +102,7 @@ fn create2_with_non_whitelisted_account_fails() {
 
             assert_err_ignore_postinfo!(
                 pallet_evm::Pallet::<Runtime>::create2(
-                    RuntimeOrigin::signed(ALICE.into()),
+                    RuntimeOrigin::root(),
                     ALICE.into(),
                     contract_bytecode(),
                     H256::default(),

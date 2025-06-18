@@ -206,7 +206,10 @@ pub fn development_config_genesis() -> serde_json::Value {
         // EVM chain id
         9999,
         // Account allowed to deploy contracts
-        Vec::new(),
+        DEFAULT_ENDOWED_SEEDS
+            .iter()
+            .map(|entry| entry.eth_addr.into())
+            .collect::<Vec<_>>(),
     )
 }
 
@@ -240,17 +243,32 @@ pub fn local_config_genesis() -> serde_json::Value {
             .take(authorities_num)
             .map(FundedAccount::json_data)
             .collect::<Vec<_>>(),
+        // EVM chain id
+        9999,
+        // Account allowed to deploy contracts
+        DEFAULT_ENDOWED_SEEDS
+            .iter()
+            .map(|entry| entry.eth_addr.into())
+            .collect::<Vec<_>>(),
     )
 }
 
 pub fn testnet_config_genesis() -> serde_json::Value {
-
+    genesis(
+        1.into(),
+        Vec::new(),           // Our initial collators
+        AccountId::default(), // To be set to our sudo multisig
+        Vec::new(),           // No pre-funded accoutns
+        1408,
+        Vec::new(), // To be set to allowed deployers
+    )
 }
 
 pub fn get_preset(id: &sp_genesis_builder::PresetId) -> Option<Vec<u8>> {
     let cfg = match id.as_ref() {
         "development" => development_config_genesis(),
         "local" => local_config_genesis(),
+        "testnet" => testnet_config_genesis(),
         _ => return None,
     };
     Some(
@@ -261,5 +279,9 @@ pub fn get_preset(id: &sp_genesis_builder::PresetId) -> Option<Vec<u8>> {
 }
 
 pub fn preset_names() -> Vec<PresetId> {
-    vec![PresetId::from("development"), PresetId::from("local")]
+    vec![
+        PresetId::from("development"),
+        PresetId::from("local"),
+        PresetId::from("testnet"),
+    ]
 }
