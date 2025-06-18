@@ -63,7 +63,7 @@ RUN apt-get update -qq \
     && rm -rf /var/{lib/apt/lists/*,cache/apt/archives/*.deb} /tmp/*
 
 COPY --from=builder "/usr/src/node/target/${PROFILE}/${BINARY}" "/usr/local/bin/"
-COPY --from=builder "/usr/src/node/target/${PROFILE}/wbuild/zkv-para-evm-runtime/zkv_para_evm_runtime.compact.wasm" "./zkv_para_evm_runtime.compact.wasm"
+COPY --from=builder "/usr/src/node/target/${PROFILE}/wbuild/zkv-para-evm-runtime/zkv_para_evm_runtime.compact.compressed.wasm" "./zkv_para_evm_runtime.compact.compressed.wasm"
 RUN chmod -R a+rx "/usr/local/bin"
 
 COPY docker/scripts/entrypoint.sh .

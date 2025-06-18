@@ -105,6 +105,7 @@ pub fn create_benchmark_extrinsic(
         frame_system::CheckNonce::<runtime::Runtime>::from(nonce),
         frame_system::CheckWeight::<runtime::Runtime>::new(),
         pallet_transaction_payment::ChargeTransactionPayment::<runtime::Runtime>::from(0),
+        frame_metadata_hash_extension::CheckMetadataHash::<runtime::Runtime>::new(false),
         cumulus_primitives_storage_weight_reclaim::StorageWeightReclaim::<runtime::Runtime>::new(),
     );
 
@@ -120,6 +121,7 @@ pub fn create_benchmark_extrinsic(
             (),
             (),
             (),
+            None,
             (),
         ),
     );

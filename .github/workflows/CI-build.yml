@@ -1,0 +1,32 @@
+name: Build
+
+run-name: "Workflow CI/CD Step: cargo build"
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: warp-ubuntu-latest-x64-8x
+    name: Build para-evm-node
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Para-evm-node build
+        uses: ./.github/actions/cmd-in-docker
+        with:
+          command: "cargo build -p zkv-para-evm-node --release"
+          use_cache: 'yes'
+          cache_key: 'build-evm-node'
+          lld_install: 'yes'
+
+      - name: Upload para-evm-node build binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: "para-evm-node-bin"
+          path: |
+            target/release/zkv-para-evm-node
+          retention-days: 1
+          overwrite: true

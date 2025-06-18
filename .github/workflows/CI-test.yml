@@ -1,0 +1,43 @@
+name: Test
+
+run-name: "Workflow CI/CD Steps: build, unit and integration testing"
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  unit-test:
+    runs-on: warp-ubuntu-latest-x64-8x
+    name: Cargo unit test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cargo unit test
+        uses: ./.github/actions/cmd-in-docker
+        with:
+          command: "cargo test --lib --bins --all-features --no-fail-fast --release 2>&1 | tee unit_test_output.txt"
+          use_cache: 'yes'
+          cache_key: 'unit-test'
+          lld_install: 'yes'
+          skip_wasm_build: 'yes'
+
+      - name: Cargo unit test runtime without features
+        uses: ./.github/actions/cmd-in-docker
+        with:
+          command: "cargo test --lib -p zkv-para-evm-runtime --no-fail-fast --release 2>&1 | tee -a unit_test_output.txt"
+          use_cache: 'yes'
+          cache_key: 'unit-test'
+          lld_install: 'yes'
+          skip_wasm_build: 'yes'
+
+      - name: Upload unit test output
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-output
+          path: unit_test_output.txt
+          retention-days: 1
+          compression-level: 0
+          overwrite: true

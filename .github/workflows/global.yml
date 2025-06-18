@@ -3,10 +3,6 @@ name: global
 run-name: "All CI checks"
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 concurrency:
@@ -18,12 +14,9 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-24.04
+    runs-on: warp-ubuntu-latest-x64-8x
     steps:
       - uses: actions/checkout@v4
-
-      - name: Cleanup space
-        run:  bash ${GITHUB_WORKSPACE}/.github/scripts/clean_ci.sh
 
       - name: Rust Setup
         uses: actions-rs/toolchain@v1
@@ -58,4 +51,4 @@ jobs:
           cargo install cargo-make --locked
 
       - name: Run ci
-        run: cargo make ci-remote
+        run: cargo make ci
