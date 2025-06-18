@@ -280,7 +280,7 @@ pub type LocalOriginToLocation = SignedToAccountId20<RuntimeOrigin, AccountId, R
 /// the right message queues.
 pub type XcmRouter = WithUniqueTopic<(
     // Two routers - use UMP to communicate with the relay chain:
-    cumulus_primitives_utility::ParentAsUmp<ParachainSystem, (), ()>,
+    cumulus_primitives_utility::ParentAsUmp<ParachainSystem, ZKVXcm, ()>,
     // ..and XCMP to communicate with the sibling chains.
     XcmpQueue,
 )>;
@@ -297,9 +297,7 @@ impl pallet_xcm::Config for Runtime {
     type SendXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, LocalOriginToLocation>;
     type XcmRouter = XcmRouter;
     type ExecuteXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, LocalOriginToLocation>;
-    type XcmExecuteFilter = Everything; // TODO!!!! Check this
-                                        // ^ Disable dispatchable execute on the XCM pallet.
-                                        // Needs to be `Everything` for local testing.
+    type XcmExecuteFilter = Everything;
     type XcmExecutor = XcmExecutor<XcmConfig>;
     type XcmTeleportFilter = Everything;
     type XcmReserveTransferFilter = Nothing;

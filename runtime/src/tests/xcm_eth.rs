@@ -124,7 +124,7 @@ fn can_call_eth_from_xcm() {
             assert_ok!(pallet_xcm::Pallet::<Runtime>::execute(
                 RuntimeOrigin::signed(ALICE.into()),
                 base_xcm,
-                Weight::from_parts(1000000000, 10000),
+                Weight::from_parts(10000000000, 10000),
             ));
             assert_eq!(
                 Balances::free_balance(AccountId::from(BOB)),

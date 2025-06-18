@@ -1,6 +1,8 @@
 use super::*;
 use crate::{
-    constants::currency::{CENTS, MICROCENTS}, tests::{ExtBuilder, ALICE, BOB}, RuntimeOrigin
+    constants::currency::{CENTS, MICROCENTS},
+    tests::{ExtBuilder, ALICE, BOB},
+    RuntimeOrigin,
 };
 use frame_support::{assert_err_ignore_postinfo, assert_ok};
 use sp_core::H256;
