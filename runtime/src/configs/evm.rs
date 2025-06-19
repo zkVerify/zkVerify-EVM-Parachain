@@ -48,12 +48,10 @@ impl pallet_ethereum::Config for Runtime {
     type ExtraDataLength = ConstU32<30>;
 }
 
-const MAX_STORAGE_GROWTH: u64 = 400 * 1024;
-
 parameter_types! {
     pub BlockGasLimit: U256 = U256::from(NORMAL_DISPATCH_RATIO * MAXIMUM_BLOCK_WEIGHT.ref_time() / WEIGHT_PER_GAS);
     pub GasLimitPovSizeRatio: u64 = BlockGasLimit::get().as_u64().saturating_div(cumulus_primitives_core::relay_chain::MAX_POV_SIZE as u64);
-    pub GasLimitStorageGrowthRatio: u64 = BlockGasLimit::get().as_u64().saturating_div(MAX_STORAGE_GROWTH);
+    pub GasLimitStorageGrowthRatio: u64 = 0; // Disabled
     pub PrecompilesValue: Precompiles<Runtime> = Precompiles::<_>::new();
     pub WeightPerGas: Weight = Weight::from_parts(WEIGHT_PER_GAS, 0);
     pub StakingPot: AccountId = CollatorSelection::account_id();
