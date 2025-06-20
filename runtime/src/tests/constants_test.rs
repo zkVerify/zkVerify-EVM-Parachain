@@ -178,7 +178,7 @@ mod runtime_tests {
     fn aura_constants() {
         use configs::consensus::*;
 
-        assert!(!AllowMultipleBlocksPerSlot::get());
+        assert!(AllowMultipleBlocksPerSlot::get());
 
         assert_eq!(MaxAuthorities::get(), 100_000);
     }
