@@ -17,12 +17,12 @@
 //! of pallets used for currency management.
 
 use crate::{
-    constants::currency::{EXISTENTIAL_DEPOSIT, MICROCENTS},
-    weights, AccountId, Balance, Balances, CollatorSelection, Runtime, RuntimeEvent,
-    RuntimeFreezeReason, RuntimeHoldReason, System, WeightToFee,
+    constants::currency::EXISTENTIAL_DEPOSIT, weights, AccountId, Balance, Balances,
+    CollatorSelection, Runtime, RuntimeEvent, RuntimeFreezeReason, RuntimeHoldReason, System,
 };
 use frame_support::{parameter_types, traits::tokens::imbalance::ResolveTo};
-use polkadot_runtime_common::SlowAdjustingFeeUpdate;
+use pallet_transaction_payment::{Multiplier, TargetedFeeAdjustment};
+use sp_runtime::{traits::One, FixedPointNumber, Perquintill};
 use sp_weights::ConstantMultiplier;
 
 parameter_types! {
@@ -52,11 +52,24 @@ impl pallet_balances::Config for Runtime {
 }
 
 parameter_types! {
-    /// Relay Chain `TransactionByteFee` / 10
-    pub const TransactionByteFee: Balance = 10 * MICROCENTS;
+    pub const TransactionPicosecondFee: Balance = 5000000;
+    pub const TransactionByteFee: Balance = 5000000;
+    pub const TargetBlockFullness: Perquintill = Perquintill::from_percent(75);
+    // AdjustmentVariable computed to result in a desired cost for filling n blocks in a row.
+    pub AdjustmentVariable: Multiplier = Multiplier::saturating_from_rational(1313646132342424i64, 10000000000000000i64);
+    pub MinimumMultiplier: Multiplier = Multiplier::one();
+    pub MaximumMultiplier: Multiplier = Multiplier::from(100_000u128);
     pub const OperationalFeeMultiplier: u8 = 5;
     pub StakingPot: AccountId = CollatorSelection::account_id();
 }
+
+pub type VFlowFeeUpdate<R> = TargetedFeeAdjustment<
+    R,
+    TargetBlockFullness,
+    AdjustmentVariable,
+    MinimumMultiplier,
+    MaximumMultiplier,
+>;
 
 #[cfg(feature = "runtime-benchmarks")]
 mod runtime_benchmarks {
@@ -151,9 +164,9 @@ impl pallet_transaction_payment::Config for Runtime {
     type OnChargeTransaction =
         runtime_benchmarks::OnChargeTransactionRuntimeBenchmarks<OnChargeTransaction>;
 
-    type WeightToFee = WeightToFee;
+    type WeightToFee = ConstantMultiplier<Balance, TransactionPicosecondFee>;
     type LengthToFee = ConstantMultiplier<Balance, TransactionByteFee>;
-    type FeeMultiplierUpdate = SlowAdjustingFeeUpdate<Self>;
+    type FeeMultiplierUpdate = VFlowFeeUpdate<Self>;
     type OperationalFeeMultiplier = OperationalFeeMultiplier;
     type WeightInfo = weights::pallet_transaction_payment::ZKVEvmWeight<Runtime>;
 }

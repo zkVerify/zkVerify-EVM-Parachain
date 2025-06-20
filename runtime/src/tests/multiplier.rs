@@ -17,15 +17,14 @@
 use crate::{configs::system::RuntimeBlockWeights, tests::run_with_system_weight, Runtime};
 use frame_support::pallet_prelude::*;
 use pallet_transaction_payment::Multiplier;
-use polkadot_runtime_common::MinimumMultiplier;
 use sp_runtime::{traits::Convert, Perquintill};
 
 fn min_multiplier() -> Multiplier {
-    MinimumMultiplier::get()
+    crate::configs::monetary::MinimumMultiplier::get()
 }
 
 fn target() -> Weight {
-    Perquintill::from_percent(25)
+    Perquintill::from_percent(75)
         * RuntimeBlockWeights::get()
             .get(DispatchClass::Normal)
             .max_total
