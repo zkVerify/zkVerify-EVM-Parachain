@@ -45,6 +45,7 @@ fn chain_properties() -> Map<String, Value> {
     properties.insert("tokenSymbol".into(), "tVFY".into());
     properties.insert("tokenDecimals".into(), 18.into());
     properties.insert("ss58Format".into(), 0.into());
+    properties.insert("isEthereum".into(), true.into());
     // This is very important for us, it lets us track the usage of our templates, and have no downside for the node/runtime. Please do not remove :)
     properties.insert("basedOn".into(), "OpenZeppelin EVM Template".into());
     properties
