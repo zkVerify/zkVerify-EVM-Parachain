@@ -24,6 +24,7 @@ jobs:
     name: Cargo test bench job
     needs: [check-lockfile-job]
     uses: ./.github/workflows/CI-test-bench.yml
+    
   lint-format-job:
     name: Lint and format job
     needs: [check-lockfile-job]

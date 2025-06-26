@@ -23,5 +23,5 @@ jobs:
       - name: Run benchmarks
         uses: ./.github/actions/cmd-in-docker
         with:
-          command: "./target/release/zkv-para-evm-node benchmark pallet --pallet \"*\" --extrinsic \"*\" -s 2 -r 1"
+          command: './target/release/zkv-para-evm-node benchmark pallet --pallet "*" --extrinsic "*" -s 2 -r 1'
           use_cache: 'no'
