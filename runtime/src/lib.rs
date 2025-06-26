@@ -48,14 +48,13 @@ use frame_support::{
     construct_runtime,
     genesis_builder_helper::{build_state, get_preset},
     traits::OnFinalize,
-    weights::{Weight, WeightToFeeCoefficient, WeightToFeeCoefficients, WeightToFeePolynomial},
+    weights::Weight,
 };
 use pallet_ethereum::{
     Call::transact, Transaction as EthereumTransaction, TransactionAction, TransactionData,
     TransactionStatus,
 };
 use pallet_evm::{Account as EVMAccount, FeeCalculator, Runner};
-use smallvec::smallvec;
 use sp_api::impl_runtime_apis;
 pub use sp_consensus_aura::sr25519::AuthorityId as AuraId;
 use sp_core::{crypto::KeyTypeId, OpaqueMetadata, H160, H256, U256};
@@ -78,11 +77,7 @@ use sp_version::RuntimeVersion;
 pub use crate::types::{
     AccountId, Balance, Block, BlockNumber, Executive, Nonce, Signature, UncheckedExtrinsic,
 };
-use crate::{
-    constants::{currency::MILLICENTS, POLY_DEGREE, P_FACTOR, Q_FACTOR, SLOT_DURATION},
-    types::ConsensusHook,
-    weights::ExtrinsicBaseWeight,
-};
+use crate::{constants::SLOT_DURATION, types::ConsensusHook};
 
 impl fp_self_contained::SelfContainedCall for RuntimeCall {
     type SignedInfo = H160;
@@ -142,37 +137,6 @@ impl fp_self_contained::SelfContainedCall for RuntimeCall {
     }
 }
 
-/// Handles converting a weight scalar to a fee value, based on the scale and
-/// granularity of the node's balance type.
-///
-/// This should typically create a mapping between the following ranges:
-///   - `[0, MAXIMUM_BLOCK_WEIGHT]`
-///   - `[Balance::min, Balance::max]`
-///
-/// Yet, it can be used for any other sort of change to weight-fee. Some
-/// examples being:
-///   - Setting it to `0` will essentially disable the weight fee.
-///   - Setting it to `1` will cause the literal `#[weight = x]` values to be
-///     charged.
-pub struct WeightToFee;
-
-impl WeightToFeePolynomial for WeightToFee {
-    type Balance = Balance;
-
-    fn polynomial() -> WeightToFeeCoefficients<Self::Balance> {
-        // in Rococo, extrinsic base weight (smallest non-zero weight) is mapped to 1
-        // MILLIUNIT: in our template, we map to 1/10 of that, or 1/10 MILLIUNIT
-        let p = MILLICENTS / P_FACTOR;
-        let q = Q_FACTOR * Balance::from(ExtrinsicBaseWeight::get().ref_time());
-        smallvec![WeightToFeeCoefficient {
-            degree: POLY_DEGREE,
-            negative: false,
-            coeff_frac: Perbill::from_rational(p % q, q),
-            coeff_integer: p / q,
-        }]
-    }
-}
-
 /// Opaque types. These are used by the CLI to instantiate machinery that don't
 /// need to know the specifics of the runtime. They can then be made to be
 /// agnostic over specific formats of data like extrinsics, allowing for them to
@@ -205,8 +169,8 @@ impl_opaque_keys! {
 // Version of the runtime.
 #[sp_version::runtime_version]
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-    spec_name: Cow::Borrowed("frontier-template"),
-    impl_name: Cow::Borrowed("frontier-template"),
+    spec_name: Cow::Borrowed("tvflow-runtime"),
+    impl_name: Cow::Borrowed("vflow-node"),
     authoring_version: 1,
     spec_version: 1,
     impl_version: 0,
@@ -270,7 +234,6 @@ construct_runtime!(
         // EVM
         Ethereum: pallet_ethereum = 40, // No weight
         EVM: pallet_evm = 41,
-        BaseFee: pallet_base_fee = 42, // No weight
         EVMChainId: pallet_evm_chain_id = 43, // No weight
         EthereumXcm: pallet_ethereum_xcm = 44,
 
@@ -598,7 +561,7 @@ impl_runtime_apis! {
 
         /// Return the elasticity multiplier.
         fn elasticity() -> Option<Permill> {
-            Some(pallet_base_fee::Elasticity::<Runtime>::get())
+            None
         }
 
         /// Used to determine if gas limit multiplier for non-transactional calls (eth_call/estimateGas)
@@ -727,18 +690,11 @@ impl_runtime_apis! {
                     pub const ToParentBaseDeliveryFee: u128 = CENTS.saturating_mul(3);
                 }
 
-                pub type PriceForParentDelivery = polkadot_runtime_common::xcm_sender::ExponentialPrice<
-                    configs::xcm::FeeAssetId,
-                    ToParentBaseDeliveryFee,
-                    TransactionByteFee,
-                    ParachainSystem,
-                >;
-
                 impl pallet_xcm::benchmarking::Config for Runtime {
                     type DeliveryHelper = cumulus_primitives_utility::ToParentDeliveryHelper<
                         XcmConfig,
                         ExistentialDepositAsset,
-                        PriceForParentDelivery,
+                        configs::xcm::PriceForParentDelivery,
                     >;
 
                     fn reachable_dest() -> Option<Location> {
@@ -774,7 +730,11 @@ impl_runtime_apis! {
                 impl pallet_xcm_benchmarks::Config for Runtime {
                     type XcmConfig = XcmConfig;
                     type AccountIdConverter = configs::xcm::LocationAccountId32ToAccountId;
-                    type DeliveryHelper = ();
+                    type DeliveryHelper = cumulus_primitives_utility::ToParentDeliveryHelper<
+                        XcmConfig,
+                        ExistentialDepositAsset,
+                        configs::xcm::PriceForParentDelivery,
+                    >;
 
                     fn valid_destination() -> Result<Location, BenchmarkError> {
                         Ok(Location::parent())

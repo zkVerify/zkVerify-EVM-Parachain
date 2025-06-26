@@ -9986,20 +9986,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pallet-base-fee"
-version = "1.0.0"
-source = "git+https://github.com/moonbeam-foundation/frontier?branch=moonbeam-polkadot-stable2412#c7b7f2b0025a3ad502a295208295c7208078b6b4"
-dependencies = [
- "fp-evm",
- "frame-support",
- "frame-system",
- "parity-scale-codec",
- "scale-info",
- "sp-core",
- "sp-runtime",
-]
-
-[[package]]
 name = "pallet-beefy"
 version = "40.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -22834,7 +22820,6 @@ dependencies = [
  "pallet-aura",
  "pallet-authorship",
  "pallet-balances",
- "pallet-base-fee",
  "pallet-collator-selection",
  "pallet-deployment-permissions",
  "pallet-ethereum",
@@ -22865,7 +22850,6 @@ dependencies = [
  "precompile-utils",
  "scale-info",
  "serde_json",
- "smallvec",
  "sp-api",
  "sp-block-builder",
  "sp-consensus-aura",

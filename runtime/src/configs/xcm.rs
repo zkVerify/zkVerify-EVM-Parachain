@@ -16,9 +16,12 @@
 //! In this module, we provide the configurations about xcm subsystem.
 
 use crate::{
-    configs::system::RuntimeBlockWeights, constants::currency::CENTS, types::AccountId, weights,
-    AllPalletsWithSystem, Balances, MessageQueue, ParachainInfo, ParachainSystem, Perbill, Runtime,
-    RuntimeCall, RuntimeEvent, RuntimeOrigin, WeightToFee, XcmpQueue, ZKVXcm,
+    configs::monetary::TransactionByteFee,
+    configs::system::RuntimeBlockWeights,
+    constants::currency::{CENTS, MILLIS},
+    types::AccountId,
+    weights, AllPalletsWithSystem, Balances, MessageQueue, ParachainInfo, ParachainSystem, Perbill,
+    Runtime, RuntimeCall, RuntimeEvent, RuntimeOrigin, XcmpQueue, ZKVXcm,
 };
 use cumulus_primitives_core::{AggregateMessageOrigin, ParaId};
 use frame_support::{
@@ -61,6 +64,7 @@ const ZKV_GENESIS_HASH: [u8; 32] =
     hex_literal::hex!("ff7fe5a610f15fe7a0c52f94f86313fb7db7d3786e7f8acf2b66c11d5be7c242");
 
 parameter_types! {
+    pub const RootLocation: Location = Here.into_location();
     pub const RelayLocation: Location = Location::parent();
     pub const RelayNetwork: Option<NetworkId> = Some(NetworkId::ByGenesis(ZKV_GENESIS_HASH));
     pub BalancesPalletLocation: Location = PalletInstance(<Balances as PalletInfoAccess>::index() as u8).into();
@@ -142,7 +146,7 @@ pub type XcmOriginToTransactDispatchOrigin = (
 );
 
 parameter_types! {
-    pub const MaxInstructions: u32 = 100;
+    pub const MaxInstructions: u32 = 30;
     pub const MaxAssetsIntoHolding: u32 = 64;
     pub StakingPot: AccountId = crate::CollatorSelection::account_id();
 }
@@ -173,7 +177,7 @@ pub type Barrier = TrailingSetTopicAsId<
 
 pub type TrustedTeleporters = ConcreteAssetFromSystem<RelayLocation>;
 
-pub type WaivedLocations = Equals<RelayLocation>;
+pub type WaivedLocations = (Equals<RelayLocation>, Equals<RootLocation>);
 
 pub struct RemoteEVMCall;
 impl CallDispatcher<RuntimeCall> for RemoteEVMCall {
@@ -220,7 +224,7 @@ impl xcm_executor::Config for XcmConfig {
     type Weigher = WeightInfoBounds<XcmZKVEvmWeight<RuntimeCall>, RuntimeCall, MaxInstructions>;
     // Can only buy weight with the native token
     type Trader = UsingComponents<
-        WeightToFee,
+        <Runtime as pallet_transaction_payment::Config>::WeightToFee,
         RelayLocation,
         AccountId,
         Balances,
@@ -246,7 +250,7 @@ impl xcm_executor::Config for XcmConfig {
     type HrmpNewChannelOpenRequestHandler = ();
     type HrmpChannelAcceptedHandler = ();
     type HrmpChannelClosingHandler = ();
-    type XcmRecorder = ();
+    type XcmRecorder = ZKVXcm;
 }
 
 // Convert a local Origin (i.e., a signed 20 byte account Origin)  to a Multilocation
@@ -275,11 +279,25 @@ where
 // Converts a Signed Local Origin into a Location
 pub type LocalOriginToLocation = SignedToAccountId20<RuntimeOrigin, AccountId, RelayNetwork>;
 
+parameter_types! {
+    /// The asset ID for the asset that we use to pay for message delivery fees.
+    pub FeeAssetId: AssetId = AssetId(RelayLocation::get()); // the relay chain native asset
+    /// The base fee for the message delivery fees.
+    pub const ToParentBaseDeliveryFee: u128 = MILLIS.saturating_mul(3);
+}
+
+pub type PriceForParentDelivery = polkadot_runtime_common::xcm_sender::ExponentialPrice<
+    FeeAssetId,
+    ToParentBaseDeliveryFee,
+    TransactionByteFee,
+    ParachainSystem,
+>;
+
 /// The means for routing XCM messages which are not for local execution into
 /// the right message queues.
 pub type XcmRouter = WithUniqueTopic<(
     // Two routers - use UMP to communicate with the relay chain:
-    cumulus_primitives_utility::ParentAsUmp<ParachainSystem, (), ()>,
+    cumulus_primitives_utility::ParentAsUmp<ParachainSystem, ZKVXcm, PriceForParentDelivery>,
     // ..and XCMP to communicate with the sibling chains.
     XcmpQueue,
 )>;
@@ -296,9 +314,7 @@ impl pallet_xcm::Config for Runtime {
     type SendXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, LocalOriginToLocation>;
     type XcmRouter = XcmRouter;
     type ExecuteXcmOrigin = EnsureXcmOrigin<RuntimeOrigin, LocalOriginToLocation>;
-    type XcmExecuteFilter = Everything; // TODO!!!! Check this
-                                        // ^ Disable dispatchable execute on the XCM pallet.
-                                        // Needs to be `Everything` for local testing.
+    type XcmExecuteFilter = Everything;
     type XcmExecutor = XcmExecutor<XcmConfig>;
     type XcmTeleportFilter = Everything;
     type XcmReserveTransferFilter = Nothing;
@@ -325,8 +341,8 @@ impl cumulus_pallet_xcm::Config for Runtime {
 }
 
 parameter_types! {
-    pub MessageQueueServiceWeight: Weight = Perbill::from_percent(35) * RuntimeBlockWeights::get().max_block;
-    pub const HeapSize: u32 = 64 * 1024;
+    pub MessageQueueServiceWeight: Weight = Perbill::from_percent(25) * RuntimeBlockWeights::get().max_block;
+    pub const HeapSize: u32 = 103 * 1024;
     pub const MaxStale: u32 = 8;
 }
 
@@ -334,10 +350,12 @@ impl pallet_message_queue::Config for Runtime {
     type RuntimeEvent = RuntimeEvent;
     type WeightInfo = weights::pallet_message_queue::ZKVEvmWeight<Runtime>;
     #[cfg(not(feature = "runtime-benchmarks"))]
-    type MessageProcessor = xcm_builder::ProcessXcmMessage<
-        AggregateMessageOrigin,
-        xcm_executor::XcmExecutor<crate::configs::xcm::XcmConfig>,
-        RuntimeCall,
+    type MessageProcessor = pallet_ethereum_xcm::MessageProcessorWrapper<
+        xcm_builder::ProcessXcmMessage<
+            AggregateMessageOrigin,
+            xcm_executor::XcmExecutor<crate::configs::xcm::XcmConfig>,
+            RuntimeCall,
+        >,
     >;
     #[cfg(feature = "runtime-benchmarks")]
     type MessageProcessor =
@@ -355,8 +373,6 @@ impl pallet_message_queue::Config for Runtime {
 
 parameter_types! {
     pub const MaxInboundSuspended: u32 = 1000;
-    /// The asset ID for the asset that we use to pay for message delivery fees.
-    pub FeeAssetId: AssetId = AssetId(RelayLocation::get()); // the relay chain native asset
     /// The base fee for the message delivery fees. zkVerify is based for the reference.
     pub const ToSiblingBaseDeliveryFee: u128 = CENTS.saturating_mul(3);
 }
@@ -365,7 +381,7 @@ parameter_types! {
 type PriceForSiblingParachainDelivery = polkadot_runtime_common::xcm_sender::ExponentialPrice<
     FeeAssetId,
     ToSiblingBaseDeliveryFee,
-    crate::configs::monetary::TransactionByteFee,
+    TransactionByteFee,
     XcmpQueue,
 >;
 

@@ -17,7 +17,6 @@ workspace = true
 [dependencies]
 parity-scale-codec = {workspace = true, features = ["derive"]}
 scale-info = {workspace = true, features = ["derive"]}
-smallvec = {workspace = true}
 hex-literal = {workspace = true}
 serde_json = { workspace = true, features = ["alloc"] }
 num_enum = { workspace = true }
@@ -87,7 +86,6 @@ fp-rpc = {workspace = true}
 fp-self-contained = {workspace = true, features = ["serde"]}
 fp-evm = {workspace = true}
 
-pallet-base-fee = {workspace = true}
 pallet-ethereum = {workspace = true}
 pallet-evm = {workspace = true}
 pallet-evm-chain-id = {workspace = true}
@@ -140,7 +138,6 @@ std = [
 	"pallet-aura/std",
 	"pallet-authorship/std",
 	"pallet-balances/std",
-	"pallet-base-fee/std",
 	"pallet-collator-selection/std",
 	"pallet-deployment-permissions/std",
 	"pallet-ethereum-xcm/std",
@@ -238,7 +235,6 @@ try-runtime = [
 	"pallet-aura/try-runtime",
 	"pallet-authorship/try-runtime",
 	"pallet-balances/try-runtime",
-	"pallet-base-fee/try-runtime",
 	"pallet-collator-selection/try-runtime",
 	"pallet-deployment-permissions/try-runtime",
 	"pallet-ethereum-xcm/try-runtime",

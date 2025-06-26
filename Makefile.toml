@@ -21,6 +21,10 @@ args = ["check", "--all-features"]
 command = "cargo"
 args = ["build", "--release"]
 
+[tasks.build-bench]
+command = "cargo"
+args = ["build", "--release", "--features", "runtime-benchmarks"]
+
 [tasks.test-base]
 command = "cargo"
 env = { "SKIP_WASM_BUILD" = "1" }
@@ -31,6 +35,11 @@ dependencies = ["test-base"]
 command = "cargo"
 env = { "SKIP_WASM_BUILD" = "1" }
 args = ["test", "--release", "--all-features"]
+
+[tasks.test-bench]
+dependencies = ["build-bench"]
+command = "./target/release/zkv-para-evm-node"
+args = ["benchmark", "pallet", "--pallet", "*", "--extrinsic", "*", "-s", "2", "-r", "1"]
 
 [tasks.format_inst]
 [tasks.format-inst]
@@ -89,9 +98,8 @@ dependencies = ["zepter-fix-check", "zepter-fix-format"]
 command = "cargo"
 args = ["machete"]
 
-
 [tasks.dependencies-check]
 dependencies = ["audit", "machete"]
 
 [tasks.ci]
-dependencies = ["format", "zepter", "check", "build", "test", "clippy", "dependencies-check"]
+dependencies = ["format", "zepter", "check", "build", "test", "test-bench", "clippy", "dependencies-check"]

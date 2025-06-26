@@ -108,9 +108,14 @@ export DONT_CACHE_NATIVE="true"
 # save 20/30% time on disable it without to lose any advantage.
 export CARGO_INCREMENTAL=0
 
-# If SKIP_WASM_BUILD is set, we export the variable to skip the runtime wasm build
+# If SKIP_WASM_BUILD is set, we export the variable to skip the runtime wasm build.
+# The build script just check the presence, so if the intent is to not skip it just unset it.
 if [ -n "${SKIP_WASM_BUILD}" ]; then
+  echo -e "\n=== SKIP WASM BUILD ===\n"
   export SKIP_WASM_BUILD=1
+else
+  echo -e "\n=== WASM BUILD ENABLED ===\n"
+  unset SKIP_WASM_BUILD
 fi
 
 # Run

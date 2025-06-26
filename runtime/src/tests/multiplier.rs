@@ -14,22 +14,32 @@
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 // Integration transaction weight-fee tests
-use crate::{configs::system::RuntimeBlockWeights, tests::run_with_system_weight, Runtime};
+use crate::{
+    configs::{monetary::VFlowFeeUpdate, system::RuntimeBlockWeights},
+    tests::run_with_system_weight,
+    Runtime,
+};
 use frame_support::pallet_prelude::*;
 use pallet_transaction_payment::Multiplier;
-use polkadot_runtime_common::MinimumMultiplier;
 use sp_runtime::{traits::Convert, Perquintill};
 
 fn min_multiplier() -> Multiplier {
-    MinimumMultiplier::get()
+    crate::configs::monetary::MinimumMultiplier::get()
 }
 
 fn target() -> Weight {
-    Perquintill::from_percent(25)
+    Perquintill::from_percent(75)
         * RuntimeBlockWeights::get()
             .get(DispatchClass::Normal)
             .max_total
             .unwrap()
+}
+
+fn max() -> Weight {
+    RuntimeBlockWeights::get()
+        .get(DispatchClass::Normal)
+        .max_total
+        .unwrap()
 }
 
 fn runtime_multiplier_update(fm: Multiplier) -> Multiplier {
@@ -74,5 +84,35 @@ fn multiplier_cannot_go_below_limit() {
     run_with_system_weight(Weight::zero(), || {
         let next = runtime_multiplier_update(min_multiplier());
         assert_eq!(next, min_multiplier());
+    })
+}
+
+#[test]
+fn block_cost_after_k_full_blocks() {
+    run_with_system_weight(max(), || {
+        // We check that after k full blocks, the fee multiplier is ~26.67, so that filling a block
+        // completely costs ~200 VFY, considering time only.
+        let mut mul: Multiplier = 1.into();
+        let k = 100;
+        let final_mul = 26.67f64;
+        for _i in 0..k {
+            mul = VFlowFeeUpdate::<Runtime>::convert(mul);
+        }
+
+        assert!((mul.to_float() - final_mul).abs() < 1e-9f64);
+    })
+}
+
+#[test]
+fn block_cost_after_k_empty_blocks() {
+    run_with_system_weight(Weight::zero(), || {
+        let mut mul: Multiplier = 1.into();
+        // We check that after k empty blocks, the fee multiplier never goes below the minimum.
+        let k = 100;
+        for _i in 0..k {
+            mul = VFlowFeeUpdate::<Runtime>::convert(mul);
+        }
+
+        assert_eq!(mul, min_multiplier());
     })
 }

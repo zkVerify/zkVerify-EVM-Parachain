@@ -16,6 +16,7 @@
 
 use sc_chain_spec::{ChainSpecExtension, ChainSpecGroup};
 use sc_service::ChainType;
+use sc_telemetry::TelemetryEndpoints;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 
@@ -80,5 +81,27 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
     .with_protocol_id("zkv_para_evm_local_testnet")
     .with_properties(chain_properties())
     .with_genesis_config_preset_name("local")
+    .build())
+}
+
+pub fn testnet_config() -> Result<ChainSpec, String> {
+    Ok(ChainSpec::builder(
+        zkv_para_evm_runtime::WASM_BINARY
+            .ok_or_else(|| "Testnet wasm not available".to_string())?,
+        Extensions {
+            relay_chain: "zkVerify Volta".into(),
+            para_id: 1,
+        },
+    )
+    .with_name("VFlow Testnet")
+    .with_id("vflow_testnet")
+    .with_chain_type(ChainType::Live)
+    .with_protocol_id("tvflow")
+    .with_properties(chain_properties())
+    .with_genesis_config_preset_name("testnet")
+    .with_boot_nodes(vec![])
+    .with_telemetry_endpoints(
+        TelemetryEndpoints::new(vec![]).expect("Horizen Labs telemetry url is valid; qed"),
+    )
     .build())
 }

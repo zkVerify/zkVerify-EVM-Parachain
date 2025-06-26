@@ -17,15 +17,23 @@
 
 use crate::{
     constants::{MAXIMUM_BLOCK_WEIGHT, NORMAL_DISPATCH_RATIO, WEIGHT_PER_GAS},
-    opaque, weights, AccountId, Aura, Balances, BaseFee, DeploymentPermissions, EVMChainId,
-    Permill, Precompiles, Runtime, RuntimeEvent, Timestamp, UncheckedExtrinsic,
+    opaque, weights, AccountId, Aura, Balances, CollatorSelection, DeploymentPermissions,
+    EVMChainId, Precompiles, Runtime, RuntimeEvent, Timestamp, TransactionPayment,
+    UncheckedExtrinsic,
 };
-use frame_support::{pallet_prelude::ConstU32, parameter_types, traits::FindAuthor};
+use fp_evm::FeeCalculator;
+use frame_support::{
+    pallet_prelude::ConstU32,
+    parameter_types,
+    traits::{tokens::imbalance::ResolveTo, FindAuthor},
+};
 use pallet_ethereum::PostLogContent;
-use pallet_evm::{EVMCurrencyAdapter, EnsureAccountId20, IdentityAddressMapping};
+use pallet_evm::{
+    EVMFungibleAdapter, EnsureAccountId20, EnsureAddressRoot, IdentityAddressMapping,
+};
 use parity_scale_codec::{Decode, Encode};
 use sp_core::{H160, U256};
-use sp_runtime::ConsensusEngineId;
+use sp_runtime::{ConsensusEngineId, FixedPointNumber};
 use sp_std::marker::PhantomData;
 use sp_weights::Weight;
 
@@ -40,14 +48,13 @@ impl pallet_ethereum::Config for Runtime {
     type ExtraDataLength = ConstU32<30>;
 }
 
-const MAX_STORAGE_GROWTH: u64 = 400 * 1024;
-
 parameter_types! {
     pub BlockGasLimit: U256 = U256::from(NORMAL_DISPATCH_RATIO * MAXIMUM_BLOCK_WEIGHT.ref_time() / WEIGHT_PER_GAS);
     pub GasLimitPovSizeRatio: u64 = BlockGasLimit::get().as_u64().saturating_div(cumulus_primitives_core::relay_chain::MAX_POV_SIZE as u64);
-    pub GasLimitStorageGrowthRatio: u64 = BlockGasLimit::get().as_u64().saturating_div(MAX_STORAGE_GROWTH);
+    pub GasLimitStorageGrowthRatio: u64 = 0; // Disabled
     pub PrecompilesValue: Precompiles<Runtime> = Precompiles::<_>::new();
     pub WeightPerGas: Weight = Weight::from_parts(WEIGHT_PER_GAS, 0);
+    pub StakingPot: AccountId = CollatorSelection::account_id();
 }
 
 impl pallet_deployment_permissions::Config for Runtime {
@@ -62,13 +69,40 @@ type PermissionedRunner<T> = pallet_deployment_permissions::runner::Permissioned
     DeploymentPermissions,
 >;
 
+pub struct TransactionPaymentAsGasPrice;
+impl FeeCalculator for TransactionPaymentAsGasPrice {
+    fn min_gas_price() -> (U256, Weight) {
+        // note: transaction-payment differs from EIP-1559 in that its tip and length fees are not
+        //       scaled by the multiplier, which means its multiplier will be overstated when
+        //       applied to an ethereum transaction
+        // note: transaction-payment uses both a congestion modifier (next_fee_multiplier, which is
+        //       updated once per block in on_finalize) and a 'WeightToFee' implementation. Our
+        //       runtime implements this as a 'ConstantModifier', so we can get away with a simple
+        //       multiplication here.
+        // It is imperative that `saturating_mul_int` be performed as late as possible in the
+        // expression since it involves fixed point multiplication with a division by a fixed
+        // divisor. This leads to truncation and subsequent precision loss if performed too early.
+        // This can lead to min_gas_price being same across blocks even if the multiplier changes.
+        // There's still some precision loss when the final `gas_price` (used_gas * min_gas_price)
+        // is computed in frontier, but that's currently unavoidable.
+        let min_gas_price = TransactionPayment::next_fee_multiplier().saturating_mul_int(
+            (crate::configs::monetary::TransactionPicosecondFee::get())
+                .saturating_mul(WEIGHT_PER_GAS as u128),
+        );
+        (
+            min_gas_price.into(),
+            <Runtime as frame_system::Config>::DbWeight::get().reads(1),
+        )
+    }
+}
+
 impl pallet_evm::Config for Runtime {
     type AccountProvider = pallet_evm::FrameSystemAccountProvider<Self>;
-    type FeeCalculator = BaseFee;
+    type FeeCalculator = TransactionPaymentAsGasPrice;
     type GasWeightMapping = pallet_evm::FixedGasWeightMapping<Self>;
     type WeightPerGas = WeightPerGas;
     type BlockHashMapping = pallet_ethereum::EthereumBlockHashMapping<Self>;
-    type CallOrigin = EnsureAccountId20;
+    type CallOrigin = EnsureAddressRoot<AccountId>;
     type WithdrawOrigin = EnsureAccountId20;
     type AddressMapping = IdentityAddressMapping;
     type Currency = Balances;
@@ -78,7 +112,7 @@ impl pallet_evm::Config for Runtime {
     type ChainId = EVMChainId;
     type BlockGasLimit = BlockGasLimit;
     type Runner = PermissionedRunner<Self>;
-    type OnChargeTransaction = EVMCurrencyAdapter<Balances, ()>;
+    type OnChargeTransaction = EVMFungibleAdapter<Balances, ResolveTo<StakingPot, Balances>>;
     type OnCreate = ();
     type FindAuthor = FindAuthorSession<pallet_session::FindAccountFromAuthorIndex<Self, Aura>>;
     type GasLimitPovSizeRatio = GasLimitPovSizeRatio;
@@ -88,35 +122,6 @@ impl pallet_evm::Config for Runtime {
 }
 
 impl pallet_evm_chain_id::Config for Runtime {}
-
-parameter_types! {
-    /// Starting value for base fee. Set at the same value as in Ethereum.
-    pub DefaultBaseFeePerGas: U256 = U256::from(1_000_000_000);
-    /// Default elasticity rate. Set at the same value as in Ethereum.
-    pub DefaultElasticity: Permill = Permill::from_parts(125_000);
-}
-
-/// The thresholds based on which the base fee will change.
-pub struct BaseFeeThreshold;
-impl pallet_base_fee::BaseFeeThreshold for BaseFeeThreshold {
-    fn lower() -> Permill {
-        Permill::zero()
-    }
-
-    fn ideal() -> Permill {
-        Permill::from_parts(500_000)
-    }
-
-    fn upper() -> Permill {
-        Permill::from_parts(1_000_000)
-    }
-}
-impl pallet_base_fee::Config for Runtime {
-    type RuntimeEvent = RuntimeEvent;
-    type Threshold = BaseFeeThreshold;
-    type DefaultBaseFeePerGas = DefaultBaseFeePerGas;
-    type DefaultElasticity = DefaultElasticity;
-}
 
 pub struct FindAuthorSession<Inner>(PhantomData<Inner>);
 impl<Inner> FindAuthor<H160> for FindAuthorSession<Inner>
