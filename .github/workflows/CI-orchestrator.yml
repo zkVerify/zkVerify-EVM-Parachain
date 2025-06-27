@@ -59,7 +59,7 @@ jobs:
         feature-propagation-job,
         machete-job,
       ]
-    if: ${{ github.event_name == 'pull_request' && !cancelled() }}
+    if: ${{ !cancelled() }}
     outputs:
       branch-name: ${{ steps.get-info.outputs.BRANCH_NAME }}
       last-commit-sha: ${{ steps.get-info.outputs.LAST_COMMIT_SHA }}
