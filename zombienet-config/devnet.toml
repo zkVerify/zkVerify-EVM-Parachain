@@ -14,7 +14,7 @@ rpc_port = 8855
 [[relaychain.nodes]]
 name = "bob"
 validator = true
-ws_port = 9844
+ws_port = 9944
 rpc_port = 8844
 
 [relaychain.genesis.runtimeGenesis.patch.configuration.config.scheduler_params]
@@ -41,7 +41,7 @@ args = ["-lxcm=trace", "--rpc-max-connections 10000"]
 
 [[parachains.collators]]
 name = "zkv-para-evm-parachain-collator02"
-ws_port = 9822
+ws_port = 9922
 rpc_port = 8822
 command = "./target/release/zkv-para-evm-node"
 args = ["--rpc-max-connections 10000"]
