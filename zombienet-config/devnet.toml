@@ -8,10 +8,14 @@ default_command = "./relay-bin/zkv-relay"
 [[relaychain.nodes]]
 name = "alice"
 validator = true
+ws_port = 9955
+rpc_port = 8855
 
 [[relaychain.nodes]]
 name = "bob"
 validator = true
+ws_port = 9944
+rpc_port = 8844
 
 [relaychain.genesis.runtimeGenesis.patch.configuration.config.scheduler_params]
 lookahead = 2
@@ -37,7 +41,7 @@ args = ["-lxcm=trace", "--rpc-max-connections 10000"]
 
 [[parachains.collators]]
 name = "zkv-para-evm-parachain-collator02"
-ws_port = 9822
+ws_port = 9922
 rpc_port = 8822
 command = "./target/release/zkv-para-evm-node"
 args = ["--rpc-max-connections 10000"]
