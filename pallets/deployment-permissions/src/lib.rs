@@ -13,6 +13,7 @@ mod tests;
 pub mod weights;
 
 pub use crate::weights::WeightInfo;
+use alloc::vec::Vec;
 use frame_support::sp_runtime::DispatchError;
 pub use pallet::*;
 use sp_core::H160;
@@ -20,7 +21,7 @@ use sp_core::H160;
 #[frame_support::pallet]
 pub mod pallet {
     use super::*;
-    use frame_support::{dispatch::DispatchResult, pallet_prelude::*};
+    use frame_support::{dispatch::DispatchResult, pallet_prelude::*, DefaultNoBound};
     use frame_system::pallet_prelude::*;
 
     #[pallet::pallet]
@@ -57,6 +58,22 @@ pub mod pallet {
 
     #[pallet::storage]
     pub type Deployers<T> = StorageMap<_, Blake2_128Concat, H160, (), OptionQuery>;
+
+    #[pallet::genesis_config]
+    #[derive(DefaultNoBound)]
+    pub struct GenesisConfig<T: Config> {
+        pub deployers: Vec<H160>,
+        _phantom: PhantomData<T>,
+    }
+
+    #[pallet::genesis_build]
+    impl<T: Config> BuildGenesisConfig for GenesisConfig<T> {
+        fn build(&self) {
+            self.deployers.iter().for_each(|deployer| {
+                Deployers::<T>::insert(deployer, ());
+            });
+        }
+    }
 
     #[pallet::call]
     impl<T: Config> Pallet<T> {

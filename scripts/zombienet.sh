@@ -1,8 +1,6 @@
 #!/bin/bash
 
 ZOMBIENET_V=v1.3.128
-ZKV_REV=a099848
-ZKV_V=v0.1.0
 BIN_DIR=relay-bin
 
 case "$(uname -s)" in
@@ -36,7 +34,12 @@ build_zkVerify() {
   pushd /tmp
     git clone https://github.com/zkVerify/zkVerify.git
     pushd zkVerify
-      git checkout $ZKV_REV
+      # Get new tags from remote
+      git fetch --tags > /dev/null
+      # Get latest tag name
+      latestTag=$(git describe --tags "$(git rev-list --tags --max-count=1)")
+      # Checkout latest tag
+      git checkout $latestTag
       echo "building zkVerify executable..."
       cargo build --release -p zkv-relay --features "fast-runtime"
       cp target/release/zkv-relay "$CWD/$BIN_DIR"
