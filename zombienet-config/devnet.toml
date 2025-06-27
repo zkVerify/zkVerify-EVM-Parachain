@@ -8,10 +8,14 @@ default_command = "./relay-bin/zkv-relay"
 [[relaychain.nodes]]
 name = "alice"
 validator = true
+ws_port = 9955
+rpc_port = 8855
 
 [[relaychain.nodes]]
 name = "bob"
 validator = true
+ws_port = 9844
+rpc_port = 8844
 
 [relaychain.genesis.runtimeGenesis.patch.configuration.config.scheduler_params]
 lookahead = 2
