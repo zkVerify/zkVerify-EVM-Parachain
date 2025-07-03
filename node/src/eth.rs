@@ -67,8 +67,7 @@ impl FromStr for EthApi {
             "txpool" => Self::Txpool,
             _ => {
                 return Err(format!(
-                    "`{}` is not recognized as a supported Ethereum Api",
-                    s
+                    "`{s}` is not recognized as a supported Ethereum Api",
                 ))
             }
         })
