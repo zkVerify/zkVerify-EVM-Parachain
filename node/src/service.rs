@@ -209,7 +209,7 @@ pub fn new_partial(
                 std::num::NonZeroU32::new(eth_config.frontier_sql_backend_num_ops_timeout),
                 overrides.clone(),
             ))
-            .unwrap_or_else(|err| panic!("failed creating sql backend: {:?}", err));
+            .unwrap_or_else(|err| panic!("failed creating sql backend: {err:?}"));
             FrontierBackend::Sql(Arc::new(backend))
         }
     };
@@ -431,9 +431,8 @@ where
         match SUBSTRATE_REFERENCE_HARDWARE.check_hardware(&hwbench, true) {
             Err(err) if validator => {
                 log::warn!(
-                    "⚠️  The hardware does not meet the minimal requirements {} for role \
+                    "⚠️  The hardware does not meet the minimal requirements {err} for role \
 					 'Authority'.",
-                    err
                 );
             }
             _ => {}

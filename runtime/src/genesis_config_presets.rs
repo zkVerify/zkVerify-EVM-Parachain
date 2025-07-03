@@ -70,7 +70,7 @@ pub fn get_from_seed_url<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>
 pub fn get_from_substrate_account<TPublic: Public>(
     account: &str,
 ) -> <TPublic::Pair as Pair>::Public {
-    get_from_seed_url::<TPublic>(&format!("//{}", account))
+    get_from_seed_url::<TPublic>(&format!("//{account}"))
 }
 
 type Ids = (AccountId, AuraId);
