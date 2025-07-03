@@ -73,6 +73,12 @@ pub fn get_from_substrate_account<TPublic: Public>(
     get_from_seed_url::<TPublic>(&format!("//{account}"))
 }
 
+fn from_ss58check<T: sp_core::crypto::Ss58Codec>(
+    key: &str,
+) -> Result<T, sp_core::crypto::PublicError> {
+    <T as sp_core::crypto::Ss58Codec>::from_ss58check(key)
+}
+
 type Ids = (AccountId, AuraId);
 
 /// Configure initial storage state for FRAME modules.
@@ -254,13 +260,37 @@ pub fn local_config_genesis() -> serde_json::Value {
 }
 
 pub fn testnet_config_genesis() -> serde_json::Value {
+    fn aura(p: &str) -> AuraId {
+        from_ss58check(p).expect("Aura is valid. qed")
+    }
+
+    let initial_authorities = vec![
+        (
+            hex!("f01550a972bd740bb4bf0e310df5a24951bcc4d7").into(),
+            aura("5D2uV6TzfCygTZZaewQEQParxfVpS7wBKMzYFYisba9jsdvu"),
+        ),
+        (
+            hex!("0bc86963d4be46ccf88f2dd5ddd2f762a2758551").into(),
+            aura("5HKatXMUHuP6o7NzPfAsF9yMxXMwbNZqHoLDsixQFXma8Svq"),
+        ),
+        (
+            hex!("840ca56f773c06d4a5085b9aa6269bcd28c274f5").into(),
+            aura("5ED9jAcPPACLKvSa7AePyGUD8oxPLnsTMrzYpiEqWiygP2GE"),
+        ),
+    ];
+    let sudo = hex!("96e74657b82f6865f15f3280667cda5a6dd79c51").into();
+
     genesis(
-        1.into(),
-        Vec::new(),           // Our initial collators
-        AccountId::default(), // To be set to our sudo multisig
-        Vec::new(),           // No pre-funded accoutns
+        1599.into(),
+        // Initial PoA authorities
+        initial_authorities,
+        // Sudo account
+        sudo,
+        // No Pre-funded accounts
+        Default::default(),
         1408,
-        Vec::new(), // To be set to allowed deployers
+        // No allowed deployers in genesis: sudo will add it
+        Default::default(),
     )
 }
 

@@ -29,6 +29,37 @@ mod storage;
 mod use_correct_weights;
 mod xcm_eth;
 
+mod misc {
+    use super::*;
+
+    #[test]
+    fn check_version() {
+        let v_str = std::env!("CARGO_PKG_VERSION");
+        let convert = |v: &str| {
+            v.split('.')
+                .map(|x| x.parse::<u32>().unwrap())
+                .rev()
+                .enumerate()
+                .fold(0, |a, (step, dec)| a + dec * 1000_u32.pow(step as u32))
+        };
+
+        let v_num = convert(v_str);
+        use sp_api::runtime_decl_for_core::CoreV5;
+        let s_ver = Runtime::version().spec_version;
+        assert_eq!(
+            s_ver, v_num,
+            "Version mismatch. Crate version = {v_str}, but spec_version is {s_ver} != {v_num}"
+        );
+
+        // Sanity checks
+        assert_eq!(1_002_003, convert("1.2.3"));
+        assert_eq!(3_002_001, convert("3.2.1"));
+        assert_eq!(0, convert("0.0.0"));
+        assert_eq!(5_010, convert("0.5.10"));
+        assert_eq!(1_000_000, convert("1.0.0"));
+    }
+}
+
 #[derive(Default)]
 pub struct ExtBuilder {
     balances: Vec<(AccountId, u128)>,

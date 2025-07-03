@@ -34,9 +34,9 @@ use crate::{
 
 fn load_spec(id: &str) -> std::result::Result<Box<dyn ChainSpec>, String> {
     Ok(match id {
-        "test" | "testnet" => Box::new(chain_spec::testnet_config()?),
+        "" | "test" | "testnet" => Box::new(chain_spec::testnet_config()?),
         "dev" => Box::new(chain_spec::development_config()?),
-        "" | "local" => Box::new(chain_spec::local_testnet_config()?),
+        "local" => Box::new(chain_spec::local_testnet_config()?),
         path => Box::new(GenericChainSpec::from_json_file(std::path::PathBuf::from(
             path,
         ))?),

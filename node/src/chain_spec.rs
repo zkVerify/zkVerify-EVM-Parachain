@@ -15,13 +15,18 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 use sc_chain_spec::{ChainSpecExtension, ChainSpecGroup};
+use sc_network::config::MultiaddrWithPeerId;
 use sc_service::ChainType;
 use sc_telemetry::TelemetryEndpoints;
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
+use std::str;
 
 /// Specialized `ChainSpec` for the normal parachain runtime.
 pub type ChainSpec = sc_service::GenericChainSpec<Extensions>;
+
+// The URL for the telemetry server.
+const TELEMETRY_URL: &str = "wss://telemetry.zkverify.io/submit/";
 
 /// The extensions for the [`ChainSpec`].
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, ChainSpecGroup, ChainSpecExtension)]
@@ -81,28 +86,52 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
     .with_chain_type(ChainType::Local)
     .with_protocol_id("zkv_para_evm_local_testnet")
     .with_properties(chain_properties())
-    .with_genesis_config_preset_name("local")
+    .with_genesis_config_preset_name("local-test")
     .build())
 }
 
+fn boot_node_address(dns: &str, peer_id: &str) -> impl Iterator<Item = MultiaddrWithPeerId> {
+    vec![
+        format!("/dns/{dns}/tcp/30333/p2p/{peer_id}"),
+        format!("/dns/{dns}/tcp/30334/ws/p2p/{peer_id}"),
+        format!("/dns/{dns}/tcp/443/wss/p2p/{peer_id}"),
+    ]
+    .into_iter()
+    .map(|s| s.parse().expect("Valid address. qed"))
+}
+
 pub fn testnet_config() -> Result<ChainSpec, String> {
+    // The connection strings for bootnodes
+    const BOOTNODE_1_DNS: &str = "boot-node-tn-vflow-1.de.zkverify.io";
+    const BOOTNODE_1_PEER_ID: &str = "12D3KooWStRw5P6v8bydm3RjzsdSE75PNoFtCzZ5PnV1hkntWGim";
+    const BOOTNODE_2_DNS: &str = "boot-node-tn-vflow-2.eu-west-gra.zkverify.io";
+    const BOOTNODE_2_PEER_ID: &str = "12D3KooWFVarmg1RGuCnEsHVjYSxKd6idJ6cCEowkKkgaBPovt84";
+
     Ok(ChainSpec::builder(
         zkv_para_evm_runtime::WASM_BINARY
-            .ok_or_else(|| "Testnet wasm not available".to_string())?,
+            .ok_or_else(|| "Development wasm not available".to_string())?,
         Extensions {
             relay_chain: "zkVerify Volta".into(),
-            para_id: 1,
+            para_id: 1599,
         },
     )
     .with_name("VFlow Testnet")
     .with_id("vflow_testnet")
     .with_chain_type(ChainType::Live)
     .with_protocol_id("tvflow")
+    .with_boot_nodes(
+        boot_node_address(BOOTNODE_1_DNS, BOOTNODE_1_PEER_ID)
+            .chain(boot_node_address(BOOTNODE_2_DNS, BOOTNODE_2_PEER_ID))
+            .collect(),
+    )
     .with_properties(chain_properties())
     .with_genesis_config_preset_name("testnet")
-    .with_boot_nodes(vec![])
     .with_telemetry_endpoints(
-        TelemetryEndpoints::new(vec![]).expect("Horizen Labs telemetry url is valid; qed"),
+        TelemetryEndpoints::new(vec![(
+            TELEMETRY_URL.to_string(),
+            sc_telemetry::CONSENSUS_INFO,
+        )])
+        .expect("Horizen Labs telemetry url is valid; qed"),
     )
     .build())
 }
