@@ -10,6 +10,7 @@ name = "alice"
 validator = true
 ws_port = 9955
 rpc_port = 8855
+args = ["-lxcm=trace"]
 
 [[relaychain.nodes]]
 name = "bob"
