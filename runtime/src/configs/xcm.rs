@@ -45,9 +45,9 @@ use sp_runtime::{
 };
 use xcm::latest::prelude::*;
 use xcm_builder::{
-    AccountKey20Aliases, AllowKnownQueryResponses, AllowSubscriptionsFrom,
-    AllowTopLevelPaidExecutionFrom, DenyReserveTransferToRelayChain, DenyThenTry,
-    DescribeAllTerminal, DescribeFamily, EnsureXcmOrigin, FrameTransactionalProcessor,
+    AccountKey20Aliases, AllowExplicitUnpaidExecutionFrom, AllowKnownQueryResponses,
+    AllowSubscriptionsFrom, AllowTopLevelPaidExecutionFrom, DenyReserveTransferToRelayChain,
+    DenyThenTry, DescribeAllTerminal, DescribeFamily, EnsureXcmOrigin, FrameTransactionalProcessor,
     FungibleAdapter, HashedDescription, IsConcrete, NativeAsset, ParentIsPreset,
     RelayChainAsNative, SendXcmFeeToAccount, SiblingParachainAsNative, SignedAccountKey20AsNative,
     SovereignSignedViaLocation, TakeWeightCredit, TrailingSetTopicAsId, UsingComponents,
@@ -166,7 +166,10 @@ pub type Barrier = TrailingSetTopicAsId<
             TakeWeightCredit,
             AllowKnownQueryResponses<ZKVXcm>,
             WithComputedOrigin<
-                (AllowTopLevelPaidExecutionFrom<ParentRelayChain>,),
+                (
+                    AllowTopLevelPaidExecutionFrom<ParentRelayChain>,
+                    AllowExplicitUnpaidExecutionFrom<ParentRelayChain>,
+                ),
                 UniversalLocation,
                 ConstU32<8>,
             >,
@@ -401,4 +404,24 @@ impl cumulus_pallet_xcmp_queue::Config for Runtime {
     type ControllerOriginConverter = XcmOriginToTransactDispatchOrigin;
     type PriceForSiblingDelivery = PriceForSiblingParachainDelivery;
     type WeightInfo = weights::cumulus_pallet_xcmp_queue::ZKVEvmWeight<Runtime>;
+}
+
+#[test]
+fn xcm_executor_constants() {
+    use hex_literal::hex;
+    use xcm::latest::Junctions::X1;
+
+    let loc = Location {
+        parents: 0,
+        interior: X1([AccountId32 {
+            network: None,
+            id: hex!("d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d").into(),
+        }]
+        .into()),
+    };
+    assert_eq!(
+        LocationAccountId32ToAccountId::convert_location(&loc)
+            .expect("Cannot convert accountid32; qed"),
+        hex!("04a99fd6822c8558854ccde39a5684e7a56da27d").into()
+    );
 }
