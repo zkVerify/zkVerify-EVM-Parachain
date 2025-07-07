@@ -159,6 +159,14 @@ impl Contains<Location> for ParentRelayChain {
     }
 }
 
+pub struct ParentsTreasury;
+impl Contains<Location> for ParentsTreasury {
+    fn contains(location: &Location) -> bool {
+        // match the relay chain and any account on it
+        matches!(location.unpack(), (1, [PalletInstance(14)]))
+    }
+}
+
 pub type Barrier = TrailingSetTopicAsId<
     DenyThenTry<
         DenyReserveTransferToRelayChain,
@@ -168,7 +176,7 @@ pub type Barrier = TrailingSetTopicAsId<
             WithComputedOrigin<
                 (
                     AllowTopLevelPaidExecutionFrom<ParentRelayChain>,
-                    AllowExplicitUnpaidExecutionFrom<ParentRelayChain>,
+                    AllowExplicitUnpaidExecutionFrom<ParentsTreasury>,
                 ),
                 UniversalLocation,
                 ConstU32<8>,
@@ -180,7 +188,7 @@ pub type Barrier = TrailingSetTopicAsId<
 
 pub type TrustedTeleporters = ConcreteAssetFromSystem<RelayLocation>;
 
-pub type WaivedLocations = (Equals<RelayLocation>, Equals<RootLocation>);
+pub type WaivedLocations = (Equals<RelayLocation>, Equals<RootLocation>, ParentsTreasury);
 
 pub struct RemoteEVMCall;
 impl CallDispatcher<RuntimeCall> for RemoteEVMCall {
@@ -407,7 +415,7 @@ impl cumulus_pallet_xcmp_queue::Config for Runtime {
 }
 
 #[test]
-fn xcm_executor_constants() {
+fn alice_pubkey_conversion() {
     use hex_literal::hex;
     use xcm::latest::Junctions::X1;
 

@@ -232,10 +232,10 @@ mod xcm_tests {
 
     #[test]
     fn relay_treasury_account() {
+        // TODO: replace with zkv_runtime::TreasuryPalletIdx::get() on next zkVerify tag?
         let loc = Location {
             parents: 1,
-            interior: X1([PalletInstance(14)].into()), // TODO: replace with the value taken
-                                                       // directly from zkv_runtime?
+            interior: X1([PalletInstance(14)].into()), // 14 is the index of the treasury pallet in zkv-runtime
         };
         assert_eq!(
             LocationAccountId32ToAccountId::convert_location(&loc)

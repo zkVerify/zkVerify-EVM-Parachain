@@ -10,7 +10,6 @@ name = "alice"
 validator = true
 ws_port = 9955
 rpc_port = 8855
-args = ["-lxcm=trace"]
 
 [[relaychain.nodes]]
 name = "bob"
@@ -37,7 +36,6 @@ name = "zkv-para-evm-parachain-collator01"
 command = "./target/release/zkv-para-evm-node"
 ws_port = 9933
 rpc_port = 8833
-#args = ["--rpc-max-connections 10000 -ltrace"]
 args = ["-lxcm=trace", "--rpc-max-connections 10000"]
 
 [[parachains.collators]]

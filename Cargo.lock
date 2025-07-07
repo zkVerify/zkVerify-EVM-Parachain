@@ -22446,7 +22446,6 @@ dependencies = [
  "frame-try-runtime",
  "hex",
  "hex-literal",
- "log",
  "num_enum 0.5.11",
  "pallet-aura",
  "pallet-authorship",
