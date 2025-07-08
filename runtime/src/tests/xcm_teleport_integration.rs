@@ -3,7 +3,7 @@ use crate::{
     tests::{ExtBuilder, ALICE},
     ZKVXcm, RuntimeOrigin,
 };
-use xcm::v5::{Asset, AssetId, Assets, Fungibility, Junction, Location};
+use xcm::v5::{Asset, AssetId, Assets, Fungibility, Junction, Location, WeightLimit};
 use xcm::{VersionedAssets, VersionedLocation};
 
 /// Test XCM message construction matches precompile expectations
@@ -35,12 +35,13 @@ fn xcm_message_construction_matches_precompile() {
             assert!(matches!(assets, VersionedAssets::V5(_)));
 
             // The actual teleport will fail without relay chain, but construction works
-            let result = ZKVXcm::teleport_assets(
+            let result = ZKVXcm::transfer_assets(
                 RuntimeOrigin::signed(ALICE.into()),
                 Box::new(destination),
                 Box::new(beneficiary),
                 Box::new(assets),
                 0,
+                WeightLimit::Unlimited
             );
 
             // Expecting either NotConnected, NotTrustedLocation, or similar transport error
