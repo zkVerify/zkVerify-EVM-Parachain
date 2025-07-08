@@ -27,6 +27,7 @@ mod genesis_config_presets;
 
 mod precompiles;
 pub use precompiles::Precompiles;
+mod xcm_teleport;
 #[cfg(test)]
 mod tests;
 pub mod types;

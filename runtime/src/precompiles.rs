@@ -21,6 +21,7 @@ use pallet_evm_precompile_modexp::Modexp;
 use pallet_evm_precompile_sha3fips::Sha3FIPS256;
 use pallet_evm_precompile_simple::{ECRecover, ECRecoverPublicKey, Identity, Ripemd160, Sha256};
 use precompile_utils::precompile_set::*;
+use crate::xcm_teleport::XcmTeleportPrecompile;
 
 pub struct NativeErc20Metadata;
 
@@ -81,12 +82,17 @@ type PrecompilesAt<R> = (
             CallableByPrecompile<OnlyFrom<AddressU64<2056>>>,
         ),
     >,
+    PrecompileAt<
+        AddressU64<2060>,
+        XcmTeleportPrecompile<crate::Runtime>,
+        (CallableByContract, CallableByPrecompile),
+    >,
 );
 
 pub type Precompiles<R> = PrecompileSetBuilder<
     R,
     (
         // Skip precompiles if out of range.
-        PrecompilesInRangeInclusive<(AddressU64<1>, AddressU64<2056>), PrecompilesAt<R>>,
+        PrecompilesInRangeInclusive<(AddressU64<1>, AddressU64<2060>), PrecompilesAt<R>>,
     ),
 >;
