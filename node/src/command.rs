@@ -37,7 +37,7 @@ fn load_spec(id: &str) -> std::result::Result<Box<dyn ChainSpec>, String> {
         "" | "test" | "testnet" => Box::new(GenericChainSpec::from_json_bytes(
             &include_bytes!("../chain-specs/zkverify_evm_vflow.json")[..],
         )?),
-        "testnet-build" => Box::new(chain_spec::testnet_config()?),
+        "testnet_build" => Box::new(chain_spec::testnet_config()?),
         "dev" => Box::new(chain_spec::development_config()?),
         "local" => Box::new(chain_spec::local_testnet_config()?),
         path => Box::new(GenericChainSpec::from_json_file(std::path::PathBuf::from(
