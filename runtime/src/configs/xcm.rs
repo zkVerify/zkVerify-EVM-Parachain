@@ -281,7 +281,8 @@ pub type LocalOriginToLocation = SignedToAccountId20<RuntimeOrigin, AccountId, R
 
 parameter_types! {
     /// The asset ID for the asset that we use to pay for message delivery fees.
-    pub FeeAssetId: AssetId = AssetId(RelayLocation::get()); // the relay chain native asset
+    pub NativeAssetId: AssetId = AssetId(RelayLocation::get()); // the relay chain native asset
+    pub FeeAssetId: AssetId = NativeAssetId::get();
     /// The base fee for the message delivery fees.
     pub const ToParentBaseDeliveryFee: u128 = MILLIS.saturating_mul(3);
 }

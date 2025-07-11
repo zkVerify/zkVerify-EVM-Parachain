@@ -27,11 +27,11 @@ mod genesis_config_presets;
 
 mod precompiles;
 pub use precompiles::Precompiles;
-mod xcm_teleport;
 #[cfg(test)]
 mod tests;
 pub mod types;
 mod weights;
+mod xcm_teleport;
 
 /// In this module, we're re-export all dependencies needed by special weight modules.
 pub(crate) mod weights_aliases {
@@ -695,7 +695,7 @@ impl_runtime_apis! {
                     type DeliveryHelper = cumulus_primitives_utility::ToParentDeliveryHelper<
                         XcmConfig,
                         ExistentialDepositAsset,
-                        configs::xcm::PriceForParentDelivery,
+                        PriceForParentDelivery,
                     >;
 
                     fn reachable_dest() -> Option<Location> {
@@ -722,7 +722,7 @@ impl_runtime_apis! {
 
                     fn get_asset() -> Asset {
                         Asset {
-                            id: AssetId(RelayLocation::get()),
+                            id: NativeAssetId::get(),
                             fun: Fungible(ExistentialDeposit::get()),
                         }
                     }
@@ -730,11 +730,11 @@ impl_runtime_apis! {
 
                 impl pallet_xcm_benchmarks::Config for Runtime {
                     type XcmConfig = XcmConfig;
-                    type AccountIdConverter = configs::xcm::LocationAccountId32ToAccountId;
+                    type AccountIdConverter = LocationAccountId32ToAccountId;
                     type DeliveryHelper = cumulus_primitives_utility::ToParentDeliveryHelper<
                         XcmConfig,
                         ExistentialDepositAsset,
-                        configs::xcm::PriceForParentDelivery,
+                        PriceForParentDelivery,
                     >;
 
                     fn valid_destination() -> Result<Location, BenchmarkError> {
@@ -742,7 +742,7 @@ impl_runtime_apis! {
                     }
                     fn worst_case_holding(_depositable_count: u32) -> Assets {
                         vec![Asset {
-                            id: configs::xcm::FeeAssetId::get(),
+                            id: FeeAssetId::get(),
                             fun: Fungible(crate::constants::currency::tVFY),
                         }].into()
                     }
@@ -750,9 +750,9 @@ impl_runtime_apis! {
 
                 parameter_types! {
                     pub TrustedTeleporter: Option<(Location, Asset)> = Some((
-                        configs::xcm::RelayLocation::get(),
+                        RelayLocation::get(),
                         Asset {
-                            id: AssetId(configs::xcm::RelayLocation::get()),
+                            id: NativeAssetId::get(),
                             fun: Fungible(ExistentialDeposit::get()),
                         },
                     ));
@@ -768,7 +768,7 @@ impl_runtime_apis! {
 
                     fn get_asset() -> Asset {
                         Asset {
-                            id: AssetId(configs::xcm::RelayLocation::get()),
+                            id: NativeAssetId::get(),
                             fun: Fungible(ExistentialDeposit::get()),
                         }
                     }
@@ -793,25 +793,25 @@ impl_runtime_apis! {
                     }
 
                     fn transact_origin_and_runtime_call() -> Result<(Location, RuntimeCall), BenchmarkError> {
-                        Ok((configs::xcm::RelayLocation::get(), frame_system::Call::remark_with_event { remark: vec![] }.into()))
+                        Ok((RelayLocation::get(), frame_system::Call::remark_with_event { remark: vec![] }.into()))
                     }
 
                     fn subscribe_origin() -> Result<Location, BenchmarkError> {
-                        Ok(configs::xcm::RelayLocation::get())
+                        Ok(RelayLocation::get())
                     }
 
                     fn claimable_asset() -> Result<(Location, Location, Assets), BenchmarkError> {
                         // an asset that can be trapped and claimed
                         use crate::constants::currency::tVFY;
-                        let origin = configs::xcm::RelayLocation::get();
-                        let assets: Assets = (AssetId(configs::xcm::RelayLocation::get()), tVFY).into();
+                        let origin = RelayLocation::get();
+                        let assets: Assets = (NativeAssetId::get(), tVFY).into();
                         let ticket = Location { parents: 0, interior: Here };
                         Ok((origin, ticket, assets))
                     }
 
                     fn fee_asset() -> Result<Asset, BenchmarkError> {
                         Ok(Asset {
-                            id: configs::xcm::FeeAssetId::get(),
+                            id: FeeAssetId::get(),
                             fun: Fungible(CENTS),
                         })
                     }

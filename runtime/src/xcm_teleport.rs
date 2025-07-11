@@ -13,30 +13,35 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+use crate::{configs::xcm::*, Runtime, RuntimeOrigin};
 use pallet_evm::AddressMapping;
 use precompile_utils::prelude::*;
 use sp_core::{H256, U256};
-use sp_runtime::traits::Dispatchable;
-use sp_std::{marker::PhantomData, vec, boxed::Box};
-use xcm::v5::{Asset, AssetId, Assets, Fungibility, Junction, Location};
+use sp_std::{boxed::Box, marker::PhantomData, vec};
+use xcm::v5::{Asset, Assets, Fungibility, Junction, Location};
 use xcm::{VersionedAssets, VersionedLocation};
-use crate::{RuntimeCall, RuntimeOrigin};
 
 pub struct XcmTeleportPrecompile<Runtime>(PhantomData<Runtime>);
 
 #[precompile_utils::precompile]
-impl XcmTeleportPrecompile<crate::Runtime>
-{
+impl XcmTeleportPrecompile<Runtime> {
     #[precompile::public("teleportToRelayChain(bytes32,uint256)")]
     fn teleport_to_relay_chain(
         handle: &mut impl PrecompileHandle,
         destination_account: H256,
         amount: U256,
-    ) -> EvmResult<()> {
-        let account_id = <crate::Runtime as pallet_evm::Config>::AddressMapping::into_account_id(handle.context().caller);
+    ) -> EvmResult {
+        // No benchmarks availabe yet for precompiles, so charge some arbitrary gas as a spam
+        // prevention mechanism.
+        handle.record_cost(1000)?;
+
+        // We use IdentityAddressMapping, so no db access
+        let account_id = <Runtime as pallet_evm::Config>::AddressMapping::into_account_id(
+            handle.context().caller,
+        );
         let origin: RuntimeOrigin = frame_system::RawOrigin::Signed(account_id).into();
 
-        let destination = VersionedLocation::V5(Location::new(1, []));
+        let destination = VersionedLocation::V5(RelayLocation::get());
 
         let beneficiary = VersionedLocation::V5(Location::new(
             0,
@@ -46,31 +51,23 @@ impl XcmTeleportPrecompile<crate::Runtime>
             }],
         ));
 
-        let amount_u128: u128 = amount.try_into().map_err(|_| {
-            revert("Amount too large")
-        })?;
+        let amount_u128: u128 = amount.try_into().map_err(|_| revert("Amount too large"))?;
 
         let assets = VersionedAssets::V5(Assets::from(vec![Asset {
-            id: AssetId(Location::new(1, [])),
+            id: NativeAssetId::get(),
             fun: Fungibility::Fungible(amount_u128),
         }]));
 
         let fee_asset_item = 0;
 
-        let call = pallet_xcm::Call::<crate::Runtime>::teleport_assets {
+        let call = pallet_xcm::Call::<Runtime>::teleport_assets {
             dest: Box::new(destination),
             beneficiary: Box::new(beneficiary),
             assets: Box::new(assets),
             fee_asset_item,
         };
 
-        handle.record_cost(RuntimeHelper::<crate::Runtime>::db_read_gas_cost().saturating_mul(2))?;
-        handle.record_cost(RuntimeHelper::<crate::Runtime>::db_write_gas_cost())?;
-
-        <RuntimeCall as Dispatchable>::dispatch(call.into(), origin)
-            .map_err(|e| {
-                revert(alloc::format!("Teleport failed: {:?}", e.error))
-            })?;
+        RuntimeHelper::<Runtime>::try_dispatch(handle, origin, call, 0)?;
 
         Ok(())
     }
