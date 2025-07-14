@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see <https://www.gnu.org/licenses/>.
 
+use crate::xcm_teleport::XcmTeleportPrecompile;
 use pallet_evm_precompile_balances_erc20::{Erc20BalancesPrecompile, Erc20Metadata};
 use pallet_evm_precompile_batch::BatchPrecompile;
 use pallet_evm_precompile_blake2::Blake2F;
@@ -81,12 +82,17 @@ type PrecompilesAt<R> = (
             CallableByPrecompile<OnlyFrom<AddressU64<2056>>>,
         ),
     >,
+    PrecompileAt<
+        AddressU64<2060>,
+        XcmTeleportPrecompile<R>,
+        (CallableByContract, CallableByPrecompile),
+    >,
 );
 
 pub type Precompiles<R> = PrecompileSetBuilder<
     R,
     (
         // Skip precompiles if out of range.
-        PrecompilesInRangeInclusive<(AddressU64<1>, AddressU64<2056>), PrecompilesAt<R>>,
+        PrecompilesInRangeInclusive<(AddressU64<1>, AddressU64<2060>), PrecompilesAt<R>>,
     ),
 >;
