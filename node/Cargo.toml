@@ -92,6 +92,10 @@ fp-dynamic-fee = {workspace = true, features = ["std"]}
 fp-rpc = {workspace = true}
 async-trait = "0.1.81"
 
+[dev-dependencies]
+assert_cmd = "2.0.17"
+tokio = {workspace = true, features = ["macros"]}
+
 [build-dependencies]
 substrate-build-script-utils = {workspace = true}
 

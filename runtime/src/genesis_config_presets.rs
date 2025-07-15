@@ -281,14 +281,14 @@ pub fn testnet_config_genesis() -> serde_json::Value {
     let sudo = hex!("96e74657b82f6865f15f3280667cda5a6dd79c51").into();
 
     genesis(
-        1599.into(),
+        1.into(),
         // Initial PoA authorities
         initial_authorities,
         // Sudo account
         sudo,
         // No Pre-funded accounts
         Default::default(),
-        1408,
+        1409,
         // No allowed deployers in genesis: sudo will add it
         Default::default(),
     )

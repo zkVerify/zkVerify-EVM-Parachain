@@ -111,8 +111,8 @@ pub fn testnet_config() -> Result<ChainSpec, String> {
         zkv_para_evm_runtime::WASM_BINARY
             .ok_or_else(|| "Development wasm not available".to_string())?,
         Extensions {
-            relay_chain: "zkVerify Volta".into(),
-            para_id: 1599,
+            relay_chain: "test".into(),
+            para_id: 1,
         },
     )
     .with_name("VFlow Testnet")
