@@ -3,12 +3,12 @@
   "id": "vflow_testnet",
   "chainType": "Live",
   "bootNodes": [
-    "/dns/boot-node-tn-vflow-1.de.zkverify.io/tcp/30333/p2p/12D3KooWStRw5P6v8bydm3RjzsdSE75PNoFtCzZ5PnV1hkntWGim",
-    "/dns/boot-node-tn-vflow-1.de.zkverify.io/tcp/30334/ws/p2p/12D3KooWStRw5P6v8bydm3RjzsdSE75PNoFtCzZ5PnV1hkntWGim",
-    "/dns/boot-node-tn-vflow-1.de.zkverify.io/tcp/443/wss/p2p/12D3KooWStRw5P6v8bydm3RjzsdSE75PNoFtCzZ5PnV1hkntWGim",
-    "/dns/boot-node-tn-vflow-2.eu-west-gra.zkverify.io/tcp/30333/p2p/12D3KooWFVarmg1RGuCnEsHVjYSxKd6idJ6cCEowkKkgaBPovt84",
-    "/dns/boot-node-tn-vflow-2.eu-west-gra.zkverify.io/tcp/30334/ws/p2p/12D3KooWFVarmg1RGuCnEsHVjYSxKd6idJ6cCEowkKkgaBPovt84",
-    "/dns/boot-node-tn-vflow-2.eu-west-gra.zkverify.io/tcp/443/wss/p2p/12D3KooWFVarmg1RGuCnEsHVjYSxKd6idJ6cCEowkKkgaBPovt84"
+    "/dns/boot-node-tn-vflow-1.zkverify.io/tcp/30333/p2p/12D3KooWStRw5P6v8bydm3RjzsdSE75PNoFtCzZ5PnV1hkntWGim",
+    "/dns/boot-node-tn-vflow-1.zkverify.io/tcp/30334/ws/p2p/12D3KooWStRw5P6v8bydm3RjzsdSE75PNoFtCzZ5PnV1hkntWGim",
+    "/dns/boot-node-tn-vflow-1.zkverify.io/tcp/443/wss/p2p/12D3KooWStRw5P6v8bydm3RjzsdSE75PNoFtCzZ5PnV1hkntWGim",
+    "/dns/boot-node-tn-vflow-2.zkverify.io/tcp/30333/p2p/12D3KooWFVarmg1RGuCnEsHVjYSxKd6idJ6cCEowkKkgaBPovt84",
+    "/dns/boot-node-tn-vflow-2.zkverify.io/tcp/30334/ws/p2p/12D3KooWFVarmg1RGuCnEsHVjYSxKd6idJ6cCEowkKkgaBPovt84",
+    "/dns/boot-node-tn-vflow-2.zkverify.io/tcp/443/wss/p2p/12D3KooWFVarmg1RGuCnEsHVjYSxKd6idJ6cCEowkKkgaBPovt84"
   ],
   "telemetryEndpoints": [
     [
