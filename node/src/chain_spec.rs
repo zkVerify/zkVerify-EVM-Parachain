@@ -102,9 +102,9 @@ fn boot_node_address(dns: &str, peer_id: &str) -> impl Iterator<Item = Multiaddr
 
 pub fn testnet_config() -> Result<ChainSpec, String> {
     // The connection strings for bootnodes
-    const BOOTNODE_1_DNS: &str = "boot-node-tn-vflow-1.de.zkverify.io";
+    const BOOTNODE_1_DNS: &str = "boot-node-tn-vflow-1.zkverify.io";
     const BOOTNODE_1_PEER_ID: &str = "12D3KooWStRw5P6v8bydm3RjzsdSE75PNoFtCzZ5PnV1hkntWGim";
-    const BOOTNODE_2_DNS: &str = "boot-node-tn-vflow-2.eu-west-gra.zkverify.io";
+    const BOOTNODE_2_DNS: &str = "boot-node-tn-vflow-2.zkverify.io";
     const BOOTNODE_2_PEER_ID: &str = "12D3KooWFVarmg1RGuCnEsHVjYSxKd6idJ6cCEowkKkgaBPovt84";
 
     Ok(ChainSpec::builder(
