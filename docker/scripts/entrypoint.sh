@@ -10,21 +10,21 @@
 # - preparation before the node start (example keys injection)
 # - launch of the actual node
 #
-# Environment variables should generally be in the form `EVM_*` for the parachain parameters and `ZKV_*` for the relay chain parameters.
-# Environment variables in the form `EVM_CONF_*` and `ZKV_CONF_*` are translated to command line arguments based on these rules:
+# Environment variables should generally be in the form `PARA_*` for the parachain parameters and `ZKV_*` for the relay chain parameters.
+# Environment variables in the form `PARA_CONF_*` and `ZKV_CONF_*` are translated to command line arguments based on these rules:
 #
-# 1. `EVM_CONF_` and `ZKV_CONF_` prefix are removed
+# 1. `PARA_CONF_` and `ZKV_CONF_` prefix are removed
 # 2. if underscores (`_`) are present, they are replaced with dashes (`-`)
 # 3. letters are replaced with lower case
 # 4. prefix `--` is added
 #
 # Examples:
 #
-# - `EVM_CONF_BASE_PATH` -> `--base-path`
-# - `EVM_CONF_BOOTNODES` -> `--bootnodes`
+# - `PARA_CONF_BASE_PATH` -> `--base-path`
+# - `PARA_CONF_BOOTNODES` -> `--bootnodes`
 #
 # Values of environment variables are used unmodified as values of command line arguments with the exception
-# of `yes` being dropped (as a flag, example `EVM_CONF_COLLATOR`/`--validator`)
+# of `yes` being dropped (as a flag, example `PARA_CONF_COLLATOR`/`--validator`)
 
 set -eEuo pipefail
 
@@ -140,23 +140,23 @@ else
   #  - use the --entrypoint option
   #  - pass the ENV BINARY with a single binary
   IFS=',' read -r -a BINARIES <<< "${BINARY}"
-  EVM_NODE_BIN="${BINARIES[0]}"
-  command -v "${EVM_NODE_BIN}" &>/dev/null || fn_die "ERROR: '${EVM_NODE_BIN}' binary can not be found on the run user's 'PATH'=${PATH}"
-  log_bold_green "🔧 zkVerify parachain node binary: ${EVM_NODE_BIN}"
+  PARA_NODE_BIN="${BINARIES[0]}"
+  command -v "${PARA_NODE_BIN}" &>/dev/null || fn_die "ERROR: '${PARA_NODE_BIN}' binary can not be found on the run user's 'PATH'=${PATH}"
+  log_bold_green "🔧 zkVerify parachain node binary: ${PARA_NODE_BIN}"
 fi
 
 ####
 # Parachain node's configurations
 ####
 log_bold_green "=== Parachain node's configuration:"
-EVM_CONF_BASE_PATH=${EVM_CONF_BASE_PATH:-}
-EVM_CONF_CHAIN=${EVM_CONF_CHAIN:-}
-EVM_SPEC_FILE_URL="${EVM_SPEC_FILE_URL:-}"
-EVM_NODE_KEY="${EVM_NODE_KEY:-}"
-EVM_NODE_KEY_FILE="${EVM_NODE_KEY_FILE:-/data/node_key.dat}"
-EVM_SECRET_PHRASE="${EVM_SECRET_PHRASE:-}"
-EVM_SECRET_PHRASE_FILE="${EVM_SECRET_PHRASE_FILE:-/data/secret_phrase.dat}"
-EVM_KEYSTORE_PATH="${EVM_KEYSTORE_PATH:-/data/keystore}"
+PARA_CONF_BASE_PATH=${PARA_CONF_BASE_PATH:-}
+PARA_CONF_CHAIN=${PARA_CONF_CHAIN:-}
+PARA_SPEC_FILE_URL="${PARA_SPEC_FILE_URL:-}"
+PARA_NODE_KEY="${PARA_NODE_KEY:-}"
+PARA_NODE_KEY_FILE="${PARA_NODE_KEY_FILE:-/data/node_key.dat}"
+PARA_SECRET_PHRASE="${PARA_SECRET_PHRASE:-}"
+PARA_SECRET_PHRASE_FILE="${PARA_SECRET_PHRASE_FILE:-/data/secret_phrase.dat}"
+PARA_KEYSTORE_PATH="${PARA_KEYSTORE_PATH:-/data/keystore}"
 
 # Loop through all arguments to check for --dev
 for arg in "$@"; do
@@ -169,11 +169,11 @@ for arg in "$@"; do
 done
 
 if [ "${DEV_MODE:-false}" != "true" ]; then
-  # Call the function for EVM_CONF_CHAIN
-  validate_and_download "EVM_CONF_CHAIN" "EVM_SPEC_FILE_URL"
+  # Call the function for PARA_CONF_CHAIN
+  validate_and_download "PARA_CONF_CHAIN" "PARA_SPEC_FILE_URL"
 fi
 
-prefix="EVM_CONF_"
+prefix="PARA_CONF_"
 conf_args=()
 while IFS='=' read -r -d '' var_name var_value; do
   if [[ "${var_name}" == "${prefix}"* ]]; then
@@ -204,30 +204,30 @@ while IFS='=' read -r -d '' var_name var_value; do
 done < <(env -0)
 
 # Session keys handling
-if [ -n "${EVM_SECRET_PHRASE}" ]; then
+if [ -n "${PARA_SECRET_PHRASE}" ]; then
   # Creating secret phrase file and keystore location if secret phrase environmental variable is provided
-  mkdir -p "${EVM_KEYSTORE_PATH}" || fn_die "ERROR: was not able to create keystore '${EVM_KEYSTORE_PATH}' directory for storing session keys.  Exiting ..."
-  chmod 700 "${EVM_KEYSTORE_PATH}" && chown "${RUN_USER}" "${EVM_KEYSTORE_PATH}"
+  mkdir -p "${PARA_KEYSTORE_PATH}" || fn_die "ERROR: was not able to create keystore '${PARA_KEYSTORE_PATH}' directory for storing session keys.  Exiting ..."
+  chmod 700 "${PARA_KEYSTORE_PATH}" && chown "${RUN_USER}" "${PARA_KEYSTORE_PATH}"
 
-  conf_args+=(--keystore-path "${EVM_KEYSTORE_PATH}")
+  conf_args+=(--keystore-path "${PARA_KEYSTORE_PATH}")
 
-  printf "%s" "${EVM_SECRET_PHRASE}" > "${EVM_SECRET_PHRASE_FILE}" || fn_die "ERROR: was not able to create '${EVM_SECRET_PHRASE_FILE}' file.  Exiting ..."
-  chmod 0400 "${EVM_SECRET_PHRASE_FILE}" && chown "${RUN_USER}" "${EVM_SECRET_PHRASE_FILE}"
-  echo -e "  EVM_SECRET_PHRASE_FILE=${EVM_SECRET_PHRASE_FILE}\n"
+  printf "%s" "${PARA_SECRET_PHRASE}" > "${PARA_SECRET_PHRASE_FILE}" || fn_die "ERROR: was not able to create '${PARA_SECRET_PHRASE_FILE}' file.  Exiting ..."
+  chmod 0400 "${PARA_SECRET_PHRASE_FILE}" && chown "${RUN_USER}" "${PARA_SECRET_PHRASE_FILE}"
+  echo -e "  PARA_SECRET_PHRASE_FILE=${PARA_SECRET_PHRASE_FILE}\n"
 
-  unset EVM_SECRET_PHRASE
+  unset PARA_SECRET_PHRASE
 
   injection_args=()
-  if [ -n "${EVM_CONF_BASE_PATH}" ]; then
-    injection_args+=("$(get_arg_name_from_env_name EVM_CONF_BASE_PATH ${prefix})")
-    injection_args+=("$(get_arg_value_from_env_value "${EVM_CONF_BASE_PATH}")")
+  if [ -n "${PARA_CONF_BASE_PATH}" ]; then
+    injection_args+=("$(get_arg_name_from_env_name PARA_CONF_BASE_PATH ${prefix})")
+    injection_args+=("$(get_arg_value_from_env_value "${PARA_CONF_BASE_PATH}")")
   fi
-  if [ -n "${EVM_CONF_CHAIN}" ]; then
-    injection_args+=("$(get_arg_name_from_env_name EVM_CONF_CHAIN ${prefix})")
-    injection_args+=("$(get_arg_value_from_env_value "${EVM_CONF_CHAIN}")")
+  if [ -n "${PARA_CONF_CHAIN}" ]; then
+    injection_args+=("$(get_arg_name_from_env_name PARA_CONF_CHAIN ${prefix})")
+    injection_args+=("$(get_arg_value_from_env_value "${PARA_CONF_CHAIN}")")
   fi
 
-  injection_args+=(--keystore-path "${EVM_KEYSTORE_PATH}")
+  injection_args+=(--keystore-path "${PARA_KEYSTORE_PATH}")
 
   log_green "INFO: injecting session keys with the following args:"
   echo "---------------------------------"
@@ -243,34 +243,34 @@ if [ -n "${EVM_SECRET_PHRASE}" ]; then
   for key_type in "${!session_keys[@]}"; do
     log_green "INFO: injecting session key '${key_type}' ..."
 
-    gosu "${RUN_USER}" "${EVM_NODE_BIN}" key insert "${injection_args[@]}" \
+    gosu "${RUN_USER}" "${PARA_NODE_BIN}" key insert "${injection_args[@]}" \
       --scheme "${session_keys["${key_type}"]}" \
-      --suri "${EVM_SECRET_PHRASE_FILE}" \
+      --suri "${PARA_SECRET_PHRASE_FILE}" \
       --key-type "${key_type}" || fn_die "ERROR: could not inject '${key_type}' session key. Exiting ..."
   done
 fi
 
 # Creating node key file if node key is provided via environmental variable or generating random one if doesn't already exist
-if [ ! -s "${EVM_NODE_KEY_FILE}" ] ; then
-  log_yellow "WARNING: node key file '${EVM_NODE_KEY_FILE}' does not exist. Creating one ..."
-  if [ -n "${EVM_NODE_KEY}" ]; then
-    log_green "INFO: creating node key file using 'EVM_NODE_KEY' environmental variable ..."
-    printf "%s" "${EVM_NODE_KEY}" > "${EVM_NODE_KEY_FILE}" || fn_die "ERROR: was not able to create '${EVM_NODE_KEY_FILE}' file.  Exiting ..."
+if [ ! -s "${PARA_NODE_KEY_FILE}" ] ; then
+  log_yellow "WARNING: node key file '${PARA_NODE_KEY_FILE}' does not exist. Creating one ..."
+  if [ -n "${PARA_NODE_KEY}" ]; then
+    log_green "INFO: creating node key file using 'PARA_NODE_KEY' environmental variable ..."
+    printf "%s" "${PARA_NODE_KEY}" > "${PARA_NODE_KEY_FILE}" || fn_die "ERROR: was not able to create '${PARA_NODE_KEY_FILE}' file.  Exiting ..."
   else
     injection_args=()
-    if [ -n "${EVM_CONF_CHAIN}" ]; then
-      injection_args+=("$(get_arg_name_from_env_name EVM_CONF_CHAIN ${prefix})")
-      injection_args+=("$(get_arg_value_from_env_value "${EVM_CONF_CHAIN}")")
+    if [ -n "${PARA_CONF_CHAIN}" ]; then
+      injection_args+=("$(get_arg_name_from_env_name PARA_CONF_CHAIN ${prefix})")
+      injection_args+=("$(get_arg_value_from_env_value "${PARA_CONF_CHAIN}")")
     fi
-    log_green "INFO: generating RANDOM node key since 'EVM_NODE_KEY' environmental variable was not set ..."
-    gosu "${RUN_USER}" "${EVM_NODE_BIN}" key generate-node-key "${injection_args[@]}" --file "${EVM_NODE_KEY_FILE}" || fn_die "ERROR: was not able to generate RANDOM node key file. Exiting ..."
+    log_green "INFO: generating RANDOM node key since 'PARA_NODE_KEY' environmental variable was not set ..."
+    gosu "${RUN_USER}" "${PARA_NODE_BIN}" key generate-node-key "${injection_args[@]}" --file "${PARA_NODE_KEY_FILE}" || fn_die "ERROR: was not able to generate RANDOM node key file. Exiting ..."
   fi
 fi
-chmod 0400 "${EVM_NODE_KEY_FILE}" && chown "${RUN_USER}" "${EVM_NODE_KEY_FILE}"
-echo -e "  EVM_NODE_KEY_FILE=${EVM_NODE_KEY_FILE}\n"
+chmod 0400 "${PARA_NODE_KEY_FILE}" && chown "${RUN_USER}" "${PARA_NODE_KEY_FILE}"
+echo -e "  PARA_NODE_KEY_FILE=${PARA_NODE_KEY_FILE}\n"
 
-conf_args+=(--node-key-file "${EVM_NODE_KEY_FILE}")
-unset EVM_NODE_KEY
+conf_args+=(--node-key-file "${PARA_NODE_KEY_FILE}")
+unset PARA_NODE_KEY
 
 ####
 # Relaychain node's configuration
@@ -319,9 +319,9 @@ if env | grep -q "^${prefix}"; then
   done < <(env -0)
 fi
 
-log_green "INFO: launching '${EVM_NODE_BIN}' with the following args:"
+log_green "INFO: launching '${PARA_NODE_BIN}' with the following args:"
 echo "---------------------------------"
 echo "  ${conf_args[*]}" "$@"
 echo -e "---------------------------------\n"
 
-exec gosu "${RUN_USER}" "${EVM_NODE_BIN}" "${conf_args[@]}" "$@"
+exec gosu "${RUN_USER}" "${PARA_NODE_BIN}" "${conf_args[@]}" "$@"
