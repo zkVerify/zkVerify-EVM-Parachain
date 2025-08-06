@@ -27,8 +27,8 @@ FROM ubuntu:24.04 AS node
 
 SHELL ["/bin/bash", "-c"]
 
-ARG BINARY="zkv-para-evm-node"
-ARG DESCRIPTION="zkVerify EVM Parachain"
+ARG BINARY="vflow-node"
+ARG DESCRIPTION="VFlow Parachain"
 ARG AUTHORS="infrastructure@zkverify.io"
 ARG VENDOR="zkVerify"
 ARG PROFILE="release"
@@ -63,7 +63,7 @@ RUN apt-get update -qq \
     && rm -rf /var/{lib/apt/lists/*,cache/apt/archives/*.deb} /tmp/*
 
 COPY --from=builder "/usr/src/node/target/${PROFILE}/${BINARY}" "/usr/local/bin/"
-COPY --from=builder "/usr/src/node/target/${PROFILE}/wbuild/zkv-para-evm-runtime/zkv_para_evm_runtime.compact.compressed.wasm" "./zkv_para_evm_runtime.compact.compressed.wasm"
+COPY --from=builder "/usr/src/node/target/${PROFILE}/wbuild/vflow-runtime/vflow_runtime.compact.compressed.wasm" "./vflow_runtime.compact.compressed.wasm"
 RUN chmod -R a+rx "/usr/local/bin"
 
 COPY docker/scripts/entrypoint.sh .

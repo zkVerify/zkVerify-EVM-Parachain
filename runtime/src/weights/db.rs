@@ -17,7 +17,7 @@
 //! DATE: 2024-08-07 (Y/M/D)
 //! HOSTNAME: `bench1.fi`, CPU: `AMD Ryzen 7 7700 8-Core Processor`
 //!
-//! DATABASE: `RocksDb`, RUNTIME: `ZKV Testnet`
+//! DATABASE: `RocksDb`, RUNTIME: `VFlow Volta`
 //! BLOCK-NUM: `BlockId::Number(1213797)`
 //! SKIP-WRITE: `false`, SKIP-READ: `false`, WARMUPS: `1`
 //! STATE-VERSION: `V1`, STATE-CACHE-SIZE: ``
@@ -41,7 +41,7 @@
 //   -d
 //   /home/giacomo/zkv-node
 
-/// Storage DB weights for the `ZKV Testnet` runtime and `RocksDb`.
+/// Storage DB weights for the `VFlow Volta` runtime and `RocksDb`.
 pub mod constants {
     use frame_support::weights::constants;
     use sp_core::parameter_types;

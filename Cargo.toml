@@ -1,7 +1,7 @@
 [workspace.package]
 authors = ["Horizen Labs <admin@horizenlabs.io>"]
 edition = "2021"
-repository = "https://github.com/zkVerify/zkVerify-EVM-Parachain"
+repository = "https://github.com/zkVerify/vflow"
 homepage = "https://www.horizenlabs.io/"
 license = "GPL-3.0-only"
 
@@ -19,7 +19,7 @@ resolver = "2"
 # Local
 cumulus-client-parachain-inherent = {path = "pallets/parachain-inherent", default-features = false}
 pallet-deployment-permissions = {path = "pallets/deployment-permissions", default-features = false}
-zkv-para-evm-runtime = {path = "runtime"}
+vflow-runtime = {path = "runtime"}
 
 # Common
 async-trait = {version = "0.1.42"}

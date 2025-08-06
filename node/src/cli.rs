@@ -78,13 +78,13 @@ pub struct KeysFromSeedCmd {
 
 const AFTER_HELP_EXAMPLE: &str = color_print::cstr!(
     r#"<bold><underline>Examples:</></>
-   <bold>zkv-evm-para-node build-spec --disable-default-bootnode > plain-parachain-chainspec.json</>
+   <bold>vflow-node build-spec --disable-default-bootnode > plain-parachain-chainspec.json</>
            Export a chainspec for a local testnet in json format.
-   <bold>zkv-evm-para-node --chain plain-parachain-chainspec.json --tmp -- --chain local</>
+   <bold>vflow-node --chain plain-parachain-chainspec.json --tmp -- --chain local</>
            Launch a full node with chain specification loaded from plain-parachain-chainspec.json.
-   <bold>zkv-evm-para-node</>
+   <bold>vflow-node</>
            Launch a full node with default parachain <italic>local-testnet</> and relay chain <italic>local</>.
-   <bold>zkv-evm-para-node --collator</>
+   <bold>vflow-node --collator</>
            Launch a collator with default parachain <italic>local-testnet</> and relay chain <italic>local</>.
  "#
 );

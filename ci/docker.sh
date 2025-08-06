@@ -2,8 +2,8 @@
 set -eEuo pipefail
 
 workdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." &> /dev/null && pwd )"
-docker_hub_org="${DOCKER_HUB_ORG:-zkvparaevm}"
-docker_image_build_name="${DOCKER_IMAGE_BUILD_NAME:-zkvparaevm-node}"
+docker_hub_org="${DOCKER_HUB_ORG:-vflow}"
+docker_image_build_name="${DOCKER_IMAGE_BUILD_NAME:-vflow-node}"
 docker_hub_username="${DOCKER_HUB_USERNAME:-}"
 docker_hub_token="${DOCKER_HUB_TOKEN:-}"
 is_a_release="${IS_A_RELEASE:-false}"
@@ -11,7 +11,7 @@ prod_release="${PROD_RELEASE:-false}"
 dev_release="${DEV_RELEASE:-false}"
 github_ref_name="${GITHUB_REF_NAME:-}"
 common_file_location="${COMMON_FILE_LOCATION:-not-set}"
-docker_file_path='docker/dockerfiles/zkvparaevm-node.Dockerfile'
+docker_file_path='docker/dockerfiles/vflow-node.Dockerfile'
 
 # Requirement
 if ! [ -f "${common_file_location}" ]; then

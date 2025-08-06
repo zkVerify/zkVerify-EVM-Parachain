@@ -56,7 +56,7 @@ if [ "${USE_DOCKER}" = "false" ]; then
   NODE="${NODE_EXE}"
   WASM="${RUNTIME}"
 else
-  IMAGE=${IMAGE:-"zkv-evm"}
+  IMAGE=${IMAGE:-"vflow"}
   TAG="$(git rev-parse --short HEAD)"
   dirty="$(git status --porcelain --untracked-files=no | grep "Cargo\|docker/\|node/\|pallets/\|primitives/\|runtime/" | grep -v "runtime/src/weights" || true)"
   build="false"
@@ -113,7 +113,7 @@ EXCLUDED_PALLETS=(
         "frame_benchmarking"
     )
 
-echo "[+] Benchmarking ${#SELECTED_PALLETS[@]} zkv-evm pallets. (IGNORE SET [${#EXCLUDED_PALLETS[@]}])"
+echo "[+] Benchmarking ${#SELECTED_PALLETS[@]} vflow pallets. (IGNORE SET [${#EXCLUDED_PALLETS[@]}])"
 
 
 is_pallet_excluded() {

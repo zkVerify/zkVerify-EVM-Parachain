@@ -1,4 +1,4 @@
-This folder contains some resources for running zkVerify EVM Parachain in a Docker environment.
+This folder contains some resources for running VFlow in a Docker environment.
 
 ## Full docker image
 
@@ -7,14 +7,14 @@ To generate a node image without bothering about local resources, local Rust ins
 (from the project root folder)
 
 ```bash
-docker build -t zkverify/para-evm-node:local -f docker/dockerfiles/zkvparaevm-node.Dockerfile .
+docker build -t zkverify/para-evm-node:local -f docker/dockerfiles/vflow-node.Dockerfile .
 ```
 
 This will generate a docker image named <b>zkverify/para-evm-node:local</b> with a fresh source compilation.
 You can then run it with:
 
 ```bash
-> docker run -ti --rm --entrypoint zkv-para-evm-node zkverify/para-evm-node:local --dev
+> docker run -ti --rm --entrypoint vflow-node zkverify/para-evm-node:local --dev
 ```
 All arguments after `zkverify/para-evm-node:local` image name will be passed to the node executable.
 
@@ -44,7 +44,7 @@ docker run --entrypoint zkv-relay --rm -v ./staging/relay-spec.json:/tmp/relay-s
 3- Generate **parachain** spec:
 
 ```bash
-docker run --rm --entrypoint zkv-para-evm-node zkverify/para-evm-node:local build-spec --chain local --disable-default-bootnode > ./staging/para-spec.json
+docker run --rm --entrypoint vflow-node zkverify/para-evm-node:local build-spec --chain local --disable-default-bootnode > ./staging/para-spec.json
 ```
 Before the next step, you can modify it if you want to change any parameter or add preminted account.<br>
 The generated one is already configured to use the as initial collators the ones defined in docker/resources/envs/parachain. (Alith and Baltathar)<br>
@@ -52,19 +52,19 @@ The generated one is already configured to use the as initial collators the ones
 4- Generate **parachain** raw spec:
 
 ```bash
-docker run --rm -v ./staging/para-spec.json:/tmp/para-spec.json --entrypoint zkv-para-evm-node zkverify/para-evm-node:local build-spec --chain /tmp/para-spec.json  --disable-default-bootnode --raw > ./staging/para-spec-raw.json
+docker run --rm -v ./staging/para-spec.json:/tmp/para-spec.json --entrypoint vflow-node zkverify/para-evm-node:local build-spec --chain /tmp/para-spec.json  --disable-default-bootnode --raw > ./staging/para-spec-raw.json
 ```
 
 5- Generate **parachain** wasm
 
 ```bash
-docker run --rm -v ./staging/para-spec-raw.json:/tmp/para-spec-raw.json --entrypoint zkv-para-evm-node zkverify/para-evm-node:local export-genesis-wasm --chain /tmp/para-spec-raw.json > ./staging/para-genesis.wasm
+docker run --rm -v ./staging/para-spec-raw.json:/tmp/para-spec-raw.json --entrypoint vflow-node zkverify/para-evm-node:local export-genesis-wasm --chain /tmp/para-spec-raw.json > ./staging/para-genesis.wasm
 ```
 
 6- Generate **parachain** geneis state
 
 ```bash
-docker run --rm -v ./staging/para-spec-raw.json:/tmp/para-spec-raw.json --entrypoint zkv-para-evm-node zkverify/para-evm-node:local export-genesis-state --chain /tmp/para-spec-raw.json > ./staging/para-genesis-state
+docker run --rm -v ./staging/para-spec-raw.json:/tmp/para-spec-raw.json --entrypoint vflow-node zkverify/para-evm-node:local export-genesis-state --chain /tmp/para-spec-raw.json > ./staging/para-genesis-state
 ```
 
 7- Start the nodes with

@@ -27,10 +27,10 @@ Make sure you have Rust installed along with everything that is needed to compil
 
 ### 🔧 Build
 
-1. Clone the zkVerify EVM Parachain repository:
+1. Clone the VFlow repository:
 
 ```sh
-git clone https://github.com/zkVerify/zkVerify-EVM-Parachain
+git clone https://github.com/zkVerify/VFlow
 ```
 
 2. Ensure rust is updated to latest version:

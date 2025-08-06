@@ -1,7 +1,7 @@
 [package]
-name = "zkv-para-evm-node"
+name = "vflow-node"
 version = "0.2.1"
-description = "zkVerify EVM Parachain Node"
+description = "VFlow Node"
 authors.workspace = true
 edition.workspace = true
 homepage.workspace = true
@@ -23,7 +23,7 @@ serde = {workspace = true, features = ["derive"]}
 serde_json = {workspace = true, features = ["std"]}
 
 # Local
-zkv-para-evm-runtime = {workspace = true}
+vflow-runtime = {workspace = true}
 
 # Substrate
 frame-benchmarking = {workspace = true}
@@ -113,7 +113,7 @@ runtime-benchmarks = [
 	"polkadot-runtime-common/runtime-benchmarks",
 	"sc-service/runtime-benchmarks",
 	"sp-runtime/runtime-benchmarks",
-	"zkv-para-evm-runtime/runtime-benchmarks",
+	"vflow-runtime/runtime-benchmarks",
 ]
 try-runtime = [
 	"frame-system/try-runtime",
@@ -121,7 +121,7 @@ try-runtime = [
 	"polkadot-cli/try-runtime",
 	"polkadot-runtime-common/try-runtime",
 	"sp-runtime/try-runtime",
-	"zkv-para-evm-runtime/try-runtime",
+	"vflow-runtime/try-runtime",
 ]
 txpool = [ "fc-rpc/txpool" ]
-metadata-hash = [ "zkv-para-evm-runtime/metadata-hash" ]
+metadata-hash = [ "vflow-runtime/metadata-hash" ]

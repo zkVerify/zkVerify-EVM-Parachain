@@ -15,7 +15,7 @@ jobs:
       - name: zkv build with runtime-benchmarks
         uses: ./.github/actions/cmd-in-docker
         with:
-          command: "cargo build -p zkv-para-evm-node --release --features runtime-benchmarks"
+          command: "cargo build -p vflow-node --release --features runtime-benchmarks"
           use_cache: 'yes'
           cache_key: 'build-runtime-benchmarks'
           lld_install: 'yes'
@@ -23,5 +23,5 @@ jobs:
       - name: Run benchmarks
         uses: ./.github/actions/cmd-in-docker
         with:
-          command: './target/release/zkv-para-evm-node benchmark pallet --pallet "*" --extrinsic "*" -s 2 -r 1'
+          command: './target/release/vflow-node benchmark pallet --pallet "*" --extrinsic "*" -s 2 -r 1'
           use_cache: 'no'

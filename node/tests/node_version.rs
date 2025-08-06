@@ -21,7 +21,7 @@ use std::{
     time::Duration,
 };
 
-pub const NODE: &str = "zkv-para-evm-node";
+pub const NODE: &str = "vflow-node";
 
 /// Run the given `future` and panic if the `timeout` is hit.
 pub async fn run_with_timeout(timeout: Duration, future: impl Future<Output = ()>) {

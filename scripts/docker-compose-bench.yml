@@ -3,7 +3,7 @@ services:
     image: ${IMAGE:-zkv-env}:${TAG:-bench}
     build:
       context: ${SOURCE_ROOT?err_unset}
-      dockerfile: ${DOCKER_FILE:-./docker/dockerfiles/zkvparaevm-node.Dockerfile}
+      dockerfile: ${DOCKER_FILE:-./docker/dockerfiles/vflow-node.Dockerfile}
       args:
         - PROFILE=${PROFILE:-production}
         - FEATURES=runtime-benchmarks
