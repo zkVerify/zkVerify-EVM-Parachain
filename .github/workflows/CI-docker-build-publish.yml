@@ -42,7 +42,7 @@ jobs:
 
   publish-docker-image:
     runs-on: warp-ubuntu-latest-x64-2x
-    name: Publish Docker Image Evm Parachain Node
+    name: Publish VFlow Node Docker Image
     needs: [build-docker]
     steps:
       - name: Git checkout
@@ -51,7 +51,7 @@ jobs:
           ref: ${{ github.ref }}
           fetch-depth: 0
 
-      - name: Download zkv evm parachain node Docker image artifact
+      - name: Download VFlow node Docker image artifact
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build-docker.outputs.artifact_name }}
@@ -72,8 +72,8 @@ jobs:
       - name: Upload runtime artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: "zkv_para_evm_runtime.compact.compressed.wasm"
-          path: ./zkv_para_evm_runtime.compact.compressed.wasm
+          name: "vflow_runtime.compact.compressed.wasm"
+          path: ./vflow_runtime.compact.compressed.wasm
           retention-days: 7
           overwrite: true
 

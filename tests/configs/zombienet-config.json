@@ -51,8 +51,8 @@
       "collators": [
         {
           "args": [],
-          "command": "../target/release/zkv-para-evm-node",
-          "name": "zkv-para-evm-parachain-collator01",
+          "command": "../target/release/vflow-node",
+          "name": "vflow-parachain-collator01",
           "ws_port": 9910
         },
         {
@@ -63,8 +63,8 @@
             "-lrpc=debug",
             "--wasm-runtime-overrides=tmp/"
           ],
-          "command": "../target/release/zkv-para-evm-node",
-          "name": "zkv-para-evm-parachain-rpc",
+          "command": "../target/release/vflow-node",
+          "name": "vflow-parachain-rpc",
           "ws_port": 9920
         }
       ]

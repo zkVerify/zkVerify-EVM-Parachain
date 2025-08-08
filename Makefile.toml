@@ -38,7 +38,7 @@ args = ["test", "--release", "--all-features"]
 
 [tasks.test-bench]
 dependencies = ["build-bench"]
-command = "./target/release/zkv-para-evm-node"
+command = "./target/release/vflow-node"
 args = ["benchmark", "pallet", "--pallet", "*", "--extrinsic", "*", "-s", "2", "-r", "1"]
 
 [tasks.format_inst]

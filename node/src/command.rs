@@ -24,7 +24,7 @@ use sc_cli::{
 };
 use sc_service::config::{BasePath, PrometheusConfig};
 use sp_runtime::traits::AccountIdConversion;
-use zkv_para_evm_runtime::Block;
+use vflow_runtime::Block;
 
 use crate::{
     chain_spec,
@@ -35,7 +35,7 @@ use crate::{
 fn load_spec(id: &str) -> std::result::Result<Box<dyn ChainSpec>, String> {
     Ok(match id {
         "" | "test" | "testnet" => Box::new(GenericChainSpec::from_json_bytes(
-            &include_bytes!("../chain-specs/zkverify_evm_vflow.json")[..],
+            &include_bytes!("../chain-specs/vflow_volta.json")[..],
         )?),
         "testnet_build" => Box::new(chain_spec::testnet_config()?),
         "dev" => Box::new(chain_spec::development_config()?),
@@ -48,7 +48,7 @@ fn load_spec(id: &str) -> std::result::Result<Box<dyn ChainSpec>, String> {
 
 impl SubstrateCli for Cli {
     fn impl_name() -> String {
-        "zkVerify EVM Parachain".into()
+        "VFlow".into()
     }
 
     fn impl_version() -> String {
@@ -57,7 +57,7 @@ impl SubstrateCli for Cli {
 
     fn description() -> String {
         format!(
-            "zkVerify EVM Parachain\n\nThe command-line arguments provided first will be passed to the \
+            "VFlow\n\nThe command-line arguments provided first will be passed to the \
 			 parachain node, while the arguments provided after -- will be passed to the relay \
 			 chain node.\n\n{} <parachain-args> -- <relay-chain-args>",
             Self::executable_name()
@@ -69,7 +69,7 @@ impl SubstrateCli for Cli {
     }
 
     fn support_url() -> String {
-        "https://github.com/zkVerify/zkVerify-EVM-Parachain/issues/new".into()
+        "https://github.com/zkVerify/VFlow/issues/new".into()
     }
 
     fn copyright_start_year() -> i32 {
@@ -92,7 +92,7 @@ impl SubstrateCli for RelayChainCli {
 
     fn description() -> String {
         format!(
-            "zkVerify EVM Collator Node\n\nThe command-line arguments provided first will be passed \
+            "VFlow Collator Node\n\nThe command-line arguments provided first will be passed \
 			 to the parachain node, while the arguments provided after -- will be passed to the \
 			 relay chain node.\n\n{} <parachain-args> -- <relay-chain-args>",
             Self::executable_name()
@@ -104,7 +104,7 @@ impl SubstrateCli for RelayChainCli {
     }
 
     fn support_url() -> String {
-        "https://github.com/zkVerify/zkVerify-EVM-Parachain/issues/new".into()
+        "https://github.com/zkVerify/VFlow/issues/new".into()
     }
 
     fn copyright_start_year() -> i32 {

@@ -20,8 +20,8 @@
         "launchSpec": [
           {
             "newRpcBehaviour": true,
-            "name": "zkvevmpara-dev",
-            "binPath": "../target/release/zkv-para-evm-node",
+            "name": "vflow-dev",
+            "binPath": "../target/release/vflow-node",
             "options": [
               "--dev",
               "--sealing=manual",

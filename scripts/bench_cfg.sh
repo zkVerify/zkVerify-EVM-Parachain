@@ -1,16 +1,16 @@
 DEFAULT_BM_STEPS=50
 DEFAULT_BM_REPEAT=20
 DEFAULT_BM_HEAP_PAGES=4096
-NODE_CRATE="zkv-para-evm-node"
+NODE_CRATE="vflow-node"
 PROFILE=${PROFILE:-"production"}
 DEFAULT_NODE_EXE="target/${PROFILE}/${NODE_CRATE}"
-RUNTIME_CRATE="zkv-para-evm-runtime"
+RUNTIME_CRATE="vflow-runtime"
 WASM_FILE="${RUNTIME_CRATE}.compact.compressed.wasm"
 DEFAULT_WASM="target/${PROFILE}/wbuild/${RUNTIME_CRATE}/${WASM_FILE}"
 TEMPLATES_ROOT=${TEMPLATES_ROOT:-"scripts/templates"}
 DEFAULT_LOCAL_WEIGHT_TEMPLATE="${TEMPLATES_ROOT}/pallets-weight-template.hbs"
-IMAGE=${IMAGE:-"zkv-evm"}
-DEFAULT_DOCKER_FILE=${DEFAULT_DOCKER_FILE:-"docker/dockerfiles/zkvparaevm-node.Dockerfile"}
+IMAGE=${IMAGE:-"vflow"}
+DEFAULT_DOCKER_FILE=${DEFAULT_DOCKER_FILE:-"docker/dockerfiles/vflow-node.Dockerfile"}
 
 
 

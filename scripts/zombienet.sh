@@ -85,7 +85,7 @@ zombienet_debug() {
   echo "compiling parachain node"
   cargo build
   echo "compiling parachain runtime wasm with evm-tracing feature for enabling debug rpc methods..."
-  cargo build -p zkv-para-evm-runtime --target-dir /tmp/zkv_para_evm --features evm-tracing
+  cargo build -p vflow-runtime --target-dir /tmp/vflow --features evm-tracing
   echo "spawning local relay chain plus devnet as a parachain..."
   local dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
   ./$ZOMBIENET_BIN spawn "$dir/../zombienet-config/debug.toml" -p native

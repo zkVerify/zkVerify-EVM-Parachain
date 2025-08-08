@@ -10,7 +10,7 @@ https://moonsong-labs.github.io/moonwall/guide/intro/getting-started.html
 ## Test Categories
 
 - `dev`: Tests that execute a single local dev node, using PolkadotJs / Ethers.js / Web3.js, to check the runtime and client in a relatively end-to-end manner.
-- `zombie`: Tests that use the [ZombieNet](https://github.com/paritytech/zombienet) framework to verify zkVerify EVM parachains in the context of a parachain connected to a relay chain, and other topologies.
+- `zombie`: Tests that use the [ZombieNet](https://github.com/paritytech/zombienet) framework to verify VFlow in the context of a parachain connected to a relay chain, and other topologies.
 
 ## Installation
 

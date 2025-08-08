@@ -33,10 +33,10 @@ runs:
     - name: Build docker image
       shell: bash
       run: |
-        echo "Building evm parachain Docker image"
+        echo "Building VFlow Docker image"
         docker build --build-arg PROFILE=production \
           --build-arg FEATURES=metadata-hash \
-          -f "docker/dockerfiles/zkvparaevm-node.Dockerfile" \
+          -f "docker/dockerfiles/vflow-node.Dockerfile" \
           -t ${{ inputs.docker_hub_org }}/${{ inputs.docker_image_name }} .
 
         echo "DOCKER_IMAGE_NAME=${{ inputs.docker_hub_org }}/${{ inputs.docker_image_name }}" >> "${GITHUB_ENV}"

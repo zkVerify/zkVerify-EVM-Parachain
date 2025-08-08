@@ -27,16 +27,16 @@
       "chain_spec_path": "./configs/chain_specs/test_chain_spec.json",
       "collators": [
         {
-          "name": "zkv-evm-parachain-collator01",
-          "command": "../target/release/zkv-para-evm-node",
+          "name": "vflow-collator01",
+          "command": "../target/release/vflow-node",
           "ws_port": 9910,
           "args": [
             ""
           ]
         },
         {
-          "name": "zkv-evm-parachain-collator02",
-          "command": "../target/release/zkv-para-evm-node",
+          "name": "vflow-collator02",
+          "command": "../target/release/vflow-node",
           "ws_port": 9920,
           "args": [
             ""

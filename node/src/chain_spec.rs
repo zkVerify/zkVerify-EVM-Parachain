@@ -57,8 +57,7 @@ fn chain_properties() -> Map<String, Value> {
 }
 pub fn development_config() -> Result<ChainSpec, String> {
     Ok(ChainSpec::builder(
-        zkv_para_evm_runtime::WASM_BINARY
-            .ok_or_else(|| "Development wasm not available".to_string())?,
+        vflow_runtime::WASM_BINARY.ok_or_else(|| "Development wasm not available".to_string())?,
         Extensions {
             relay_chain: "local".into(),
             para_id: 2000,
@@ -74,8 +73,7 @@ pub fn development_config() -> Result<ChainSpec, String> {
 
 pub fn local_testnet_config() -> Result<ChainSpec, String> {
     Ok(ChainSpec::builder(
-        zkv_para_evm_runtime::WASM_BINARY
-            .ok_or_else(|| "Development wasm not available".to_string())?,
+        vflow_runtime::WASM_BINARY.ok_or_else(|| "Development wasm not available".to_string())?,
         Extensions {
             relay_chain: "local".into(),
             para_id: 2000,
@@ -84,7 +82,7 @@ pub fn local_testnet_config() -> Result<ChainSpec, String> {
     .with_name("Local Testnet")
     .with_id("local_testnet")
     .with_chain_type(ChainType::Local)
-    .with_protocol_id("zkv_para_evm_local_testnet")
+    .with_protocol_id("vflow_local_testnet")
     .with_properties(chain_properties())
     .with_genesis_config_preset_name("local-test")
     .build())
@@ -108,14 +106,13 @@ pub fn testnet_config() -> Result<ChainSpec, String> {
     const BOOTNODE_2_PEER_ID: &str = "12D3KooWFVarmg1RGuCnEsHVjYSxKd6idJ6cCEowkKkgaBPovt84";
 
     Ok(ChainSpec::builder(
-        zkv_para_evm_runtime::WASM_BINARY
-            .ok_or_else(|| "Development wasm not available".to_string())?,
+        vflow_runtime::WASM_BINARY.ok_or_else(|| "Development wasm not available".to_string())?,
         Extensions {
             relay_chain: "test".into(),
             para_id: 1,
         },
     )
-    .with_name("VFlow Testnet")
+    .with_name("VFlow Volta")
     .with_id("vflow_testnet")
     .with_chain_type(ChainType::Live)
     .with_protocol_id("tvflow")
