@@ -1,7 +1,7 @@
 [workspace.package]
 authors = ["Horizen Labs <admin@horizenlabs.io>"]
 edition = "2021"
-repository = "https://github.com/zkVerify/vflow"
+repository = "https://github.com/zkVerify/VFlow"
 homepage = "https://www.horizenlabs.io/"
 license = "GPL-3.0-only"
 

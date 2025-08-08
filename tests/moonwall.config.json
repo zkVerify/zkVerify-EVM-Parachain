@@ -21,7 +21,7 @@
           {
             "newRpcBehaviour": true,
             "name": "vflow-dev",
-            "binPath": "../target/release/zkv-para-evm-node",
+            "binPath": "../target/release/vflow-node",
             "options": [
               "--dev",
               "--sealing=manual",
