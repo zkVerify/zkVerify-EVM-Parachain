@@ -273,8 +273,13 @@ conf_args+=(--node-key-file "${EVM_NODE_KEY_FILE}")
 unset EVM_NODE_KEY
 
 ####
-# Relaychain collator's configuration (env->arg)
+# Relaychain node's configuration
 ####
+if [ "${DEV_MODE:-false}" != "true" ]; then
+  # Call the function for EVM_CONF_CHAIN
+  validate_and_download "ZKV_CONF_CHAIN" "ZKV_SPEC_FILE_URL"
+fi
+
 prefix="ZKV_CONF_"
 if env | grep -q "^${prefix}"; then
   log_bold_green "=== Relaychain node's configuration:"
