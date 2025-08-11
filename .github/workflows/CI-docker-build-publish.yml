@@ -24,7 +24,7 @@ env:
 jobs:
   build-docker:
     runs-on: warp-ubuntu-latest-x64-8x
-    name: Build Docker Image para-evm-node
+    name: Build Docker Image vflow-node
     steps:
       - name: Checkout code
         uses: actions/checkout@v4

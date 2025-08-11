@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         cache_key:
-          - build-evm-node
+          - build-vflow-node
           - lint-format
           - machete
           - build-runtime-benchmarks
