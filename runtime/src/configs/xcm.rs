@@ -209,6 +209,18 @@ impl CallDispatcher<RuntimeCall> for RemoteEVMCall {
     }
 }
 
+pub struct SafeCallFilter;
+impl frame_support::traits::Contains<RuntimeCall> for SafeCallFilter {
+    fn contains(call: &RuntimeCall) -> bool {
+        matches!(
+            call,
+            RuntimeCall::EthereumXcm(_)
+                // Used for baseline benchmarks
+                | RuntimeCall::System(frame_system::Call::remark_with_event { remark: _ })
+        )
+    }
+}
+
 pub struct XcmConfig;
 impl xcm_executor::Config for XcmConfig {
     type RuntimeCall = RuntimeCall;
@@ -245,7 +257,7 @@ impl xcm_executor::Config for XcmConfig {
     type MessageExporter = ();
     type UniversalAliases = Nothing;
     type CallDispatcher = RemoteEVMCall;
-    type SafeCallFilter = Everything;
+    type SafeCallFilter = SafeCallFilter;
     type TransactionalProcessor = FrameTransactionalProcessor;
     type HrmpNewChannelOpenRequestHandler = ();
     type HrmpChannelAcceptedHandler = ();

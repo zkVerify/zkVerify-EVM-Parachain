@@ -6,7 +6,7 @@ use crate::{
     Balances, RuntimeCall, RuntimeOrigin,
 };
 use frame_support::{
-    assert_noop, assert_ok,
+    assert_err_ignore_postinfo, assert_noop, assert_ok,
     dispatch::{Pays, PostDispatchInfo},
     traits::ConstU32,
     BoundedVec,
@@ -14,7 +14,7 @@ use frame_support::{
 use pallet_ethereum_xcm::RawOrigin;
 use parity_scale_codec::Encode;
 use sp_core::{H160, U256};
-use sp_runtime::{DispatchError, DispatchErrorWithPostInfo};
+use sp_runtime::{DispatchError, DispatchErrorWithPostInfo, ModuleError};
 use xcm::{
     latest::{Fungibility::Fungible, OriginKind, Xcm},
     prelude::*,
@@ -155,6 +155,47 @@ fn cannot_create_eth_from_xcm() {
                     },
                     error: DispatchError::Other("Cannot convert xcm payload to known type"),
                 }
+            );
+        })
+}
+
+#[test]
+fn cannot_call_transact_remark_from_xcm() {
+    ExtBuilder::default()
+        .with_balances(vec![(ALICE.into(), tVFY), (BOB.into(), tVFY)])
+        .build()
+        .execute_with(|| {
+            let xcm_cost = tVFY / 2;
+            let eth_call_bytes = RuntimeCall::from(frame_system::Call::<Runtime>::remark {
+                remark: hex_literal::hex!("beeb").to_vec(),
+            })
+            .encode()
+            .into();
+
+            let base_xcm = Box::new(VersionedXcm::from(Xcm(vec![
+                WithdrawAsset((RelayLocation::get(), Fungible(xcm_cost)).into()),
+                BuyExecution {
+                    fees: (RelayLocation::get(), Fungible(xcm_cost)).into(),
+                    weight_limit: Unlimited,
+                },
+                Transact {
+                    origin_kind: OriginKind::Native,
+                    call: eth_call_bytes,
+                    fallback_max_weight: None,
+                },
+            ])));
+
+            assert_err_ignore_postinfo!(
+                pallet_xcm::Pallet::<Runtime>::execute(
+                    RuntimeOrigin::signed(ALICE.into()),
+                    base_xcm,
+                    Weight::from_parts(10000000000, 10000),
+                ),
+                DispatchError::Module(ModuleError {
+                    index: 31,
+                    error: [24, 0, 0, 0],
+                    message: Some("LocalExecutionIncomplete")
+                }),
             );
         })
 }
