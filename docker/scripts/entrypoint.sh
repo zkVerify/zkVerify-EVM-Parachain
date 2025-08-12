@@ -275,6 +275,8 @@ unset PARA_NODE_KEY
 ####
 # Relaychain node's configuration
 ####
+ZKV_SPEC_FILE_URL="${ZKV_SPEC_FILE_URL:-}"
+
 if [ "${DEV_MODE:-false}" != "true" ]; then
   # Call the function for EVM_CONF_CHAIN
   validate_and_download "ZKV_CONF_CHAIN" "ZKV_SPEC_FILE_URL"
